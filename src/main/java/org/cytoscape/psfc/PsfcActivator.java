@@ -1,4 +1,4 @@
 package org.cytoscape.psfc;
 
-public class PsfcActivator {
+public class PSFCActivator {
 }
