@@ -11,14 +11,33 @@ import static org.junit.Assert.assertTrue;
 
 public class NodeTest {
     private Node node;
+    private int index = 0;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp(){
-        node = new Node(0);
+        node = new Node(index);
     }
+
+    @Test
+    public void testConstructorIndex(){
+        assertNotNull(node.getIndex());
+        assert node.getIndex() == index;
+        assertNotNull(node.getValue());
+        assert node.getValue() == 0.0;
+    }
+
+    @Test
+    public void testConstructorIndexValue(){
+        double value = 1.0;
+        Node node1 = new Node(index, value);
+        assertNotNull(node1.getIndex());
+        assert (node1.getIndex() == index);
+        assert (node1.getValue() == value);
+    }
+
     @Test
     public void testGetValue() throws Exception {
         assertNotNull(node.getValue());

@@ -1,5 +1,7 @@
 package org.cytoscape.psfc.logic.structures;
 
+import org.cytoscape.psfc.ExceptionMessages;
+
 /**
  * PUBLIC CLASS Node
  * The Node class represents a node in the graph.
@@ -15,15 +17,22 @@ public class Node {
     private double value;
 
     /**
+     * Creates a Node with given index and 0.0 initial value.
      *
-     * @param index int
+     * @param index non-negative integer: should be unique identifier for the node in a graph.
      */
     public Node(int index){
         if (index < 0)
-            throw new IllegalArgumentException("Negative indices not allowed");
+            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
         this.index = index;
     }
 
+    /**
+     * Creates a Node with given index and value.
+     *
+     * @param index non-negative integer: should be unique identifier for the node in a graph.
+     * @param value double value: may stand for expression, ratio, rank score, etc.
+     */
     public Node(int index, double value) {
         new Node(index);
         setValue(value);

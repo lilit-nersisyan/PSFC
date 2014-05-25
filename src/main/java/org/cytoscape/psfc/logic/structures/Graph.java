@@ -1,5 +1,7 @@
 package org.cytoscape.psfc.logic.structures;
 /**
+ * PUBLIC CLASS Graph
+ *
  * Graph class is for keeping the topology of the network, and references of its entities -
  * Nodes and Edges.
  * Functions?
