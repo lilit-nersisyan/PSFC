@@ -1,4 +1,4 @@
-package org.psf.logic.structures;
+package org.cytoscape.psfc.logic.structures;
 /**
  * Graph class is for keeping the topology of the network, and references of its entities -
  * Nodes and Edges.
@@ -17,7 +17,7 @@ public class Graph {
         this.edges = edges;
     }
 
-    public Graph(int[][] adjacency){
+    public Graph(int[][] adjacency) throws IllegalArgumentException {
         int nrows = adjacency.length;
         int ncols = adjacency[0].length;
         if (nrows != ncols)
