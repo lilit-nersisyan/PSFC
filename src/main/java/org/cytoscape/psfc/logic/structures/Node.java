@@ -49,4 +49,12 @@ public class Node {
     public int getID() {
         return ID;
     }
+
+    @Override
+    public String toString(){
+        return "\nNode{" +
+                ", ID=" + ID +
+                ", value=" + value +
+                '}';
+    }
 }

@@ -33,6 +33,14 @@ public class Graph {
         }
     }
 
+    @Override
+    public String toString(){
+        return "Graph{" +
+                ", \nnodes=" + nodes +
+                ", \nedges=" + edges +
+                '}';
+    }
+
 
     public static void main(String[] args) {
         int[][] adjacency = new int[][]{
