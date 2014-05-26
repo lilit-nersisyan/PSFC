@@ -7,8 +7,8 @@ import java.awt.event.ActionEvent;
 /**
  * Created by User on 5/25/2014.
  */
-public class CreateSimpleNetworkFile extends AbstractCyAction {
-    public CreateSimpleNetworkFile(){
+public class MapNetworkToGraphAction extends AbstractCyAction {
+    public MapNetworkToGraphAction(){
         super("Export network in psf format");
         setMenuGravity(0);
         setPreferredMenu("Apps.PSFC");
