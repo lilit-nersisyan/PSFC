@@ -7,9 +7,9 @@ import java.awt.event.ActionEvent;
 /**
  * Created by User on 5/25/2014.
  */
-public class PSFCJustAction extends AbstractCyAction {
-    public PSFCJustAction(){
-        super("Just action");
+public class CreateSimpleNetworkFile extends AbstractCyAction {
+    public CreateSimpleNetworkFile(){
+        super("Export network in psf format");
         setMenuGravity(0);
         setPreferredMenu("Apps.PSFC");
     }

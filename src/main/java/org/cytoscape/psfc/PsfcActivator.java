@@ -9,7 +9,7 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
-import org.cytoscape.psfc.gui.actions.PSFCJustAction;
+import org.cytoscape.psfc.gui.actions.CreateSimpleNetworkFile;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -41,7 +41,7 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyApplicationManager cyApplicationManager;
     public static CyTableManager cyTableManager;
 
-    public static PSFCJustAction psfcJustAction;
+    public static CreateSimpleNetworkFile createSimpleNetworkFile;
 
 
     @Override
@@ -65,7 +65,7 @@ public class PSFCActivator extends AbstractCyActivator {
         cyTableManager = getService(bc, CyTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
 
-        psfcJustAction = new PSFCJustAction();
+        createSimpleNetworkFile = new CreateSimpleNetworkFile();
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
         registerService(bc, taskManager, DialogTaskManager.class, new Properties());
@@ -85,6 +85,6 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
 
-        registerService(bc, psfcJustAction, CyAction.class, new Properties());
+        registerService(bc, createSimpleNetworkFile, CyAction.class, new Properties());
     }
 }

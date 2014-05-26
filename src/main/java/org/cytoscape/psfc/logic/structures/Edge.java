@@ -12,6 +12,7 @@ import org.cytoscape.psfc.ExceptionMessages;
  * Unresolved: Should it keep the reference of the Graph it belongs to?
  */
 public class Edge {
+    private int ID;
     public static int ACTIVATION = 1;
     public static int INHIBITION = 0;
 

@@ -23,8 +23,8 @@ public class NodeTest {
 
     @Test
     public void testConstructorIndex(){
-        assertNotNull(node.getIndex());
-        assert node.getIndex() == index;
+        assertNotNull(node.getID());
+        assert node.getID() == index;
         assertNotNull(node.getValue());
         assert node.getValue() == 0.0;
     }
@@ -33,8 +33,8 @@ public class NodeTest {
     public void testConstructorIndexValue(){
         double value = 1.0;
         Node node1 = new Node(index, value);
-        assertNotNull(node1.getIndex());
-        assert (node1.getIndex() == index);
+        assertNotNull(node1.getID());
+        assert (node1.getID() == index);
         assert (node1.getValue() == value);
     }
 
@@ -51,8 +51,8 @@ public class NodeTest {
 
     @Test
     public void testGetIndex() throws Exception {
-        assertNotNull(node.getIndex());
-        assertTrue(node.getIndex() >= 0);
+        assertNotNull(node.getID());
+        assertTrue(node.getID() >= 0);
 
         thrown.expect(IllegalArgumentException.class);
         new Node(-1);

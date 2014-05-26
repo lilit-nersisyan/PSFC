@@ -5,7 +5,7 @@ import org.cytoscape.psfc.ExceptionMessages;
 /**
  * PUBLIC CLASS Node
  * The Node class represents a node in the graph.
- * Node a non-negative int index associated with it. The index of Node cannot be changed after it is created.
+ * Node a non-negative int ID associated with it. The ID of Node cannot be changed after it is created.
  * Node may have a double value for gene expression, expression ratios or other metrics.
  *
  * Unresolved: If not initialized, the value is set to 0.0. Should this be null?
@@ -13,28 +13,28 @@ import org.cytoscape.psfc.ExceptionMessages;
  */
 
 public class Node {
-    private int index;
+    private int ID;
     private double value;
 
     /**
-     * Creates a Node with given index and 0.0 initial value.
+     * Creates a Node with given ID and 0.0 initial value.
      *
-     * @param index non-negative integer: should be unique identifier for the node in a graph.
+     * @param ID non-negative integer: should be unique identifier for the node in a graph.
      */
-    public Node(int index){
-        if (index < 0)
+    public Node(int ID){
+        if (ID < 0)
             throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
-        this.index = index;
+        this.ID = ID;
     }
 
     /**
-     * Creates a Node with given index and value.
+     * Creates a Node with given ID and value.
      *
-     * @param index non-negative integer: should be unique identifier for the node in a graph.
+     * @param ID non-negative integer: should be unique identifier for the node in a graph.
      * @param value double value: may stand for expression, ratio, rank score, etc.
      */
-    public Node(int index, double value) {
-        new Node(index);
+    public Node(int ID, double value) {
+        new Node(ID);
         setValue(value);
     }
 
@@ -46,7 +46,7 @@ public class Node {
         this.value = value;
     }
 
-    public int getIndex() {
-        return index;
+    public int getID() {
+        return ID;
     }
 }
