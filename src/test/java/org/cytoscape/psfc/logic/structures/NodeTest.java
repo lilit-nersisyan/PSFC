@@ -6,8 +6,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class NodeTest {
     private Node node;
@@ -21,11 +20,10 @@ public class NodeTest {
         node = new Node(index);
     }
 
+
     @Test
     public void testConstructorIndex(){
-        assertNotNull(node.getID());
         assert node.getID() == index;
-        assertNotNull(node.getValue());
         assert node.getValue() == 0.0;
     }
 
@@ -33,15 +31,13 @@ public class NodeTest {
     public void testConstructorIndexValue(){
         double value = 1.0;
         Node node1 = new Node(index, value);
-        assertNotNull(node1.getID());
         assert (node1.getID() == index);
         assert (node1.getValue() == value);
     }
 
     @Test
     public void testGetValue() throws Exception {
-        assertNotNull(node.getValue());
-        System.out.println(node.getValue());
+
     }
 
     @Test
@@ -51,9 +47,7 @@ public class NodeTest {
 
     @Test
     public void testGetIndex() throws Exception {
-        assertNotNull(node.getID());
         assertTrue(node.getID() >= 0);
-
         thrown.expect(IllegalArgumentException.class);
         new Node(-1);
 

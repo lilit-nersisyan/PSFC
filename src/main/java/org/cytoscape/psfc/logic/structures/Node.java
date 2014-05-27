@@ -5,7 +5,7 @@ import org.cytoscape.psfc.ExceptionMessages;
 /**
  * PUBLIC CLASS Node
  * The Node class represents a node in the graph.
- * Node a non-negative int ID associated with it. The ID of Node cannot be changed after it is created.
+ * Node a non-negative Integer ID associated with it.
  * Node may have a double value for gene expression, expression ratios or other metrics.
  *
  * Unresolved: If not initialized, the value is set to 0.0. Should this be null?
@@ -13,7 +13,7 @@ import org.cytoscape.psfc.ExceptionMessages;
  */
 
 public class Node {
-    private int ID;
+    private int ID = -1;
     private double value;
 
     /**
@@ -21,7 +21,7 @@ public class Node {
      *
      * @param ID non-negative integer: should be unique identifier for the node in a graph.
      */
-    public Node(int ID){
+    Node(int ID){
         if (ID < 0)
             throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
         this.ID = ID;
@@ -34,7 +34,9 @@ public class Node {
      * @param value double value: may stand for expression, ratio, rank score, etc.
      */
     public Node(int ID, double value) {
-        new Node(ID);
+        if (ID < 0)
+            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
+        this.ID = ID;
         setValue(value);
     }
 
@@ -56,5 +58,14 @@ public class Node {
                 ", ID=" + ID +
                 ", value=" + value +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(o instanceof Node){
+            Node that = (Node) o;
+            return that.getID() == this.ID;
+        }
+        return false;
     }
 }

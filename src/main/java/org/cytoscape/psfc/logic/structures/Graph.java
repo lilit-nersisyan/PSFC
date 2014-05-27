@@ -8,29 +8,37 @@ package org.cytoscape.psfc.logic.structures;
  */
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.TreeMap;
 
 public class Graph {
-    private HashMap<Integer, Node> nodes = new HashMap<Integer, Node>();
+    private TreeMap<Integer, Node> nodes = new TreeMap<Integer, Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
+    private int freeID = 0;
 
-    public Graph(HashMap<Integer, Node> nodes, ArrayList<Edge> edges) {
-        this.nodes = nodes;
-        this.edges = edges;
+    /**
+     * Empty constructor for Graph.
+     */
+    public Graph(){}
+
+    /**
+     * Create and return new Node with available free ID.
+     * @return node: Node
+     */
+    public Node createNode(){
+        Node node = new Node(freeID);
+        nodes.put(node.getID(), node);
+        freeID++;
+        return node;
     }
 
-    public Graph(int[][] adjacency) throws IllegalArgumentException {
-        int nrows = adjacency.length;
-        int ncols = adjacency[0].length;
-        if (nrows != ncols)
-            throw new IllegalArgumentException("Adjacency matrix should be square");
-        for (int i = 0; i < adjacency.length; i++){
-            nodes.put(i, new Node(i));
-            for (int j= 0; j < adjacency[0].length; j++){
-                if(adjacency[i][j] > 0)
-                    edges.add(new Edge(nodes.get(i),nodes.get(j)));
-            }
-        }
+    public Edge addEdge(Node source, Node target){
+        if (!nodes.containsValue(source))
+            return null;
+        if(!nodes.containsValue(target))
+            return null;
+        Edge edge = new Edge(source, target);
+        edges.add(edge);
+        return edge;
     }
 
     @Override
@@ -41,16 +49,32 @@ public class Graph {
                 '}';
     }
 
+    /**
+     * Return Edge with specified source and target Nodes.
+     * If graph does not contain such an edge, null is returned.
+     *
+     * @param psfSource Node - source
+     * @param psfTarget Node - target
+     * @return Edge or null
+     */
+    public Edge getEdge(Node psfSource, Node psfTarget) {
+        Edge tempEdge = new Edge(psfSource, psfTarget);
+        for(Edge edge : edges){
+            if(edge.equals(tempEdge))
+                return edge;
+        }
+        return null;
+    }
 
-    public static void main(String[] args) {
-        int[][] adjacency = new int[][]{
-                {0, 0, 0, 1, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {0, 0, 0, 0, 0},
-                {1, 1, 1, 0, 0}
-        };
-        Graph graph = new Graph(adjacency);
+    public TreeMap<Integer, Node> getNodeMap() {
+        return nodes;
+    }
 
+    public boolean containsNode(Node node){
+        return nodes.containsValue(node);
+    }
+
+    public boolean containsEdge(Edge edge){
+        return edges.contains(edge);
     }
 }

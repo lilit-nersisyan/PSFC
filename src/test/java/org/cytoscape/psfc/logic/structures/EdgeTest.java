@@ -29,6 +29,16 @@ public class EdgeTest {
 
     }
 
+    @Test
+    public void testGetSource(){
+        assertNotNull(edge.getSource());
+    }
+
+    @Test
+    public void testGetTarget(){
+        assertNotNull(edge.getTarget());
+    }
+
     @After
     public void tearDown() throws Exception {
         thrown = ExpectedException.none();

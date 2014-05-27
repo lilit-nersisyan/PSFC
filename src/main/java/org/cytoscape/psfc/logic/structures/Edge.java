@@ -20,7 +20,7 @@ public class Edge {
     private Node target;
     private int type;
 
-    public Edge(Node target, Node source) {
+    Edge(Node target, Node source) {
         if (target == null || source == null)
             throw new NullPointerException(ExceptionMessages.EdgeWithNullNode);
         this.target = target;
@@ -42,5 +42,14 @@ public class Edge {
                 ", target=" + target.getID() +
                 ", type='" + type + '\''
                 +'}';
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if (o instanceof Edge) {
+            Edge that = (Edge) o;
+            return this.source == that.source && this.target == that.target;
+        }
+        return false;
     }
 }
