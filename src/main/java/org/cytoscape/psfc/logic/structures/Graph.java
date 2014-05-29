@@ -32,6 +32,23 @@ public class Graph {
     }
 
     /**
+     * Returns the number of vertices in the Graph.
+     * @return number of vertices : int
+     */
+    public int getOrder(){
+        return nodes.size();
+    }
+
+    /**
+     * Returns the number of vertices in the Graph
+     * @return number of vertices : int
+     */
+    public int getSize(){
+        return edges.size();
+    }
+
+
+    /**
      * Create and return an Edge between source and target Nodes contained in the Graph.
      * If the source and targ
      *

@@ -18,6 +18,7 @@ public class GraphTest {
         graph = null;
     }
 
+
     @Test
     public void testCreateNode() throws Exception {
         Node node0 = graph.addNode();
@@ -25,6 +26,15 @@ public class GraphTest {
         assert node1.getID() != node0.getID();
         assert graph.containsNode(node0);
         assert graph.containsNode(node1);
+    }
+
+    @Test
+    public void testGetOrder() throws Exception {
+        assert graph.getOrder() == 0;
+        Node node0 = graph.addNode();
+        Node node1 = graph.addNode();
+        assert graph.getOrder() == 2;
+
     }
 
     @Test
