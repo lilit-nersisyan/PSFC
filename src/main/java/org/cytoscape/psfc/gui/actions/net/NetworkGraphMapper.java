@@ -19,7 +19,8 @@ public class NetworkGraphMapper {
 
         for (Object nodeObj : network.getNodeList()) {
             CyNode cyNode = (CyNode) nodeObj;
-            Node psfNode = graph.createNode();
+            Node psfNode = graph.addNode();
+            psfNode.setName(network.getDefaultNodeTable().getRow(cyNode.getSUID()).get(CyNetwork.NAME,String.class));
             cyNodePsfNodeMap.put(cyNode, psfNode);
         }
 

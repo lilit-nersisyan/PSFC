@@ -20,7 +20,7 @@ public class Edge {
     private Node target;
     private int type;
 
-    Edge(Node target, Node source) {
+    Edge(Node source, Node target) {
         if (target == null || source == null)
             throw new NullPointerException(ExceptionMessages.EdgeWithNullNode);
         this.target = target;
@@ -41,7 +41,7 @@ public class Edge {
                 "source=" + source.getID() +
                 ", target=" + target.getID() +
                 ", type='" + type + '\''
-                +'}';
+                +"}\n";
     }
 
     @Override

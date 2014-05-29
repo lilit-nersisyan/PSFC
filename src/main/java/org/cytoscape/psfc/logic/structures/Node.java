@@ -7,7 +7,7 @@ import org.cytoscape.psfc.ExceptionMessages;
  * The Node class represents a node in the graph.
  * Node a non-negative Integer ID associated with it.
  * Node may have a double value for gene expression, expression ratios or other metrics.
- *
+ * <p/>
  * Unresolved: If not initialized, the value is set to 0.0. Should this be null?
  * Unresolved: Should it keep the reference of the graph it belongs to?
  */
@@ -15,13 +15,14 @@ import org.cytoscape.psfc.ExceptionMessages;
 public class Node {
     private int ID = -1;
     private double value;
+    private String name = "";
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
      *
      * @param ID non-negative integer: should be unique identifier for the node in a graph.
      */
-    Node(int ID){
+    Node(int ID) {
         if (ID < 0)
             throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
         this.ID = ID;
@@ -30,10 +31,10 @@ public class Node {
     /**
      * Creates a Node with given ID and value.
      *
-     * @param ID non-negative integer: should be unique identifier for the node in a graph.
+     * @param ID    non-negative integer: should be unique identifier for the node in a graph.
      * @param value double value: may stand for expression, ratio, rank score, etc.
      */
-    public Node(int ID, double value) {
+    Node(int ID, double value) {
         if (ID < 0)
             throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
         this.ID = ID;
@@ -52,20 +53,31 @@ public class Node {
         return ID;
     }
 
-    @Override
-    public String toString(){
-        return "\nNode{" +
-                ", ID=" + ID +
-                ", value=" + value +
-                '}';
+    public String getName() {
+        return name;
     }
 
+    public void setName(String name) {
+        if (name != null)
+            this.name = name;
+    }
+
+
+
     @Override
-    public boolean equals(Object o){
-        if(o instanceof Node){
+    public boolean equals(Object o) {
+        if (o instanceof Node) {
             Node that = (Node) o;
             return that.getID() == this.ID;
         }
         return false;
+    }
+    @Override
+    public String toString() {
+        return "Node{" +
+                ", ID=" + ID +
+                ", value=" + value +
+                ", name=" + name +
+                "}\n";
     }
 }

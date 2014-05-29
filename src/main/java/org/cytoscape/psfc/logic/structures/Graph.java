@@ -24,41 +24,53 @@ public class Graph {
      * Create and return new Node with available free ID.
      * @return node: Node
      */
-    public Node createNode(){
+    public Node addNode(){
         Node node = new Node(freeID);
         nodes.put(node.getID(), node);
         freeID++;
         return node;
     }
 
+    /**
+     * Create and return an Edge between source and target Nodes contained in the Graph.
+     * If the source and targ
+     *
+     * @param source Node
+     * @param target Node
+     * @return newly created edge:Edge
+     */
     public Edge addEdge(Node source, Node target){
         if (!nodes.containsValue(source))
             return null;
         if(!nodes.containsValue(target))
             return null;
+        Edge existingEdge = getEdge(source, target);
+        if(existingEdge != null)
+            return existingEdge;
         Edge edge = new Edge(source, target);
         edges.add(edge);
         return edge;
     }
 
-    @Override
-    public String toString(){
-        return "Graph{" +
-                ", \nnodes=" + nodes +
-                ", \nedges=" + edges +
-                '}';
+    public boolean containsEdge(Node source, Node target) {
+        Edge tempEdge = new Edge(source, target);
+        for (Edge edge : edges)
+            if(edge.equals(tempEdge))
+                return true;
+        return false;
     }
+
 
     /**
      * Return Edge with specified source and target Nodes.
      * If graph does not contain such an edge, null is returned.
      *
-     * @param psfSource Node - source
-     * @param psfTarget Node - target
+     * @param source Node - source
+     * @param target Node - target
      * @return Edge or null
      */
-    public Edge getEdge(Node psfSource, Node psfTarget) {
-        Edge tempEdge = new Edge(psfSource, psfTarget);
+    public Edge getEdge(Node source, Node target) {
+        Edge tempEdge = new Edge(source, target);
         for(Edge edge : edges){
             if(edge.equals(tempEdge))
                 return edge;
@@ -77,4 +89,16 @@ public class Graph {
     public boolean containsEdge(Edge edge){
         return edges.contains(edge);
     }
+
+    public int getFreeID() {
+        return freeID;
+    }
+    @Override
+    public String toString(){
+        return "Graph{" +
+                ", \nnodes=" + nodes +
+                ", \nedges=" + edges +
+                '}';
+    }
+
 }
