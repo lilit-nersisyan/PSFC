@@ -10,19 +10,23 @@ import static org.junit.Assert.assertNotNull;
 
 public class EdgeTest {
     private Edge edge;
+    private Node source;
+    private Node target;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws Exception {
-        edge = new Edge(new Node(0), new Node(1));
+        source = new Node(0);
+        target = new Node(1);
+        edge = new Edge(source, target);
     }
 
     @Test
     public void testConstructor(){
-        assertNotNull(edge.getSource());
-        assertNotNull(edge.getTarget());
+        assert edge.getSource().equals(source);
+        assert edge.getTarget().equals(target);
         thrown.expect(NullPointerException.class);
         new Edge(null, new Node(0));
         new Edge(new Node(0), null);

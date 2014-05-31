@@ -29,15 +29,6 @@ public class GraphTest {
     }
 
     @Test
-    public void testGetOrder() throws Exception {
-        assert graph.getOrder() == 0;
-        Node node0 = graph.addNode();
-        Node node1 = graph.addNode();
-        assert graph.getOrder() == 2;
-
-    }
-
-    @Test
     public void testAddEdge() throws Exception{
         Node node0 = graph.addNode();
         Node node1 = graph.addNode();
@@ -85,6 +76,17 @@ public class GraphTest {
 
         assertTrue(graph.containsNode(node0));
         assertFalse(graph.containsNode(new Node(3)));
+    }
+
+    @Test
+    public void testGetOrderGetSize() throws Exception {
+        assert graph.getOrder() == 0;
+        assert graph.getSize() == 0;
+        Node node0 = graph.addNode();
+        Node node1 = graph.addNode();
+        Edge edge = graph.addEdge(node0, node1);
+        assert graph.getOrder() == 2;
+        assert graph.getSize() == 1;
     }
 
     @Test
