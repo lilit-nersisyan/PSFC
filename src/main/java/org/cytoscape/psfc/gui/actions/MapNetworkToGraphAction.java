@@ -3,6 +3,7 @@ package org.cytoscape.psfc.gui.actions;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.actions.net.NetworkGraphMapper;
+import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
 
 import java.awt.event.ActionEvent;
@@ -21,5 +22,7 @@ public class MapNetworkToGraphAction extends AbstractCyAction {
     public void actionPerformed(ActionEvent e) {
         Graph graph = NetworkGraphMapper.graphFromNetwork(PSFCActivator.cyApplicationManager.getCurrentNetwork());
         System.out.println(graph.toString());
+//        GraphSort.bsfIterate(graph);
+        GraphSort.closestFirstSort(graph);
     }
 }

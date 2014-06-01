@@ -39,9 +39,9 @@ public class Edge {
     public String toString(){
         return "Edge{" +
                 "source=" + source.getID() +
-                ", target=" + target.getID() +
-                ", type='" + type + '\''
-                +"}\n";
+                "target=" + target.getID() + "," +
+                "type='" + type + '\'' +
+                "}\n";
     }
 
     @Override

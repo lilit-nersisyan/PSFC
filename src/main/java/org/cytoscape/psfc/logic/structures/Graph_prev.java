@@ -7,23 +7,18 @@ package org.cytoscape.psfc.logic.structures;
  * Functions?
  */
 
-import org.jgrapht.graph.DefaultDirectedWeightedGraph;
-
 import java.util.ArrayList;
 import java.util.TreeMap;
 
-public class Graph {
+public class Graph_prev {
     private TreeMap<Integer, Node> nodes = new TreeMap<Integer, Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
     private int freeID = 0;
-    private DefaultDirectedWeightedGraph<Node, Edge> jgraph;
 
     /**
      * Empty constructor for Graph.
      */
-    public Graph(){
-        jgraph = new DefaultDirectedWeightedGraph<Node, Edge>(Edge.class);
-    }
+    public Graph_prev(){}
 
     /**
      * Create and return new Node with available free ID.
@@ -33,7 +28,6 @@ public class Graph {
         Node node = new Node(freeID);
         nodes.put(node.getID(), node);
         freeID++;
-        jgraph.addVertex(node);
         return node;
     }
 
@@ -72,7 +66,6 @@ public class Graph {
             return existingEdge;
         Edge edge = new Edge(source, target);
         edges.add(edge);
-        jgraph.addEdge(source, target, edge);
         return edge;
     }
 
@@ -114,53 +107,15 @@ public class Graph {
         return edges.contains(edge);
     }
 
-    public DefaultDirectedWeightedGraph<Node, Edge> getJgraph() {
-        return jgraph;
-    }
-
     public int getFreeID() {
         return freeID;
     }
     @Override
     public String toString(){
         return "Graph{" +
-                "\nnodes=" + nodes +
-                "\nedges=" + edges +
+                ", \nnodes=" + nodes +
+                ", \nedges=" + edges +
                 '}';
     }
 
-    /**
-     * Returns first encountered node with the given name
-     * Returns null if no such node exists
-     * @param name String - node name
-     * @return Node - first node with the same name
-     */
-    public Node getNodeByName(String name){
-        for (Node node : nodes.values()){
-            if(node.getName().equals(name))
-                return node;
-        }
-        return null;
-
-    }
-
-    public Node getNode(int id) {
-        if (nodes.containsKey(id))
-            return nodes.get(id);
-        return null;
-    }
-
-    /**
-     * Returns nodes with 0 in-degree.
-     * If no such nodes exist (i.e. if the graph is empty), an empty set is returned.
-     * @return Set<Node> : the set of Nodes with 0 in-degree.
-     */
-    public ArrayList<Node> getInputNodes(){
-        ArrayList<Node> nodeSet = new ArrayList<Node>();
-        for (Node node : nodes.values()){
-            if(jgraph.inDegreeOf(node) == 0)
-                nodeSet.add(node);
-        }
-        return nodeSet;
-    }
 }

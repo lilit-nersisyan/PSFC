@@ -8,4 +8,5 @@ public class ExceptionMessages {
 
     public static final String EdgeWithNullNode = "Edge cannot be initialized with null Node";
     public static final String NodeWithNegativeIndex = "Negative indices not allowed";
+    public static final String EmptyGraph = "The input graph was empty";
 }

@@ -13,9 +13,11 @@ import org.cytoscape.psfc.ExceptionMessages;
  */
 
 public class Node {
+
     private int ID = -1;
     private double value;
     private String name = "";
+    private int level;
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
@@ -75,9 +77,9 @@ public class Node {
     @Override
     public String toString() {
         return "Node{" +
-                ", ID=" + ID +
-                ", value=" + value +
-                ", name=" + name +
+                "ID=" + ID + "," +
+                "value=" + value + "," +
+                "name=" + name +
                 "}\n";
     }
 }
