@@ -7,16 +7,24 @@ package org.cytoscape.psfc.logic.structures;
  * Functions?
  */
 
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.TreeMap;
 
 public class Graph {
+
     private TreeMap<Integer, Node> nodes = new TreeMap<Integer, Node>();
     private ArrayList<Edge> edges = new ArrayList<Edge>();
     private int freeID = 0;
     private DefaultDirectedWeightedGraph<Node, Edge> jgraph;
+
+    //Cytoscape-related fields
+    private CyNetwork network;
+    private HashMap<CyNode, Node> cyNodePsfNodeMap;
 
     /**
      * Empty constructor for Graph.
@@ -162,5 +170,41 @@ public class Graph {
                 nodeSet.add(node);
         }
         return nodeSet;
+    }
+
+    /**
+     * If the graph has only one input node (node with 0 in-degree) this node is returned.
+     * Otherwise, a new node is created with out-edges to existing input nodes.
+     *
+     * @return existing or newly created unique input node : Node
+     */
+    public Node getOrCreateUniqueInputNode(){
+        ArrayList<Node> inputNodes = getInputNodes();
+        Node uniqueInputNode;
+        if (inputNodes.size() > 0) {
+            uniqueInputNode = addNode();
+            for (Node node : inputNodes) {
+                addEdge(uniqueInputNode, node);
+            }
+        } else
+            uniqueInputNode = inputNodes.iterator().next();
+        return uniqueInputNode;
+
+    }
+
+    public CyNetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(CyNetwork network) {
+        this.network = network;
+    }
+
+    public HashMap<CyNode, Node> getCyNodePsfNodeMap() {
+        return cyNodePsfNodeMap;
+    }
+
+    public void setCyNodePsfNodeMap(HashMap<CyNode, Node> cyNodePsfNodeMap) {
+        this.cyNodePsfNodeMap = cyNodePsfNodeMap;
     }
 }

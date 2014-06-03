@@ -9,7 +9,7 @@ import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
-import org.cytoscape.psfc.gui.actions.MapNetworkToGraphAction;
+import org.cytoscape.psfc.gui.actions.SortCurrentNetworkAction;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -41,7 +41,7 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyApplicationManager cyApplicationManager;
     public static CyTableManager cyTableManager;
 
-    public static MapNetworkToGraphAction mapNetworkToGraphAction;
+    public static SortCurrentNetworkAction sortCurrentNetworkAction;
 
 
     @Override
@@ -65,7 +65,7 @@ public class PSFCActivator extends AbstractCyActivator {
         cyTableManager = getService(bc, CyTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
 
-        mapNetworkToGraphAction = new MapNetworkToGraphAction();
+        sortCurrentNetworkAction = new SortCurrentNetworkAction();
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
         registerService(bc, taskManager, DialogTaskManager.class, new Properties());
@@ -85,6 +85,6 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
 
-        registerService(bc, mapNetworkToGraphAction, CyAction.class, new Properties());
+        registerService(bc, sortCurrentNetworkAction, CyAction.class, new Properties());
     }
 }

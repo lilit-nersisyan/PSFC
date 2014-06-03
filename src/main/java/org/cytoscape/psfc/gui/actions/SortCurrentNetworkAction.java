@@ -5,15 +5,18 @@ import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.actions.net.NetworkGraphMapper;
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.Node;
 
 import java.awt.event.ActionEvent;
+import java.util.ArrayList;
+import java.util.TreeMap;
 
 /**
  * Created by User on 5/25/2014.
  */
-public class MapNetworkToGraphAction extends AbstractCyAction {
-    public MapNetworkToGraphAction(){
-        super("Map network to PSF Graph");
+public class SortCurrentNetworkAction extends AbstractCyAction {
+    public SortCurrentNetworkAction(){
+        super("Sort current network");
         setMenuGravity(0);
         setPreferredMenu("Apps.PSFC");
     }
@@ -23,6 +26,8 @@ public class MapNetworkToGraphAction extends AbstractCyAction {
         Graph graph = NetworkGraphMapper.graphFromNetwork(PSFCActivator.cyApplicationManager.getCurrentNetwork());
         System.out.println(graph.toString());
 //        GraphSort.bsfIterate(graph);
-        GraphSort.closestFirstSort(graph);
+//        GraphSort.closestFirstSort(graph);
+        TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.shortestPathIterator(graph);
+
     }
 }

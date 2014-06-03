@@ -4,6 +4,7 @@ import org.cytoscape.psfc.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
+import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.ClosestFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
@@ -67,19 +68,12 @@ public class GraphSort {
 
         if (graph.getInputNodes().isEmpty())
             throw new IllegalArgumentException(ExceptionMessages.EmptyGraph);
-        ArrayList<Node> inputNodes = graph.getInputNodes();
-        Node zeroNode;
-        if (inputNodes.size() > 0) {
-            zeroNode = graph.addNode();
-            for (Node node : inputNodes) {
-                graph.addEdge(zeroNode, node);
-            }
-        } else
-            zeroNode = inputNodes.iterator().next();
-        GraphIterator iterator = new ClosestFirstIterator(graph.getJgraph(), zeroNode);
+
+        Node uniqueInputNode = graph.getOrCreateUniqueInputNode();
+        GraphIterator iterator = new ClosestFirstIterator(graph.getJgraph(), uniqueInputNode);
 
         GraphIterator<Node, Edge> closestFirstIterator =
-                new ClosestFirstIterator<Node, Edge>(graph.getJgraph(), zeroNode);
+                new ClosestFirstIterator<Node, Edge>(graph.getJgraph(), uniqueInputNode);
 //        while (closestFirstIterator.hasNext()) {
 //            System.out.println(closestFirstIterator.next());
 //        }
@@ -90,8 +84,8 @@ public class GraphSort {
         boolean nextLevel = false;
         int level = 0;
         levelSet = new LinkedList<Node>();
-        levelSet.add(zeroNode);
-        if (!zeroNode.equals(closestFirstIterator.next()))
+        levelSet.add(uniqueInputNode);
+        if (!uniqueInputNode.equals(closestFirstIterator.next()))
             System.out.println("*******\nSomething is wrong!!!*****\n");
         levelsMap.put(level, levelSet);
         level++;
@@ -135,4 +129,21 @@ public class GraphSort {
             }
         System.out.println(levelsMap);
     }
+
+    public static TreeMap<Integer, ArrayList<Node>> shortestPathIterator(Graph graph){
+        DijkstraShortestPath<Node, Edge> dijkstraShortestPath;
+        Node startVertex = graph.getOrCreateUniqueInputNode();
+        TreeMap<Integer, ArrayList<Node>> levelNodeMap = new TreeMap<Integer, ArrayList<Node>>();
+        for (Node node : graph.getNodeMap().values()){
+            dijkstraShortestPath = new DijkstraShortestPath<Node, Edge>(
+                    graph.getJgraph(), startVertex, node);
+            int pathLength = (int) dijkstraShortestPath.getPathLength();
+            if (!levelNodeMap.containsKey(pathLength))
+                levelNodeMap.put(pathLength, new ArrayList<Node>());
+            levelNodeMap.get(pathLength).add(node);
+        }
+        System.out.println(levelNodeMap);
+        return levelNodeMap;
+    }
+
 }
