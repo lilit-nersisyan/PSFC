@@ -22,7 +22,7 @@ public class Edge {
 
     Edge(Node source, Node target) {
         if (target == null || source == null)
-            throw new NullPointerException(ExceptionMessages.EdgeWithNullNode);
+            throw new NullPointerException(ExceptionMessages.EdgeWithNullNode.getMessage());
         this.target = target;
         this.source = source;
     }

@@ -1,18 +1,25 @@
 package org.cytoscape.psfc.gui.actions;
 
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.actions.net.NetworkCyManager;
 import org.cytoscape.psfc.gui.actions.net.NetworkGraphMapper;
+import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskMonitor;
 
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by User on 5/25/2014.
+ * PUBLIC CLASS SortCurrentNetworkAction
  */
 public class SortCurrentNetworkAction extends AbstractCyAction {
     public SortCurrentNetworkAction(){
@@ -23,11 +30,23 @@ public class SortCurrentNetworkAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        Graph graph = NetworkGraphMapper.graphFromNetwork(PSFCActivator.cyApplicationManager.getCurrentNetwork());
+        CyNetwork network = PSFCActivator.cyApplicationManager.getCurrentNetwork();
+        Graph graph = NetworkGraphMapper.graphFromNetwork(network);
         System.out.println(graph.toString());
-//        GraphSort.bsfIterate(graph);
-//        GraphSort.closestFirstSort(graph);
         TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.shortestPathIterator(graph);
+        Map<CyNode, Integer> cyNodeLevelMap = GraphManager.intNodesMapToCyNodeIntMap(graph, levelNodeMap);
+        try {
+            NetworkCyManager.setNodeAttributesFromMap(network, cyNodeLevelMap, "Level", Integer.class);
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+    }
 
+    private class SortNetworkTask extends AbstractTask {
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+
+        }
     }
 }

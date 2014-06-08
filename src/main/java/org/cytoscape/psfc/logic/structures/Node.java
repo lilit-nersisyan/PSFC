@@ -26,7 +26,7 @@ public class Node {
      */
     Node(int ID) {
         if (ID < 0)
-            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
+            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex.getMessage());
         this.ID = ID;
     }
 
@@ -34,11 +34,11 @@ public class Node {
      * Creates a Node with given ID and value.
      *
      * @param ID    non-negative integer: should be unique identifier for the node in a graph.
-     * @param value double value: may stand for expression, ratio, rank score, etc.
+     * @param value may stand for expression, ratio, rank score, etc.
      */
     Node(int ID, double value) {
         if (ID < 0)
-            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex);
+            throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex.getMessage());
         this.ID = ID;
         setValue(value);
     }

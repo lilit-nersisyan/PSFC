@@ -4,11 +4,23 @@ package org.cytoscape.psfc;
 /**
  * Created by User on 5/26/2014.
  */
-public class ExceptionMessages {
+public enum ExceptionMessages {
 
-    public static final String EdgeWithNullNode = "Edge cannot be initialized with null Node";
-    public static final String NodeWithNegativeIndex = "Negative indices not allowed";
-    public static final String EmptyGraph = "The input graph was empty";
-    public static final String EmptyMap = "The attribute map was empty";
-    public static final String notCyNodeKeyType = "The key type should be of class CyNode";
+    EdgeWithNullNode("Edge cannot be initialized with null Node"),
+    NodeWithNegativeIndex("Negative indices not allowed"),
+    EmptyGraph("The input graph was empty"),
+    EmptyMap("The attribute map was empty"),
+    NullNetwork("The network was null"),
+    NullCyNode("The CyNode was null"),
+    NotCyNodeKeyType("The key type should be of class CyNode"),
+    ConflictingAttributeType("The attribute type does not match existing CyColumn");
+
+    private String message;
+    ExceptionMessages(String message){
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
 }

@@ -7,12 +7,15 @@ package org.cytoscape.psfc.logic.structures;
  * Functions?
  */
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
+import org.cytoscape.psfc.ExceptionMessages;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.TreeMap;
 
 public class Graph {
@@ -24,20 +27,40 @@ public class Graph {
 
     //Cytoscape-related fields
     private CyNetwork network;
-    private HashMap<CyNode, Node> cyNodePsfNodeMap;
+    private BiMap<Node, CyNode> nodeCyNodeMap;
 
     /**
      * Empty constructor for Graph.
      */
-    public Graph(){
+    public Graph() {
         jgraph = new DefaultDirectedWeightedGraph<Node, Edge>(Edge.class);
+        nodeCyNodeMap = HashBiMap.create();
+    }
+
+    /**
+     * Returns the number of vertices in the Graph.
+     *
+     * @return number of vertices
+     */
+    public int getOrder() {
+        return nodes.size();
+    }
+
+    /**
+     * Returns the number of vertices in the Graph
+     *
+     * @return number of vertices
+     */
+    public int getSize() {
+        return edges.size();
     }
 
     /**
      * Create and return new Node with available free ID.
-     * @return node: Node
+     *
+     * @return created node
      */
-    public Node addNode(){
+    public Node addNode() {
         Node node = new Node(freeID);
         nodes.put(node.getID(), node);
         freeID++;
@@ -46,127 +69,117 @@ public class Graph {
     }
 
     /**
-     * Returns the number of vertices in the Graph.
-     * @return number of vertices : int
-     */
-    public int getOrder(){
-        return nodes.size();
-    }
-
-    /**
-     * Returns the number of vertices in the Graph
-     * @return number of vertices : int
-     */
-    public int getSize(){
-        return edges.size();
-    }
-
-
-    /**
-     * Create and return an Edge between source and target Nodes contained in the Graph.
-     * If the source and targ
+     * Create and return a new <code>Node</code> and assign given <code>CyNode</code>
+     * reference ot it.
      *
-     * @param source Node
-     * @param target Node
-     * @return newly created edge:Edge
+     * @param cyNode the CyNode reference of the Node
+     * @return created Node.
      */
-    public Edge addEdge(Node source, Node target){
-        if (!nodes.containsValue(source))
-            return null;
-        if(!nodes.containsValue(target))
-            return null;
-        Edge existingEdge = getEdge(source, target);
-        if(existingEdge != null)
-            return existingEdge;
-        Edge edge = new Edge(source, target);
-        edges.add(edge);
-        jgraph.addEdge(source, target, edge);
-        return edge;
+    public Node addNode(CyNode cyNode){
+        if (cyNode == null)
+            throw  new NullPointerException(ExceptionMessages.NullCyNode.getMessage());
+        Node node = addNode();
+        setCyNode(node, cyNode);
+        return node;
     }
-
-    public boolean containsEdge(Node source, Node target) {
-        Edge tempEdge = new Edge(source, target);
-        for (Edge edge : edges)
-            if(edge.equals(tempEdge))
-                return true;
-        return false;
-    }
-
 
     /**
-     * Return Edge with specified source and target Nodes.
-     * If graph does not contain such an edge, null is returned.
-     *
-     * @param source Node - source
-     * @param target Node - target
-     * @return Edge or null
+     * Checks if there the graph contains the specified node.
+     * @param node the node to search for
+     * @return <code>true</code> if the node is present; <code>false</code> otherwise
      */
-    public Edge getEdge(Node source, Node target) {
-        Edge tempEdge = new Edge(source, target);
-        for(Edge edge : edges){
-            if(edge.equals(tempEdge))
-                return edge;
-        }
-        return null;
-    }
-
-    public TreeMap<Integer, Node> getNodeMap() {
-        return nodes;
-    }
-
-    public boolean containsNode(Node node){
+    public boolean containsNode(Node node) {
         return nodes.containsValue(node);
     }
 
-    public boolean containsEdge(Edge edge){
-        return edges.contains(edge);
-    }
-
-    public DefaultDirectedWeightedGraph<Node, Edge> getJgraph() {
-        return jgraph;
-    }
-
-    public int getFreeID() {
+    /**
+     * Returns the next identifier which has not been assigned to any node.
+     *
+     * @return free ID
+     */
+    int getFreeID() {
         return freeID;
-    }
-    @Override
-    public String toString(){
-        return "Graph{" +
-                "\nnodes=" + nodes +
-                "\nedges=" + edges +
-                '}';
     }
 
     /**
      * Returns first encountered node with the given name
      * Returns null if no such node exists
-     * @param name String - node name
-     * @return Node - first node with the same name
+     *
+     * @param name node name
+     * @return first node with the same name
      */
-    public Node getNodeByName(String name){
-        for (Node node : nodes.values()){
-            if(node.getName().equals(name))
+    public Node getNode(String name) {
+        for (Node node : nodes.values()) {
+            if (node.getName().equals(name))
                 return node;
         }
         return null;
 
     }
 
-    public Node getNode(int id) {
-        if (nodes.containsKey(id))
-            return nodes.get(id);
+    /**
+     * Return the Node with given ID.
+     * If there is no node with specified ID, null is returned.
+     *
+     * @param ID Node identifier
+     * @return <code>Node</code> if the Node was found;  <code>null</code> if no node exists with the ID
+     */
+    public Node getNode(int ID) {
+        if (nodes.containsKey(ID))
+            return nodes.get(ID);
         return null;
+    }
+
+    /**
+     * Sets <code>CyNode</code> reference to the given <code>Node</code>.
+     * If Node does not exist or either of the input parameters is null,
+     * a value of <code>false</code> is returned, otherwise <code>true</code> is returned.
+     *
+     * @param node node for which the CyNode reference should be set
+     * @param cyNode the actual reference of the node
+     * @return boolean success
+     */
+    public boolean setCyNode(Node node, CyNode cyNode) {
+        if (!containsNode(node))
+            return false;
+        if (nodeCyNodeMap.containsKey(node))
+            nodeCyNodeMap.remove(node);
+        nodeCyNodeMap.put(node, cyNode);
+        return true;
+    }
+
+    /**
+     * Return the list of Nodes in the graph.
+     *
+     * @return list of Nodes
+     */
+    public Collection<Node> getNodesList() {
+        return nodes.values();
+    }
+
+    /**
+     * Return <code>Integer</code> : <code>Node</code> map kept in the graph.
+     *
+     * @return the map
+     */
+    public TreeMap<Integer, Node> getNodeMap() {
+        return nodes;
+    }
+
+    public BiMap<Node, CyNode> getNodeCyNodeMap() {
+        return nodeCyNodeMap;
     }
 
     /**
      * Returns nodes with 0 in-degree.
      * If no such nodes exist (i.e. if the graph is empty), an empty set is returned.
-     * @return Set<Node> : the set of Nodes with 0 in-degree.
+     *
+     * @return the set of Nodes with 0 in-degree.
      */
-    public ArrayList<Node> getInputNodes(){
+    public ArrayList<Node> getInputNodes() {
         ArrayList<Node> nodeSet = new ArrayList<Node>();
-        for (Node node : nodes.values()){
-            if(jgraph.inDegreeOf(node) == 0)
+        for (Node node : nodes.values()) {
+            if (jgraph.inDegreeOf(node) == 0)
                 nodeSet.add(node);
         }
         return nodeSet;
@@ -178,33 +191,119 @@ public class Graph {
      *
      * @return existing or newly created unique input node : Node
      */
-    public Node getOrCreateUniqueInputNode(){
+    public Node getOrCreateUniqueInputNode() {
         ArrayList<Node> inputNodes = getInputNodes();
         Node uniqueInputNode;
-        if (inputNodes.size() > 0) {
+        if (inputNodes.size() > 1) {
             uniqueInputNode = addNode();
             for (Node node : inputNodes) {
                 addEdge(uniqueInputNode, node);
             }
-        } else
+        } else if (inputNodes.size() == 1)
             uniqueInputNode = inputNodes.iterator().next();
+        else
+            uniqueInputNode = addNode();
         return uniqueInputNode;
 
     }
 
+
+    /**
+     * Create and return an Edge between source and target Nodes contained in the Graph.
+     * If the source and targ
+     *
+     * @param source Node
+     * @param target Node
+     * @return newly created edge
+     */
+    public Edge addEdge(Node source, Node target) {
+        if (!nodes.containsValue(source))
+            return null;
+        if (!nodes.containsValue(target))
+            return null;
+        Edge existingEdge = getEdge(source, target);
+        if (existingEdge != null)
+            return existingEdge;
+        Edge edge = new Edge(source, target);
+        edges.add(edge);
+        jgraph.addEdge(source, target, edge);
+        return edge;
+    }
+
+    /**
+     * Checks if the graph contains an edge with specified source and target nodes.
+     *
+     * @param source source node
+     * @param target target node
+     * @return <code>true</code> if an edge was found; <code>false</code> otherwise
+     */
+    public boolean containsEdge(Node source, Node target) {
+        Edge tempEdge = new Edge(source, target);
+        for (Edge edge : edges)
+            if (edge.equals(tempEdge))
+                return true;
+        return false;
+    }
+
+    /**
+     * Return Edge with specified source and target Nodes.
+     * If graph does not contain such an edge, null is returned.
+     *
+     * @param source source node
+     * @param target target node
+     * @return <code>Edge</code> if exists; <code>null</code> otherwise
+     */
+    public Edge getEdge(Node source, Node target) {
+        Edge tempEdge = new Edge(source, target);
+        for (Edge edge : edges) {
+            if (edge.equals(tempEdge))
+                return edge;
+        }
+        return null;
+    }
+
+    /**
+     * Return the list of edges in the graph.
+     * @return Edge list
+     */
+    public ArrayList<Edge> getEdges() {
+        return edges;
+    }
+
+    /**
+     * Return <code>DefaultDirectedWeightedGraph</code> instance kept in the graph.
+     *
+     * @return <code>DefaultDirectedWeightedGraph</code>
+     */
+    public DefaultDirectedWeightedGraph<Node, Edge> getJgraph() {
+        return jgraph;
+    }
+
+    /**
+     * Return <code>CyNetwork</code> to which the graph holds a reference.
+     *
+     * @return <code>CyNetwork</code>; or <code>null</code> if no CyNetwork reference exists
+     */
     public CyNetwork getNetwork() {
         return network;
     }
 
+    /**
+     * Set the reference of the <code>CyNetwork</code> from which the graph was created.
+     *
+     * @param network CyNetwork
+     */
     public void setNetwork(CyNetwork network) {
         this.network = network;
     }
 
-    public HashMap<CyNode, Node> getCyNodePsfNodeMap() {
-        return cyNodePsfNodeMap;
+    @Override
+    public String toString() {
+        return "Graph{" +
+                "\nnodes=" + nodes +
+                "\nedges=" + edges +
+                '}';
     }
 
-    public void setCyNodePsfNodeMap(HashMap<CyNode, Node> cyNodePsfNodeMap) {
-        this.cyNodePsfNodeMap = cyNodePsfNodeMap;
-    }
+
 }

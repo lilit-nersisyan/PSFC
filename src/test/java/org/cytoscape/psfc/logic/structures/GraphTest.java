@@ -1,13 +1,19 @@
 package org.cytoscape.psfc.logic.structures;
 
+
+import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import static org.junit.Assert.*;
 
 public class GraphTest {
     private Graph graph;
+
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
@@ -18,23 +24,129 @@ public class GraphTest {
         graph = null;
     }
 
-
     @Test
-    public void testCreateNode() throws Exception {
-        Node node0 = graph.addNode();
-        Node node1 = graph.addNode();
-        assert node1.getID() != node0.getID();
-        assert graph.containsNode(node0);
-        assert graph.containsNode(node1);
+    public void testConstructor() throws Exception {
+        assertNotNull(graph.getJgraph());
+        assertNotNull(graph.getNodeCyNodeMap());
+        assertNotNull(graph.getNodeMap());
+        assertNotNull(graph.getEdges());
     }
 
     @Test
-    public void testAddEdge() throws Exception{
+    public void testGetOrderGetSize() throws Exception {
+        assert graph.getOrder() == 0;
+        assert graph.getSize() == 0;
+        Node node0 = graph.addNode();
+        Node node1 = graph.addNode();
+        Edge edge = graph.addEdge(node0, node1);
+        assert graph.getOrder() == 2;
+        assert graph.getSize() == 1;
+    }
+
+    @Test
+    public void testAddNode() throws Exception {
+        assert graph.getFreeID() == 0;
+        Node node0 = graph.addNode();
+        assert graph.getFreeID() == 1;
+
+        assertTrue(graph.containsNode(node0));
+        assertFalse(graph.containsNode(new Node(3)));
+    }
+
+    @Test
+    public void testAddNodeWithCyNode() throws Exception {
+
+    }
+
+    @Test
+    public void testcontainsNode() throws Exception {
+        Node node0 = graph.addNode();
+        Node node1 = new Node(1);
+        assertTrue(graph.containsNode(node0));
+        assertFalse(graph.containsNode(node1));
+        assertFalse(graph.containsNode(null));
+    }
+
+    @Test
+    public void testGetFreeID() throws Exception {
+        int freeID = graph.getFreeID();
+        assertFalse(graph.containsNode(graph.getNode(freeID)));
+    }
+
+    @Test
+    public void testGetNodeByID() throws Exception {
+        Node node0 = graph.addNode();
+        int id = node0.getID();
+        assert node0.equals(graph.getNode(id));
+
+    }
+
+    @Test
+    public void testGetNodeByName() throws Exception {
+        Node node0 = graph.addNode();
+        String name0 = "name0";
+        node0.setName(name0);
+        assert graph.getNode(name0).equals(node0);
+        assertNull(graph.getNode("noSuchNode"));
+    }
+
+    @Test
+    public void testSetCyNode() throws Exception {
+
+    }
+
+    @Test
+    public void testGetNodesList() throws Exception {
+        Collection<Node> nodes = graph.getNodesList();
+        assert graph.getOrder() == nodes.size();
+    }
+
+    @Test
+    public void testGetNodeMap() throws Exception {
+        assertNotNull(graph.getNodeMap());
+    }
+
+    @Test
+    public void testGetNodeCyNodeMap() throws Exception {
+        assertNotNull(graph.getNodeCyNodeMap());
+    }
+
+    @Test
+    public void testGetInputNodes() throws Exception {
+        Node node0 = graph.addNode();
+        Node node1 = graph.addNode();
+        Node node2 = graph.addNode();
+        graph.addEdge(node1, node2);
+        ArrayList<Node> inputNodes = graph.getInputNodes();
+        assert inputNodes.contains(node0);
+        assert inputNodes.contains(node1);
+        assert !inputNodes.contains(node2);
+        for (Node node : inputNodes){
+            assert graph.getJgraph().inDegreeOf(node) == 0;
+        }
+    }
+
+    @Test
+    public void testGetOrCreateUniqueInputNode() throws Exception {
+        Node node1 = graph.addNode();
+        Node node2 = graph.addNode();
+        graph.addEdge(node1, node2);
+        assert node1.equals(graph.getOrCreateUniqueInputNode());
+        assert graph.getOrder() == 2;
+
+        graph.addNode();
+        int initOrder = graph.getOrder();
+        graph.getOrCreateUniqueInputNode();
+        assert graph.getOrder() == initOrder + 1;
+    }
+
+    @Test
+    public void testAddEdge() throws Exception {
         Node node0 = graph.addNode();
         Node node1 = graph.addNode();
         Edge edge = graph.addEdge(node0, node1);
 
-        assert graph.containsEdge(edge);
+        assert graph.containsEdge(node0, node1);
         assert graph.containsNode(node0);
         assert graph.containsNode(node1);
 
@@ -52,7 +164,15 @@ public class GraphTest {
     }
 
     @Test
-    public void testGetEdge() throws Exception{
+    public void testContainsEdge() throws Exception {
+        Node node0 = graph.addNode();
+        Node node1 = graph.addNode();
+        Edge edge = graph.addEdge(node0, node1);
+        assertFalse(graph.containsEdge(node0, new Node(3)));
+    }
+
+    @Test
+    public void testGetEdge() throws Exception {
         Node node0 = graph.addNode();
         Node node1 = graph.addNode();
         Edge edge = graph.addEdge(node0, node1);
@@ -60,33 +180,17 @@ public class GraphTest {
     }
 
     @Test
-    public void testContainsEdge() throws Exception {
-        Node node0 = graph.addNode();
-        Node node1 = graph.addNode();
-        Edge edge = graph.addEdge(node0, node1);
-        assertTrue(graph.containsEdge(edge));
-        assertFalse(graph.containsEdge(node0, new Node(3)));
+    public void testGetEdges() throws Exception {
+        ArrayList<Edge> edges = graph.getEdges();
+        assert edges.size() == graph.getSize();
     }
 
     @Test
-    public void testAddNode() throws Exception {
-        assert graph.getFreeID() == 0;
-        Node node0 = graph.addNode();
-        assert graph.getFreeID() == 1;
-
-        assertTrue(graph.containsNode(node0));
-        assertFalse(graph.containsNode(new Node(3)));
-    }
-
-    @Test
-    public void testGetOrderGetSize() throws Exception {
-        assert graph.getOrder() == 0;
-        assert graph.getSize() == 0;
-        Node node0 = graph.addNode();
-        Node node1 = graph.addNode();
-        Edge edge = graph.addEdge(node0, node1);
-        assert graph.getOrder() == 2;
-        assert graph.getSize() == 1;
+    public void testGetJGraph() throws Exception {
+        DefaultDirectedWeightedGraph jgraph = graph.getJgraph();
+        assertNotNull(jgraph);
+        assert graph.getOrder() == jgraph.vertexSet().size();
+        assert graph.getSize() == jgraph.edgeSet().size();
     }
 
     @Test
@@ -95,3 +199,6 @@ public class GraphTest {
     }
 
 }
+
+
+
