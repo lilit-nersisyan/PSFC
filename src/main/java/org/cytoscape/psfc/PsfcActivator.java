@@ -1,14 +1,19 @@
 package org.cytoscape.psfc;
 
+import org.apache.log4j.FileAppender;
+import org.apache.log4j.Logger;
+import org.apache.log4j.PatternLayout;
 import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
+import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.CyNetworkFactory;
 import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
+import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.actions.SortCurrentNetworkAction;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
@@ -19,7 +24,10 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
+import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Properties;
 
 public class PSFCActivator extends AbstractCyActivator {
@@ -42,6 +50,12 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyTableManager cyTableManager;
 
     public static SortCurrentNetworkAction sortCurrentNetworkAction;
+    public static PSFCPanel psfcPanel;
+    private static File PSFCDir;
+
+    private static Logger PSFCLogger;
+    private static File logFile;
+    private static String logName = "PSFC.log";
 
 
     @Override
@@ -66,6 +80,8 @@ public class PSFCActivator extends AbstractCyActivator {
         cySessionManager = getService(bc, CySessionManager.class);
 
         sortCurrentNetworkAction = new SortCurrentNetworkAction();
+        psfcPanel = new PSFCPanel();
+
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
         registerService(bc, taskManager, DialogTaskManager.class, new Properties());
@@ -86,5 +102,72 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
 
         registerService(bc, sortCurrentNetworkAction, CyAction.class, new Properties());
+        registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
     }
+
+    public static Logger getLogger() {
+        File loggingDir = null;
+
+        if (logFile == null)
+            loggingDir = setLoggingDirectory();
+        if (loggingDir != null && loggingDir.exists()) {
+            logFile = new File(loggingDir, logName);
+            if (!logFile.exists())
+                try {
+                    logFile.createNewFile();
+                } catch (IOException e) {
+                    LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
+                }
+            else {
+                if (logFile.length() > (1024 * 1024))
+                    try {
+                        logFile.createNewFile();
+                    } catch (IOException e) {
+                        LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
+                    }
+            }
+        }
+        PSFCLogger = Logger.getLogger(PSFCActivator.class);
+        try {
+            PSFCLogger.addAppender(new FileAppender(new PatternLayout(), logFile.getAbsolutePath(),true));
+        } catch (IOException e) {
+            LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
+        }
+        return PSFCLogger;
+    }
+
+    private static File setLoggingDirectory() {
+        File loggingDir = new File(getPSFCDir(), "logs");
+        boolean dirValid = true;
+        if (!loggingDir.exists())
+            dirValid = loggingDir.mkdir();
+        if (dirValid)
+            return loggingDir;
+        return null;
+    }
+
+    public static File getPSFCDir() {
+        if (PSFCDir == null) {
+            createPluginDirectory();
+        }
+        return PSFCDir;
+    }
+
+    private static void createPluginDirectory() {
+        File appConfigDir = cyAppConfig.getConfigurationDirectoryLocation();
+        File appData = new File(appConfigDir, "app-data");
+        if (!appData.exists())
+            appData.mkdir();
+
+        PSFCDir = new File(appData, "PSFC");
+        if (!PSFCDir.exists())
+            if (!PSFCDir.mkdir())
+                LoggerFactory.getLogger(PSFCActivator.class).
+                        error("Failed to create directory " + PSFCDir.getAbsolutePath());
+
+    }
+
+
+
+
 }

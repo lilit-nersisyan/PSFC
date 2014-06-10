@@ -1,4 +1,4 @@
-package org.cytoscape.psfc.gui.actions.net;
+package org.cytoscape.psfc.net;
 
 import com.google.common.collect.HashBiMap;
 import org.cytoscape.model.CyEdge;

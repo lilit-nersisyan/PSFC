@@ -13,7 +13,8 @@ public enum ExceptionMessages {
     NullNetwork("The network was null"),
     NullCyNode("The CyNode was null"),
     NotCyNodeKeyType("The key type should be of class CyNode"),
-    ConflictingAttributeType("The attribute type does not match existing CyColumn");
+    ConflictingAttributeType("The attribute type does not match existing CyColumn"),
+    NoSuchAlgorithm("No algorithm with specified argument exists");
 
     private String message;
     ExceptionMessages(String message){

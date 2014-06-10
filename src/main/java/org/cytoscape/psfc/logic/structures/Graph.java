@@ -38,6 +38,21 @@ public class Graph {
     }
 
     /**
+     * Creates  a graph with specifiied number of vertices
+     *
+     * @param order number of vertices
+     */
+    public Graph(int order){
+        if (order < 0 )
+            throw new IllegalArgumentException();
+        jgraph = new DefaultDirectedWeightedGraph<Node, Edge>(Edge.class);
+        nodeCyNodeMap = HashBiMap.create();
+        for (int i =0 ; i < order; i++){
+            addNode();
+        }
+    }
+
+    /**
      * Returns the number of vertices in the Graph.
      *
      * @return number of vertices

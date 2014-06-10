@@ -4,7 +4,9 @@ package org.cytoscape.psfc.logic.structures;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,6 +16,9 @@ import static org.junit.Assert.*;
 public class GraphTest {
     private Graph graph;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @Before
     public void setUp() throws Exception {
         graph = new Graph();
@@ -22,6 +27,7 @@ public class GraphTest {
     @After
     public void tearDown() throws Exception {
         graph = null;
+        thrown = ExpectedException.none();
     }
 
     @Test
@@ -30,6 +36,20 @@ public class GraphTest {
         assertNotNull(graph.getNodeCyNodeMap());
         assertNotNull(graph.getNodeMap());
         assertNotNull(graph.getEdges());
+    }
+
+    @Test
+    public void testConstructorWithOrder() throws Exception {
+        int order = 10;
+        graph = new Graph(order);
+        assertNotNull(graph.getJgraph());
+        assertNotNull(graph.getNodeCyNodeMap());
+        assertNotNull(graph.getNodeMap());
+        assertNotNull(graph.getEdges());
+        assert graph.getOrder() == order;
+        order = -1;
+        thrown.expect(IllegalArgumentException.class);
+        new Graph(order);
     }
 
     @Test

@@ -8,17 +8,71 @@ import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.ClosestFirstIterator;
 import org.jgrapht.traverse.GraphIterator;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * PUBLIC CLASS GraphSort
- *
+ * <p/>
  * This class provides a number of static methods for sorting graphs based on different algorithms.
  */
 public class GraphSort {
+
+    public static final int SHORTESTPATHSORT = 0;
+    public static final int CLOSESTFIRSTSORT = 1;
+    public static final int BFSSORT = 2;
+    public static final int DFSSORT = 3;
+    public static final int TOPOLOGICALSORT = 4;
+
+
+    private static TreeMap<Integer, ArrayList<Node>> levelNodeMap;
+    private static HashMap<Node, Integer> nodeLevelMap;
+    private static ArrayList<Integer> algorithms = new ArrayList<Integer>(
+            Arrays.asList(SHORTESTPATHSORT, CLOSESTFIRSTSORT, BFSSORT, DFSSORT, TOPOLOGICALSORT));
+
+    /**
+     * Apply the chosen method for sorting the
+     *
+     * @param sortingAlgorithm
+     */
+    public static void sort(Graph graph, int sortingAlgorithm) {
+        switch (sortingAlgorithm) {
+            case SHORTESTPATHSORT:
+                shortestPathIterator(graph);
+                break;
+            case CLOSESTFIRSTSORT:
+                closestFirstSort(graph);
+                break;
+            case BFSSORT:
+                bsfIterate(graph);
+                break;
+            case TOPOLOGICALSORT:
+                topologicalSort(graph);
+                break;
+            default:
+                throw new IllegalArgumentException(ExceptionMessages.NoSuchAlgorithm.getMessage());
+        }
+    }
+
+    public static HashMap<Node, Integer> topologicalSort(Graph graph) {
+        GraphIterator graphIterator = new TopologicalOrderIterator(graph.getJgraph());
+        HashMap<Node, Integer> nodeLevelMap = new HashMap<Node, Integer>();
+        int level = 1;
+        while (graphIterator.hasNext()) {
+            nodeLevelMap.put((Node) graphIterator.next(), level);
+        }
+        return nodeLevelMap;
+    }
+
+
+    public static TreeMap<Integer, ArrayList<Node>> getLevelNodeMap() {
+        return levelNodeMap;
+    }
+
+    public static HashMap<Node, Integer> getNodeLevelMap() {
+        return nodeLevelMap;
+    }
 
     /**
      * This assigns levels to each of the node according to its distance from the start node,
@@ -26,18 +80,17 @@ public class GraphSort {
      * A start node is a unique node in the graph with in-degree 0.
      * If there are many such nodes, a new node is created and connected to all 0 in-degree nodes.
      *
-     *
      * @param graph the Graph to be sorted
      * @return <code>TreeMap</code> containing level : nodes mapping; or <code>null</code> if the graph was empty
      */
-    public static TreeMap<Integer, ArrayList<Node>> shortestPathIterator(Graph graph){
+    public static TreeMap<Integer, ArrayList<Node>> shortestPathIterator(Graph graph) {
         if (graph.getOrder() == 0)
             return null;
         DijkstraShortestPath<Node, Edge> dijkstraShortestPath;
         Node startVertex = graph.getOrCreateUniqueInputNode();
         TreeMap<Integer, ArrayList<Node>> levelNodeMap = new TreeMap<Integer, ArrayList<Node>>();
 
-        for (Node node : graph.getNodeMap().values()){
+        for (Node node : graph.getNodeMap().values()) {
             dijkstraShortestPath = new DijkstraShortestPath<Node, Edge>(
                     graph.getJgraph(), startVertex, node);
             int pathLength = (int) dijkstraShortestPath.getPathLength();
@@ -46,7 +99,7 @@ public class GraphSort {
             levelNodeMap.get(pathLength).add(node);
         }
 
-        System.out.println(levelNodeMap);
+//        System.out.println(levelNodeMap);
 
         return levelNodeMap;
     }
@@ -92,7 +145,7 @@ public class GraphSort {
                 levelSet.add(nextNode);
 
             else {
-                nextLevel=true;
+                nextLevel = true;
                 for (Node node : parentLevelSet) {
                     if (graph.containsEdge(node, nextNode)) {
                         nextLevel = false;
@@ -162,9 +215,6 @@ public class GraphSort {
 
         System.out.println(levelsMap);
     }
-
-
-
 
 
 }

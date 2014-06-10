@@ -1,4 +1,4 @@
-package org.cytoscape.psfc.gui.actions.net;
+package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.ExceptionMessages;

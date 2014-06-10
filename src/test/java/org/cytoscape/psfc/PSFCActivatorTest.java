@@ -17,6 +17,7 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
+import org.slf4j.LoggerFactory;
 
 
 /**
@@ -48,5 +49,7 @@ public final class PSFCActivatorTest {
             CyApplicationManager.class,
             CyTableManager.class
     );
+
+
 
 }
