@@ -50,15 +50,24 @@ public class SortCurrentNetworkAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            taskMonitor.setTitle("Network sorting task");
+
 //            GraphSort.sort(graph, sortingAlgorithm);
-//            GraphSort.topologicalSort(graph);
-            TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.shortestPathIterator(graph);
+//            GraphSort.topologicalOrderIterator(graph);
+            taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
+            TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.sort(graph,GraphSort.TOPOLOGICALSORT);
+            taskMonitor.setProgress(0.5);
             PSFCActivator.getLogger().debug(levelNodeMap.toString());
+            System.out.println(levelNodeMap.toString());
+            taskMonitor.setStatusMessage("Mapping node levels to CyNodes");
             Map<CyNode, Integer> cyNodeLevelMap = GraphManager.intNodesMapToCyNodeIntMap(graph, levelNodeMap);
+            taskMonitor.setProgress(0.7);
             try {
+                taskMonitor.setStatusMessage("Setting CyNode Level attribute");
                 NetworkCyManager.setNodeAttributesFromMap(network, cyNodeLevelMap, "Level", Integer.class);
+                taskMonitor.setProgress(1);
             } catch (Exception e1) {
-                e1.printStackTrace();
+                throw new Exception(e1.getMessage());
             }
         }
     }

@@ -1,0 +1,4 @@
+#Cytoscape Property File
+edgeTypeAttribute=SubType1
+nodeDataType=Linear
+multipleDataOption=Mean

@@ -25,7 +25,6 @@ public class GraphSort {
     public static final int DFSSORT = 3;
     public static final int TOPOLOGICALSORT = 4;
 
-
     private static TreeMap<Integer, ArrayList<Node>> levelNodeMap;
     private static HashMap<Node, Integer> nodeLevelMap;
     private static ArrayList<Integer> algorithms = new ArrayList<Integer>(
@@ -36,11 +35,10 @@ public class GraphSort {
      *
      * @param sortingAlgorithm
      */
-    public static void sort(Graph graph, int sortingAlgorithm) {
+    public static TreeMap<Integer, ArrayList<Node>> sort(Graph graph, int sortingAlgorithm) {
         switch (sortingAlgorithm) {
             case SHORTESTPATHSORT:
-                shortestPathIterator(graph);
-                break;
+                return shortestPathIterator(graph);
             case CLOSESTFIRSTSORT:
                 closestFirstSort(graph);
                 break;
@@ -48,21 +46,17 @@ public class GraphSort {
                 bsfIterate(graph);
                 break;
             case TOPOLOGICALSORT:
-                topologicalSort(graph);
-                break;
+                return sortByLevelFromStart(graph, topologicalOrderIterator(graph));
             default:
                 throw new IllegalArgumentException(ExceptionMessages.NoSuchAlgorithm.getMessage());
         }
+        return null;
     }
 
-    public static HashMap<Node, Integer> topologicalSort(Graph graph) {
-        GraphIterator graphIterator = new TopologicalOrderIterator(graph.getJgraph());
-        HashMap<Node, Integer> nodeLevelMap = new HashMap<Node, Integer>();
-        int level = 1;
-        while (graphIterator.hasNext()) {
-            nodeLevelMap.put((Node) graphIterator.next(), level);
-        }
-        return nodeLevelMap;
+    public static GraphIterator topologicalOrderIterator(Graph graph) {
+        GraphIterator<Node, Edge> graphIterator =
+                new TopologicalOrderIterator<Node, Edge>(graph.getJgraph());
+        return graphIterator;
     }
 
 
@@ -216,5 +210,55 @@ public class GraphSort {
         System.out.println(levelsMap);
     }
 
+    public static TreeMap<Integer, ArrayList<Node>> sortByLevelFromStart(Graph graph,
+                                                                         GraphIterator<Node, Edge> graphIterator) {
+        TreeMap<Integer, ArrayList<Node>> levelsMap = new TreeMap<Integer, ArrayList<Node>>();
+        ArrayList<Node> levelSet = new ArrayList<Node>();
+        Node nextNode = null;
+        boolean nextLevel = false;
+        int level = 0;
+
+        //Initialization
+        if (graphIterator.hasNext()) {
+            levelSet.add(graphIterator.next());
+            levelsMap.put(level, levelSet);
+        }
+
+        while (graphIterator.hasNext()) {
+            if (nextLevel) {
+                levelSet = new ArrayList<Node>();
+                level++;
+                levelsMap.put(level, levelSet);
+                if (nextNode != null)
+                    levelSet.add(nextNode);
+                nextLevel = false;
+            }
+            nextNode = graphIterator.next();
+            if (!levelSet.isEmpty()) {
+                for (Node node : levelSet) {
+                    if (!node.equals(nextNode))
+                        if (graph.containsEdge(node, nextNode)) {
+                            nextLevel = true;
+                            break;
+                        }
+                }
+            } else {
+                nextLevel = false;
+            }
+            if (!nextLevel) {
+                levelSet.add(nextNode);
+            }
+        }
+        //Last level
+        if(nextLevel && nextNode != null){
+            levelSet = new ArrayList<Node>();
+            level++;
+            levelsMap.put(level, levelSet);
+            levelSet.add(nextNode);
+        }
+
+
+        return levelsMap;
+    }
 
 }

@@ -15,6 +15,7 @@ import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.actions.SortCurrentNetworkAction;
+import org.cytoscape.psfc.properties.EpsfcProps;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -26,9 +27,9 @@ import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.Properties;
+import java.util.Scanner;
 
 public class PSFCActivator extends AbstractCyActivator {
     public static CySwingApplication cytoscapeDesktopService;
@@ -56,6 +57,10 @@ public class PSFCActivator extends AbstractCyActivator {
     private static Logger PSFCLogger;
     private static File logFile;
     private static String logName = "PSFC.log";
+    
+    private static Properties psfcProps = null;
+    private static File psfcPropsFile = null;
+    private static String psfcPropsFileName = "psfc.props";
 
 
     @Override
@@ -105,7 +110,10 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
     }
 
+
     public static Logger getLogger() {
+        if (PSFCLogger != null)
+            return PSFCLogger;
         File loggingDir = null;
 
         if (logFile == null)
@@ -167,7 +175,110 @@ public class PSFCActivator extends AbstractCyActivator {
 
     }
 
+    private static void initProperties() {
+        psfcPropsFile = new File(PSFCActivator.getPSFCDir(), psfcPropsFileName);
+        FileInputStream stream = null;
+        if (psfcPropsFile.exists())
+            try {
+                stream = new FileInputStream(PSFCActivator.getPSFCDir().getAbsolutePath() + "/" + psfcPropsFileName);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+        boolean isPropsFileValid = true;
+
+        if (stream != null) {
+            if (psfcProps == null) {
+                psfcProps = new Properties();
+                try {
+                    psfcProps.load(stream);
+                    stream.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    PSFCLogger.error(e.getMessage());
+                }
+            }
+
+            for (EpsfcProps epsfcProps : EpsfcProps.values()) {
+                if (psfcProps.getProperty(epsfcProps.getName()) == null) {
+                    isPropsFileValid = false;
+                    break;
+                }
+            }
 
 
+        } else
+            isPropsFileValid = false;
 
+        if (!isPropsFileValid) {
+            try {
+                if (psfcPropsFile.exists())
+                    psfcPropsFile.delete();
+                psfcPropsFile.createNewFile();
+                ClassLoader cl = PSFCActivator.class.getClassLoader();
+                InputStream in = cl.getResourceAsStream(psfcPropsFileName);
+                psfcProps = new Properties();
+                psfcProps.load(in);
+                psfcProps.store(new PrintWriter(getpsfcPropsFile()), "");
+            } catch (IOException e) {
+                PSFCLogger.error(e.getMessage());
+                e.printStackTrace();
+            }
+        }
+
+        for (EpsfcProps property : EpsfcProps.values()) {
+            property.setOldValue(Boolean.parseBoolean((String) PSFCActivator.getPsfcProps().get(property.getName())));
+            property.setNewValue(Boolean.parseBoolean((String) PSFCActivator.getPsfcProps().get(property.getName())));
+        }
+
+    }
+
+    public static Properties getPsfcProps() {
+        if (psfcProps == null)
+            initProperties();
+        return psfcProps;
+    }
+
+    private static File getpsfcPropsFile() {
+        if (psfcPropsFile == null)
+            initProperties();
+        return psfcPropsFile;
+    }
+
+
+    public static File getRecentDirectory() {
+        File recentDirFile = new File(PSFCActivator.getPSFCDir(), "recentDir.txt");
+        File recentDirectory = getRecentDirectoryFile();
+        try {
+            Scanner scanner = new Scanner(recentDirFile);
+            if (scanner.hasNextLine())
+                recentDirectory = new File(scanner.nextLine());
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        }
+        if (recentDirectory == null)
+            recentDirectory = PSFCActivator.getPSFCDir();
+        return recentDirectory;
+    }
+
+    private static File getRecentDirectoryFile() {
+        File recentDirFile = new File(PSFCActivator.getPSFCDir(), "recentDir.txt");
+        if (!recentDirFile.exists())
+            try {
+                recentDirFile.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+        return recentDirFile;
+    }
+
+    public static void writeRecentDirectory(String selectedFilePath) {
+        try {
+            PrintWriter recentDirWriter = new PrintWriter(getRecentDirectoryFile());
+            recentDirWriter.write(selectedFilePath);
+            recentDirWriter.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
 }
