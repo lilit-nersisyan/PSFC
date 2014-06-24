@@ -14,7 +14,7 @@ import org.cytoscape.model.CyNetworkManager;
 import org.cytoscape.model.CyTableFactory;
 import org.cytoscape.model.CyTableManager;
 import org.cytoscape.psfc.gui.PSFCPanel;
-import org.cytoscape.psfc.gui.actions.SortCurrentNetworkAction;
+import org.cytoscape.psfc.gui.actions.SortNetworkAction;
 import org.cytoscape.psfc.properties.EpsfcProps;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
@@ -50,7 +50,7 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyApplicationManager cyApplicationManager;
     public static CyTableManager cyTableManager;
 
-    public static SortCurrentNetworkAction sortCurrentNetworkAction;
+    public static SortNetworkAction sortNetworkAction;
     public static PSFCPanel psfcPanel;
     private static File PSFCDir;
 
@@ -84,7 +84,7 @@ public class PSFCActivator extends AbstractCyActivator {
         cyTableManager = getService(bc, CyTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
 
-        sortCurrentNetworkAction = new SortCurrentNetworkAction();
+        sortNetworkAction = new SortNetworkAction();
         psfcPanel = new PSFCPanel();
 
 
@@ -106,7 +106,7 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
 
-        registerService(bc, sortCurrentNetworkAction, CyAction.class, new Properties());
+        registerService(bc, sortNetworkAction, CyAction.class, new Properties());
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
     }
 

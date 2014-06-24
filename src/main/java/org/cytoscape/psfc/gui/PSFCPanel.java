@@ -4,7 +4,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
-import org.cytoscape.psfc.gui.actions.SortCurrentNetworkAction;
+import org.cytoscape.psfc.gui.actions.SortNetworkAction;
 import org.cytoscape.psfc.logic.algorithms.PSFAlgorithms;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.net.NetworkCyManager;
@@ -675,8 +675,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void jb_sortNetworkActionPerformed(ActionEvent evt) {
-        SortCurrentNetworkAction sortCurrentNetworkAction = new SortCurrentNetworkAction();
-        sortCurrentNetworkAction.actionPerformed(null);
+        SortNetworkAction sortNetworkAction = new SortNetworkAction();
+        sortNetworkAction.setSelectedNetwork(getSelectedNetwork());
+        sortNetworkAction.actionPerformed(evt);
     }
 
     private void setModels() {

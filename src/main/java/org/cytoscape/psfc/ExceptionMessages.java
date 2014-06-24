@@ -14,7 +14,9 @@ public enum ExceptionMessages {
     NullCyNode("The CyNode was null"),
     NotCyNodeKeyType("The key type should be of class CyNode"),
     ConflictingAttributeType("The attribute type does not match existing CyColumn"),
-    NoSuchAlgorithm("No algorithm with specified argument exists");
+    NoSuchAlgorithm("No algorithm with specified argument exists"),
+    NullConfigFile("Null configuration file"),
+    NonExistingNode("The node does not exist in the graph");
 
     private String message;
     ExceptionMessages(String message){

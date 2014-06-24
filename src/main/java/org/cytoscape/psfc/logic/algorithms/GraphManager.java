@@ -41,5 +41,34 @@ public class GraphManager {
         return cyNodeIntegerHashMap;
     }
 
+    /**
+     * Converts given <code>Integer</code> : <code>ArrayList<Node></code> mapping to
+     * <code>Integer</code> : <code>ArrayList<CyNode></code> mapping for the given Graph.
+     * For each Node in the given map, the respective CyNode is retrieved from
+     * the Graph and put in the newly generated map.
+     * If the CyNode (or Node) is not found in the Graph,
+     * it is skipped.
+     * @param intNodesMap the map to be converted
+     * @param graph the graph containing the Node-CyNode mapping
+     * @return converted map
+     */
+    public static  TreeMap<Integer, ArrayList<CyNode>>intNodesMap2IntCyNodeMap(
+            TreeMap<Integer, ArrayList<Node>> intNodesMap, Graph graph){
+        TreeMap<Integer, ArrayList<CyNode>> intCyNodesMap = new TreeMap<Integer, ArrayList<CyNode>>();
+        for (int level : intNodesMap.keySet()){
+            ArrayList<Node> nodes = intNodesMap.get(level);
+            ArrayList<CyNode> cyNodes = new ArrayList<CyNode>();
+            for (Node node : nodes){
+                CyNode cyNode = null;
+                if (graph.getNodeCyNodeMap().containsKey(node))
+                    cyNode = graph.getNodeCyNodeMap().get(node);
+                if (cyNode != null)
+                    cyNodes.add(cyNode);
+            }
+            intCyNodesMap.put(level, cyNodes);
+        }
+        return intCyNodesMap;
+    }
+
 
 }

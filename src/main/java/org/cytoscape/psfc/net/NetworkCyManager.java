@@ -2,7 +2,10 @@ package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.view.model.CyNetworkView;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -82,4 +85,19 @@ public class NetworkCyManager {
         }
     }
 
+    /**
+     * Return first of all the views of the given network, or create one if no view for the network exists.
+     * @param network the network
+     * @return the view of the network
+     */
+    public static CyNetworkView getNetworkView(CyNetwork network) {
+        CyNetworkView networkView;
+        Collection<CyNetworkView> networkViews = PSFCActivator.networkViewManager.getNetworkViews(network);
+        if (networkViews.isEmpty()) {
+            networkView = PSFCActivator.networkViewFactory.createNetworkView(network);
+            PSFCActivator.networkViewManager.addNetworkView(networkView);
+        } else
+            networkView = networkViews.iterator().next();
+        return networkView;
+    }
 }

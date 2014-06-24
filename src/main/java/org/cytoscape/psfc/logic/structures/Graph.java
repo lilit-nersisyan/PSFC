@@ -133,6 +133,27 @@ public class Graph {
     }
 
     /**
+     * Returns <code>Node</code> with given CyNode reference, or null if no such node exists.
+     *
+     * @param cyNode the <code>CyNode</code>reference
+     * @return the node with the CyNode reference; null if no such node exists
+     */
+    public Node getNode(CyNode cyNode){
+            return nodeCyNodeMap.inverse().get(cyNode);
+    }
+
+    /**
+     * Returns <code>CyNode</code> which is references by the given <code>Node</code>
+     * or null if no such reference exists or if the given node does not exist in the graph.
+     *
+     * @param node Node containing the CyNode reference
+     * @return CyNode referenced by the node; or null if no reference exists
+     */
+    public CyNode getCyNode(Node node){
+            return nodeCyNodeMap.get(node);
+    }
+
+    /**
      * Return the Node with given ID.
      * If there is no node with specified ID, null is returned.
      *
@@ -198,6 +219,42 @@ public class Graph {
                 nodeSet.add(node);
         }
         return nodeSet;
+    }
+
+    /**
+     * Returns the list of all the child nodes to which the input node is connected by out-edges.
+     *
+     * @param parentNode the Node of interest
+     * @return the list of child nodes of the given Node;
+     * or null if the given node does not exist in the graph.
+     */
+    public ArrayList<Node> getChildNodes(Node parentNode) {
+        if (!containsNode(parentNode))
+            return null;
+        ArrayList<Node> childNodes = new ArrayList<Node>();
+        for (Node node : nodes.values()){
+            if (containsEdge(parentNode, node))
+                childNodes.add(node);
+        }
+        return childNodes;
+    }
+
+    /**
+     * Returns the list of all the parent nodes which have in-edges to the input node.
+     *
+     * @param childNode the Node of interest
+     * @return the list of nodes having input edges to the given Node;
+     * or null if the given node does not exist in the graph.
+     */
+    public ArrayList<Node> getParentNodes(Node childNode) {
+        if (!containsNode(childNode))
+            return null;
+        ArrayList<Node> parentNodes = new ArrayList<Node>();
+        for (Node node : nodes.values()){
+            if (containsEdge(node, childNode))
+                parentNodes.add(node);
+        }
+        return parentNodes;
     }
 
     /**
@@ -319,6 +376,7 @@ public class Graph {
                 "\nedges=" + edges +
                 '}';
     }
+
 
 
 }

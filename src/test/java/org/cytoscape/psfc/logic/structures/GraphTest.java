@@ -147,6 +147,42 @@ public class GraphTest {
     }
 
     @Test
+    public void testGetChildNodes() throws Exception {
+        Graph dsDAG = GraphTestCases.doubleSourceDAG();
+        for (Node parentNode : dsDAG.getNodesList()){
+            ArrayList<Node> childNodes = dsDAG.getChildNodes(parentNode);
+            for (Node childNode : childNodes){
+                //Assert that there is an edge between parentNode and each child node
+                assertTrue(dsDAG.containsEdge(parentNode, childNode));
+                for (Node node : dsDAG.getNodesList()){
+                    //Assert that there is no other node in the graph to which there is an edge from the parent node
+                    if (!childNodes.contains(node))
+                        assertFalse(dsDAG.containsEdge(parentNode, node));
+                }
+            }
+        }
+    }
+
+    @Test
+    public void testGetParentNodes() throws Exception {
+        Graph dsDAG = GraphTestCases.doubleSourceDAG();
+        for (Node childNode : dsDAG.getNodesList()){
+            ArrayList<Node> parentNodes = dsDAG.getParentNodes(childNode);
+            for (Node parentNode : parentNodes){
+                //Assert that there is an edge between each parent node and the childNode
+                assertTrue(dsDAG.containsEdge(parentNode, childNode));
+                for (Node node : dsDAG.getNodesList()){
+                    //Assert that there is no other node in the graph from which there is an edge to the child node
+                    if (!parentNodes.contains(node))
+                        assertFalse(dsDAG.containsEdge(node, childNode));
+                }
+            }
+        }
+    }
+
+
+
+    @Test
     public void testGetOrCreateUniqueInputNode() throws Exception {
         Node node1 = graph.addNode();
         Node node2 = graph.addNode();
