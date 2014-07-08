@@ -1,6 +1,6 @@
 package org.cytoscape.psfc.logic.structures;
 
-import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
 /**
  * PUBLIC CLASS Edge
@@ -18,7 +18,8 @@ public class Edge {
 
     private Node source;
     private Node target;
-    private int type;
+    private String edgeType = "";
+
 
     Edge(Node source, Node target) {
         if (target == null || source == null)
@@ -35,12 +36,20 @@ public class Edge {
         return target;
     }
 
+    public String getEdgeType() {
+        return edgeType;
+    }
+
+    public void setEdgeType(String edgeType) {
+        this.edgeType = edgeType;
+    }
+
     @Override
     public String toString(){
         return "Edge{" +
                 "source=" + source.getID() +
                 "target=" + target.getID() + "," +
-                "type='" + type + '\'' +
+                "type='" + edgeType + '\'' +
                 "}\n";
     }
 

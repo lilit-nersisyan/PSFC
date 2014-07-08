@@ -84,7 +84,6 @@ public class PSFCActivator extends AbstractCyActivator {
         cyTableManager = getService(bc, CyTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
 
-        sortNetworkAction = new SortNetworkAction();
         psfcPanel = new PSFCPanel();
 
 
@@ -106,7 +105,6 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
 
-        registerService(bc, sortNetworkAction, CyAction.class, new Properties());
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
     }
 

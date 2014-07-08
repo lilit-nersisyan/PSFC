@@ -1,11 +1,14 @@
 package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
-import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.view.model.CyNetworkView;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -99,5 +102,23 @@ public class NetworkCyManager {
         } else
             networkView = networkViews.iterator().next();
         return networkView;
+    }
+
+    /**
+     * Converts the give <code>CyNode</code> : <code>Double</code> map to
+     * <code>Node</code> : <code>Double</code> map, by readdressing the double value of each CyNode
+     * in the given map to referencing Node in the give Graph.
+     *
+     * @param graph Graph keeping the nodes
+     * @param cyNodeDoubleMap given <code>CyNode</code> : <code>Double</code> map
+     * @return converted <code>Node</code> : <code>Double</code> map
+     */
+    public static HashMap<Node, Double> convertCyNodeDouble2NodeDoubleMap(Graph graph,
+                                                                          HashMap<CyNode, Double> cyNodeDoubleMap){
+        HashMap<Node, Double> nodeDoubleMap = new HashMap<Node, Double>();
+        for (CyNode cyNode : cyNodeDoubleMap.keySet()){
+            nodeDoubleMap.put(graph.getNode(cyNode), cyNodeDoubleMap.get(cyNode));
+        }
+        return nodeDoubleMap;
     }
 }

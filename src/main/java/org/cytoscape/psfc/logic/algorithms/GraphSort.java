@@ -1,6 +1,6 @@
 package org.cytoscape.psfc.logic.algorithms;
 
-import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
@@ -250,7 +250,7 @@ public class GraphSort {
             }
         }
         //Last level
-        if(nextLevel && nextNode != null){
+        if (nextLevel && nextNode != null) {
             levelSet = new ArrayList<Node>();
             level++;
             levelsMap.put(level, levelSet);

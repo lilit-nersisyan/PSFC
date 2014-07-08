@@ -1,6 +1,6 @@
 package org.cytoscape.psfc.logic.structures;
 
-import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
 /**
  * PUBLIC CLASS Node
@@ -18,6 +18,7 @@ public class Node {
     private double value;
     private String name = "";
     private int level;
+    private static String defaultValue = "1";
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
@@ -41,6 +42,10 @@ public class Node {
             throw new IllegalArgumentException(ExceptionMessages.NodeWithNegativeIndex.getMessage());
         this.ID = ID;
         setValue(value);
+    }
+
+    public static String getDefaultValue() {
+        return defaultValue;
     }
 
     public double getValue() {

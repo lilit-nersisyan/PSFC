@@ -11,7 +11,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
-import org.cytoscape.psfc.ExceptionMessages;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
 import java.util.ArrayList;
@@ -28,6 +28,7 @@ public class Graph {
     //Cytoscape-related fields
     private CyNetwork network;
     private BiMap<Node, CyNode> nodeCyNodeMap;
+
 
     /**
      * Empty constructor for Graph.
@@ -303,6 +304,17 @@ public class Graph {
     }
 
     /**
+     * Sets the edgeType attribute of the specified edge equal to the given edgeType.
+     * Returns true in case of success and false, if the edge does not exist.
+     *
+     * @param edge
+     * @param edgeType
+     */
+    public void setEdgeType(Edge edge, String edgeType) {
+        edge.setEdgeType(edgeType);
+    }
+
+    /**
      * Checks if the graph contains an edge with specified source and target nodes.
      *
      * @param source source node
@@ -378,5 +390,10 @@ public class Graph {
     }
 
 
-
+    public String getSummary() {
+        String summary = "";
+        summary += "Number of nodes (order): " + getOrder() + "\n";
+        summary += "Number of edges (size): " + getSize();
+        return summary;
+    }
 }

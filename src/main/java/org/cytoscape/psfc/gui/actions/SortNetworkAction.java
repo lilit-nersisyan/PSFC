@@ -4,6 +4,8 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.enums.EColumnNames;
+import org.cytoscape.psfc.gui.enums.ESortingAlgorithms;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
@@ -18,6 +20,7 @@ import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 
 import java.awt.event.ActionEvent;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -25,26 +28,33 @@ import java.util.*;
  */
 public class SortNetworkAction extends AbstractCyAction {
     private CyNetwork network;
+    private int sortingAlgorithm;
+    private boolean success = false;
+    private boolean performed = false;
 
-    public SortNetworkAction() {
+    public SortNetworkAction(CyNetwork network, int sortingAlgorithm) {
         super("Sort current network");
-        setMenuGravity(0);
-        setPreferredMenu("Apps.PSFC");
+        this.network = network;
+        this.sortingAlgorithm = sortingAlgorithm;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
         if (network == null)
             network = PSFCActivator.cyApplicationManager.getCurrentNetwork();
-        final SortNetworkTask task = new SortNetworkTask(network, GraphSort.SHORTESTPATHSORT);
+        final SortNetworkTask task = new SortNetworkTask(network, sortingAlgorithm);
         PSFCActivator.taskManager.execute(new TaskIterator(task));
     }
 
-    public void setSelectedNetwork(CyNetwork network) {
-        this.network = network;
+    public boolean isPerformed() {
+        return performed;
     }
 
-    private class SortNetworkTask extends AbstractTask {
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public class SortNetworkTask extends AbstractTask {
 
         private CyNetwork network;
         private Graph graph;
@@ -62,30 +72,55 @@ public class SortNetworkAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            //Debugging
             taskMonitor.setTitle("Network sorting task");
-
-//            GraphSort.sort(graph, sortingAlgorithm);
-//            GraphSort.topologicalOrderIterator(graph);
+            PSFCActivator.getLogger().info("\n################\n################");
+            PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
+            PSFCActivator.getLogger().info("Action: sorting with algorithm " + ESortingAlgorithms.getName(sortingAlgorithm));
+            PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
+            PSFCActivator.getLogger().info("Graph summary:\n" + graph.getSummary());
             taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
             try {
+                //Graph sorting
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.sort(graph, GraphSort.TOPOLOGICALSORT);
-                taskMonitor.setProgress(0.5);
-                PSFCActivator.getLogger().debug(levelNodeMap.toString());
-                System.out.println(levelNodeMap.toString());
-                taskMonitor.setStatusMessage("Mapping node levels to CyNodes");
-                Map<CyNode, Integer> cyNodeLevelMap = GraphManager.intNodesMapToCyNodeIntMap(graph, levelNodeMap);
-                taskMonitor.setProgress(0.5);
 
-                taskMonitor.setStatusMessage("Setting CyNode Level attribute");
-                NetworkCyManager.setNodeAttributesFromMap(network, cyNodeLevelMap, "Level", Integer.class);
+                //Debugging
+                taskMonitor.setStatusMessage("Graph sorted");
+                taskMonitor.setProgress(0.5);
+                PSFCActivator.getLogger().debug("Levels and nodes after sorting: (node SUID : node name):");
+                String mapString = "";
+                for (int level : levelNodeMap.keySet()){
+                    mapString += "Level " + level + ":\n";
+                    for (Node node : levelNodeMap.get(level))
+                        mapString += "\t" + graph.getCyNode(node).getSUID() + ": " + node.getName() + "\n";
+                }
+                PSFCActivator.getLogger().debug(mapString);
+
+                //CyAttribute mapping
+                Map<CyNode, Integer> cyNodeLevelMap = GraphManager.intNodesMapToCyNodeIntMap(graph, levelNodeMap);
+                NetworkCyManager.setNodeAttributesFromMap(network, cyNodeLevelMap,
+                        EColumnNames.Level.getName(), Integer.class);
+
+                //Debugging
+                taskMonitor.setStatusMessage(EColumnNames.Level + " attribute values set");
+                taskMonitor.setProgress(0.8);
                 taskMonitor.setStatusMessage("Applying level-based layout");
+
+                //Peforming Layout
                 assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph));
                 networkView.updateView();
+
+                //Debugging
+                PSFCActivator.getLogger().info("Sorting-based layout applied");
+                taskMonitor.setStatusMessage("Sorting task complete");
+                PSFCActivator.getLogger().info("Sorting task successfully completed\n");
                 taskMonitor.setProgress(1);
-
-
+                success = true;
             } catch (Exception e1) {
                 throw new Exception(e1.getMessage());
+            } finally {
+                performed = true;
+                System.gc();
             }
         }
 
@@ -142,7 +177,6 @@ public class SortNetworkAction extends AbstractCyAction {
 
             List sortedEntryList = null;
             for (int level : levelCyNodeMap.descendingKeySet()) {
-                System.out.println(nodeYMap);
                 ArrayList<CyNode> cyNodes = levelCyNodeMap.get(level);
                 HashMap<CyNode, Double> tempYMap = new HashMap<CyNode, Double>();
 
@@ -175,10 +209,8 @@ public class SortNetworkAction extends AbstractCyAction {
                     } else {
                         tempYMap.put(cyNode, nodeYMap.get(cyNode));
                     }
-
                 }
 
-                System.out.println("TempYMap: " + tempYMap);
                 //Remove overlaps and assign Y coordinates to node views
                 sortedEntryList = new LinkedList(tempYMap.entrySet());
                 Collections.sort(sortedEntryList, new Comparator<Object>() {
@@ -188,7 +220,6 @@ public class SortNetworkAction extends AbstractCyAction {
                                 .compareTo(((Map.Entry) (o2)).getValue());
                     }
                 });
-                System.out.println("EntryList: \n" + sortedEntryList);
 
                 double levelY = minY;
                 CyNode minNode = null;
@@ -212,7 +243,6 @@ public class SortNetworkAction extends AbstractCyAction {
                     }
                 }
 
-
                 //Change nodeView Y position on the fly
                 for (Object entryObj : sortedEntryList) {
                     Map.Entry<CyNode, Double> entry = (Map.Entry<CyNode, Double>) entryObj;
@@ -225,6 +255,4 @@ public class SortNetworkAction extends AbstractCyAction {
             }
         }
     }
-
-
 }

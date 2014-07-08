@@ -1,5 +1,5 @@
 
-package org.cytoscape.psfc;
+package org.cytoscape.psfc.gui.enums;
 
 /**
  * Created by User on 5/26/2014.
@@ -16,7 +16,8 @@ public enum ExceptionMessages {
     ConflictingAttributeType("The attribute type does not match existing CyColumn"),
     NoSuchAlgorithm("No algorithm with specified argument exists"),
     NullConfigFile("Null configuration file"),
-    NonExistingNode("The node does not exist in the graph");
+    NonExistingNode("The node does not exist in the graph")
+    ;
 
     private String message;
     ExceptionMessages(String message){
