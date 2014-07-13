@@ -81,40 +81,37 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         public void run(TaskMonitor taskMonitor) throws Exception {
             //Checking statements  - will not be executed here, but checking should be done before calling  this method
             //If sorting has not been done - perform it
-
+            String exceptionMessage = "";
 
             HashMap<CyNode, Double> cyNodeDataMap;
             try{
                 cyNodeDataMap = getCyNodeDataMap();
             } catch (Exception e) {
                 throw new Exception("Node scores could not be retrieved from the column " + nodeDataColumn.getName());
-            } finally {
-                System.gc();
             }
 
             Graph graph;
             try{
                  graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
             } catch (Exception e ){
-                throw new Exception("Could not convert network to graph", e);
-            } finally {
-                System.gc();
+                throw new Exception("Could not convert network to graph. Reason: " + e.getMessage(), e);
             }
-            HashMap<Integer, ArrayList<Node>> levelNodesMap = getLevelNodesMap(graph);
-            HashMap<Node, Double> nodeDataMap = NetworkCyManager.convertCyNodeDouble2NodeDoubleMap(graph, cyNodeDataMap);
-
-
-            PSFCActivator.getLogger().info("\n################\n################");
-            PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
-            PSFCActivator.getLogger().info("Action: score flow calculation");
-            PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
-            PSFCActivator.getLogger().info("Graph summary: " + graph.getSummary());
-            PSFCActivator.getLogger().info("Score file: " + scoreBackupFile.getAbsolutePath());
-            PSFCActivator.getLogger().info("edgeTypeRuleNameConfigFile: " + edgeTypeRuleNameConfigFile.toString());
-            PSFCActivator.getLogger().info("ruleConfigFile: " + ruleConfigFile.toString());
 
 
             try {
+                HashMap<Integer, ArrayList<Node>> levelNodesMap = getLevelNodesMap(graph);
+                HashMap<Node, Double> nodeDataMap = NetworkCyManager.convertCyNodeDouble2NodeDoubleMap(graph, cyNodeDataMap);
+
+
+                PSFCActivator.getLogger().info("\n################\n################");
+                PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
+                PSFCActivator.getLogger().info("Action: score flow calculation");
+                PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
+                PSFCActivator.getLogger().info("Graph summary: " + graph.getSummary());
+                PSFCActivator.getLogger().info("Score file: " + scoreBackupFile.getAbsolutePath());
+                PSFCActivator.getLogger().info("edgeTypeRuleNameConfigFile: " + edgeTypeRuleNameConfigFile.toString());
+                PSFCActivator.getLogger().info("ruleConfigFile: " + ruleConfigFile.toString());
+
                 HashMap<Integer, HashMap<Node, Double>> nodeFlowScoreMap = PSFAlgorithms.
                         calculateFlow(graph, nodeDataMap, levelNodesMap,
                                 edgeTypeRuleNameConfigFile, ruleConfigFile, nodeDataProps);
@@ -137,10 +134,15 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 //                NetworkCyManager.setNodeAttributesFromMap(network,
 //                        cyNodeFlowScoreMap, "FlowScore", Double.class);
             } catch (Exception e) {
-                e.printStackTrace();
+                throw new Exception(e);
             } finally {
                 System.gc();
             }
+        }
+
+        @Override
+        public void cancel() {
+            super.cancel();
         }
 
 

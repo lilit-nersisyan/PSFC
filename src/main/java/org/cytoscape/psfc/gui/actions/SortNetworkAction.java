@@ -72,15 +72,16 @@ public class SortNetworkAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
-            //Debugging
-            taskMonitor.setTitle("Network sorting task");
-            PSFCActivator.getLogger().info("\n################\n################");
-            PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
-            PSFCActivator.getLogger().info("Action: sorting with algorithm " + ESortingAlgorithms.getName(sortingAlgorithm));
-            PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
-            PSFCActivator.getLogger().info("Graph summary:\n" + graph.getSummary());
-            taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
             try {
+                //Debugging
+                taskMonitor.setTitle("Network sorting task");
+                PSFCActivator.getLogger().info("\n################\n################");
+                PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
+                PSFCActivator.getLogger().info("Action: sorting with algorithm " + ESortingAlgorithms.getName(sortingAlgorithm));
+                PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
+                PSFCActivator.getLogger().info("Graph summary:\n" + graph.getSummary());
+                taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
+
                 //Graph sorting
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.sort(graph, GraphSort.TOPOLOGICALSORT);
 
@@ -89,7 +90,7 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setProgress(0.5);
                 PSFCActivator.getLogger().debug("Levels and nodes after sorting: (node SUID : node name):");
                 String mapString = "";
-                for (int level : levelNodeMap.keySet()){
+                for (int level : levelNodeMap.keySet()) {
                     mapString += "Level " + level + ":\n";
                     for (Node node : levelNodeMap.get(level))
                         mapString += "\t" + graph.getCyNode(node).getSUID() + ": " + node.getName() + "\n";
@@ -122,6 +123,11 @@ public class SortNetworkAction extends AbstractCyAction {
                 performed = true;
                 System.gc();
             }
+        }
+
+        @Override
+        public void cancel() {
+            super.cancel();
         }
 
         private void assignNodeCoordinates(TreeMap<Integer, ArrayList<CyNode>> levelCyNodeMap)

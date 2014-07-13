@@ -71,7 +71,8 @@ public class NetworkGraphMapper {
      * @param network CyNetwork to be mapped
      * @return the graph created from the given CyNetwork
      */
-    public static Graph graphFromNetwork(CyNetwork network, CyColumn edgeTypeColumn) throws Exception{
+    public static Graph graphFromNetwork(CyNetwork network, CyColumn edgeTypeColumn)
+            throws Exception{
         String illegalEdgeType = "Illegal edge type";
         try {
             if (!(edgeTypeColumn.getType().newInstance() instanceof String)) {
@@ -81,9 +82,10 @@ public class NetworkGraphMapper {
                 throw new IllegalArgumentException(illegalEdgeType);
             }
         } catch (Exception e) {
-            JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(), illegalEdgeType);
-            throw new IllegalArgumentException("Edge type column should be of type String. Found: " +
-                    edgeTypeColumn.getType().getName());
+            String exceptionMessage = "Edge type column should be of type String. Found: " +
+                    edgeTypeColumn.getType().getName();
+            System.out.println("we want to throw" + exceptionMessage);
+            throw new IllegalArgumentException(exceptionMessage);
         }
         if (network == null)
             throw new NullPointerException(ExceptionMessages.NullNetwork.getMessage());

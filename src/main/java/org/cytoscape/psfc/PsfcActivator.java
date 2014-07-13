@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.PatternLayout;
 import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
-import org.cytoscape.application.swing.CyAction;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.event.CyEventHelper;
@@ -278,5 +277,11 @@ public class PSFCActivator extends AbstractCyActivator {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    public static File getPsfcPropsFile() {
+        if (psfcPropsFile == null)
+            initProperties();
+        return psfcPropsFile;
     }
 }

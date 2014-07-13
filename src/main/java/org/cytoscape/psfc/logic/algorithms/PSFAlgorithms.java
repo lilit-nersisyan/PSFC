@@ -12,8 +12,6 @@ import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import java.io.File;
 import java.util.ArrayList;
@@ -135,15 +133,7 @@ public class PSFAlgorithms {
 
 
     public static void main(String[] args) {
-        ScriptEngineManager mgr = new ScriptEngineManager();
-        ScriptEngine engine = mgr.getEngineByName("JavaScript");
-//        String foo = "Math.exp(2,3)";
-//        try {
-//            System.out.println(engine.eval(foo));
-//        } catch (ScriptException e) {
-//            e.printStackTrace();
-//        }
-        net.sourceforge.jeval.Evaluator evaluator = new net.sourceforge.jeval.Evaluator();
+
         try {
             String exp = "exp(target)";
             Calculable calculable = new ExpressionBuilder(exp)
