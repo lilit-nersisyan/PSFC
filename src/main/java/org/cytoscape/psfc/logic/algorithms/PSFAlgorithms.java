@@ -57,7 +57,12 @@ public class PSFAlgorithms {
         HashMap<Integer, HashMap<CyEdge, Double>> levelCyEdgeScoreMap = new HashMap<Integer, HashMap<CyEdge, Double>>();
 
         //Keeps the rule as a String for each edgeType
-        edgeTypeRuleMap = RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile);
+        try {
+            edgeTypeRuleMap = RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile);
+        } catch (Exception e) {
+            throw new Exception("Problem occured while parsing simple rules. Reason: "
+                    + e.getMessage(), e);
+        }
 
         boolean isFirstLevel = true;
         for (int level : levelNodesMap.keySet()) {
@@ -78,7 +83,7 @@ public class PSFAlgorithms {
                         if (edge != null) {
                             prevEdges.add(edge);
                             double nodeScore = getNodeScore(nodeScoreMap, node, nodeDataProps);
-                            double prevNodeScore = getNodeScore(levelNodeScoreMap.get(level-1), prevNode, nodeDataProps);
+                            double prevNodeScore = getNodeScore(levelNodeScoreMap.get(level - 1), prevNode, nodeDataProps);
                             String edgeType = edge.getEdgeType();
                             double updatedNodeScore = nodeScore;
                             if (edgeType != null)
@@ -107,8 +112,7 @@ public class PSFAlgorithms {
             return nodeScoreMap.get(node);
         if (nodeDataProps.containsKey(ENodeDataProps.NODE_DEFAULT_VALUE.getName()))
             try {
-                double data = Double.parseDouble(ENodeDataProps.NODE_DEFAULT_VALUE.getName());
-                return data;
+                return Double.parseDouble(ENodeDataProps.NODE_DEFAULT_VALUE.getName());
             } catch (Exception e) {
                 PSFCActivator.getLogger().error("Could not parse to double node default value: " + Node.getDefaultValue() + " will be used");
                 return Double.parseDouble(Node.getDefaultValue());

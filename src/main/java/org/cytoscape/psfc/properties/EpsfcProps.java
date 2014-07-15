@@ -8,8 +8,11 @@ public enum EpsfcProps {
     NodeDataType("nodeDataType"),
     MultipleDataOption("multipleDataOption"),
     EdgeTypeRuleNameConfigFile("edgeTypeRuleNameConfigFile"),
-    RuleNameRuleConfigFile("ruleNameRuleConfigFile")
-    ;
+    RuleNameRuleConfigFile("ruleNameRuleConfigFile"),
+    NodeDataAttribute("nodeDataAttribute"),
+    SplitSignalOn("splitSignalOn"),
+    SplitSignalRule("splitSignalRule"),
+    MultipleSignalProcessingRule("multipleSignalProcessingRule");
 
     private boolean oldValue = true;
     private boolean newValue = true;

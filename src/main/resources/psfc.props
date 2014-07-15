@@ -4,3 +4,7 @@ nodeDataType=Linear
 multipleDataOption=Mean
 edgeTypeRuleNameConfigFile=N/A
 ruleNameRuleConfigFile=N/A
+nodeDataAttribute=N/A
+splitSignalOn=N/A
+splitSignalRule=N/A
+multipleSignalProcessingRule=N/A

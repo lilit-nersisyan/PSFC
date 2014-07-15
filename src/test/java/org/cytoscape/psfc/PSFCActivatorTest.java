@@ -4,10 +4,7 @@ import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.event.CyEventHelper;
-import org.cytoscape.model.CyNetworkFactory;
-import org.cytoscape.model.CyNetworkManager;
-import org.cytoscape.model.CyTableFactory;
-import org.cytoscape.model.CyTableManager;
+import org.cytoscape.model.*;
 import org.cytoscape.service.util.internal.FakeBundleContext;
 import org.cytoscape.session.CySessionManager;
 import org.cytoscape.view.model.CyNetworkViewFactory;
@@ -17,7 +14,6 @@ import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -47,7 +43,8 @@ public final class PSFCActivatorTest {
             CyEventHelper.class,
             CySwingApplication.class,
             CyApplicationManager.class,
-            CyTableManager.class
+            CyTableManager.class,
+            CyNetworkTableManager.class
     );
 
 

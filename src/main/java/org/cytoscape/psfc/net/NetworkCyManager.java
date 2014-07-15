@@ -1,8 +1,8 @@
 package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
-import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.view.model.CyNetworkView;
@@ -14,10 +14,9 @@ import java.util.Map;
 
 /**
  * PUBLIC CLASS NetworkManager
- *
+ * <p/>
  * This class provides static methods for copying, and modifying CyNetworks,
  * their nodes and edges and attributes.
- *
  */
 public class NetworkCyManager {
     /**
@@ -26,14 +25,14 @@ public class NetworkCyManager {
      * If a CyColumn with given name exists, but does not match the attribute type given,
      * and exception is thrown.
      *
-     * @param table CyTable where the CyColumn should be
+     * @param table    CyTable where the CyColumn should be
      * @param attrName name of the attribute column
      * @param attrType type of the attribute
      * @return CyColumn
      * @throws Exception thrown if the attribute type does not match the existing type in the existing CyColumn.
      */
     public static CyColumn getOrCreateAttributeColumn(CyTable table,
-                                                       String attrName, Class attrType) throws Exception {
+                                                      String attrName, Class attrType) throws Exception {
         Iterator<CyColumn> iterator = table.getColumns().iterator();
 
         while (iterator.hasNext()) {
@@ -48,6 +47,7 @@ public class NetworkCyManager {
         table.createColumn(attrName, attrType, false);
         return table.getColumn(attrName);
     }
+
     /**
      * Populate the CyTable with attributes of given attribute name from given
      * <code>CyNode</code> : attribute map.
@@ -60,10 +60,10 @@ public class NetworkCyManager {
      * values from the map. If a CyNode does not exist in the given CyNetwork this node will be skipped.
      * </p>
      *
-     * @param cyNetwork CyNetwork containing the CyNodes to be mapped.
+     * @param cyNetwork          CyNetwork containing the CyNodes to be mapped.
      * @param cyNodeAttributeMap Map containing the CyNodes and their attribute values.
-     * @param attrName the name of the attribute column
-     * @param attrType the type of the attribute
+     * @param attrName           the name of the attribute column
+     * @param attrType           the type of the attribute
      */
     public static void setNodeAttributesFromMap(CyNetwork cyNetwork,
                                                 Map cyNodeAttributeMap,
@@ -74,14 +74,14 @@ public class NetworkCyManager {
 
         NetworkCyManager.getOrCreateAttributeColumn(nodeTable, attrName, attrType);
 
-        for (Object obj : cyNodeAttributeMap.keySet()){
+        for (Object obj : cyNodeAttributeMap.keySet()) {
             if (obj instanceof CyNode)
                 break;
             else
                 throw new Exception(ExceptionMessages.NotCyNodeKeyType.getMessage());
         }
         CyNode cyNode;
-        for (Object obj : cyNodeAttributeMap.keySet()){
+        for (Object obj : cyNodeAttributeMap.keySet()) {
             cyNode = (CyNode) obj;
             CyRow row = nodeTable.getRow(cyNode.getSUID());
             row.set(attrName, cyNodeAttributeMap.get(cyNode));
@@ -90,6 +90,7 @@ public class NetworkCyManager {
 
     /**
      * Return first of all the views of the given network, or create one if no view for the network exists.
+     *
      * @param network the network
      * @return the view of the network
      */
@@ -105,18 +106,36 @@ public class NetworkCyManager {
     }
 
     /**
+     * Return first of all the views of the given network, or create one if no view for the network exists.
+     *
+     * @param network the network
+     * @return the Collection of all views of the network
+     */
+    public static Collection<CyNetworkView> getNetworkViews(CyNetwork network) {
+        CyNetworkView networkView;
+        Collection<CyNetworkView> networkViews = PSFCActivator.networkViewManager.getNetworkViews(network);
+        if (networkViews.isEmpty()) {
+            networkView = PSFCActivator.networkViewFactory.createNetworkView(network);
+            PSFCActivator.networkViewManager.addNetworkView(networkView);
+            networkViews.add(networkView);
+        }
+        return networkViews;
+    }
+
+
+    /**
      * Converts the give <code>CyNode</code> : <code>Double</code> map to
      * <code>Node</code> : <code>Double</code> map, by readdressing the double value of each CyNode
      * in the given map to referencing Node in the give Graph.
      *
-     * @param graph Graph keeping the nodes
+     * @param graph           Graph keeping the nodes
      * @param cyNodeDoubleMap given <code>CyNode</code> : <code>Double</code> map
      * @return converted <code>Node</code> : <code>Double</code> map
      */
     public static HashMap<Node, Double> convertCyNodeDouble2NodeDoubleMap(Graph graph,
-                                                                          HashMap<CyNode, Double> cyNodeDoubleMap){
+                                                                          HashMap<CyNode, Double> cyNodeDoubleMap) {
         HashMap<Node, Double> nodeDoubleMap = new HashMap<Node, Double>();
-        for (CyNode cyNode : cyNodeDoubleMap.keySet()){
+        for (CyNode cyNode : cyNodeDoubleMap.keySet()) {
             nodeDoubleMap.put(graph.getNode(cyNode), cyNodeDoubleMap.get(cyNode));
         }
         return nodeDoubleMap;

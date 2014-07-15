@@ -40,8 +40,6 @@ public class SortNetworkAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (network == null)
-            network = PSFCActivator.cyApplicationManager.getCurrentNetwork();
         final SortNetworkTask task = new SortNetworkTask(network, sortingAlgorithm);
         PSFCActivator.taskManager.execute(new TaskIterator(task));
     }
@@ -60,6 +58,7 @@ public class SortNetworkAction extends AbstractCyAction {
         private Graph graph;
         private int sortingAlgorithm;
         private CyNetworkView networkView;
+        private Collection<CyNetworkView> networkViews;
         private double xGap = 40;
         private double yGap = 20;
 
@@ -68,13 +67,16 @@ public class SortNetworkAction extends AbstractCyAction {
             this.sortingAlgorithm = sortingAlgorithm;
             this.graph = NetworkGraphMapper.graphFromNetwork(network);
             this.networkView = NetworkCyManager.getNetworkView(network);
+            this.networkViews = NetworkCyManager.getNetworkViews(network);
         }
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            if (network == null)
+                throw new Exception("Given network was null");
             try {
                 //Debugging
-                taskMonitor.setTitle("Network sorting task");
+                taskMonitor.setTitle("PSFC.SortNetworkTask");
                 PSFCActivator.getLogger().info("\n################\n################");
                 PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
                 PSFCActivator.getLogger().info("Action: sorting with algorithm " + ESortingAlgorithms.getName(sortingAlgorithm));
@@ -108,8 +110,12 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Applying level-based layout");
 
                 //Peforming Layout
-                assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph));
-                networkView.updateView();
+                for (CyNetworkView cyNetworkView : networkViews){
+                    assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph),cyNetworkView);
+                    cyNetworkView.updateView();
+                }
+
+
 
                 //Debugging
                 PSFCActivator.getLogger().info("Sorting-based layout applied");
@@ -130,7 +136,7 @@ public class SortNetworkAction extends AbstractCyAction {
             super.cancel();
         }
 
-        private void assignNodeCoordinates(TreeMap<Integer, ArrayList<CyNode>> levelCyNodeMap)
+        private void assignNodeCoordinates(TreeMap<Integer, ArrayList<CyNode>> levelCyNodeMap, CyNetworkView cyNetworkView)
                 throws Exception {
             HashMap<CyNode, Double> nodeWidthMap = new HashMap<CyNode, Double>();
             HashMap<CyNode, Double> nodeHeightMap = new HashMap<CyNode, Double>();
@@ -142,7 +148,7 @@ public class SortNetworkAction extends AbstractCyAction {
             double minY = Double.MAX_VALUE;
             for (Object nodeObj : network.getNodeList()) {
                 CyNode node = (CyNode) nodeObj;
-                org.cytoscape.view.model.View<CyNode> nodeView = networkView.getNodeView(node);
+                org.cytoscape.view.model.View<CyNode> nodeView = cyNetworkView.getNodeView(node);
                 if (nodeView == null)
                     throw new Exception("Could not get view for node " + node.getSUID());
 
@@ -171,7 +177,7 @@ public class SortNetworkAction extends AbstractCyAction {
                     double width = nodeWidthMap.get(node);
                     if (width > maxWidth)
                         maxWidth = width;
-                    org.cytoscape.view.model.View<CyNode> nodeView = networkView.getNodeView(node);
+                    org.cytoscape.view.model.View<CyNode> nodeView = cyNetworkView.getNodeView(node);
                     if (nodeView == null)
                         throw new Exception("Could not get view for node " + node.getSUID());
                     nodeView.setVisualProperty(BasicVisualLexicon.NODE_X_LOCATION, minX);
@@ -253,7 +259,7 @@ public class SortNetworkAction extends AbstractCyAction {
                 for (Object entryObj : sortedEntryList) {
                     Map.Entry<CyNode, Double> entry = (Map.Entry<CyNode, Double>) entryObj;
                     CyNode cyNode = entry.getKey();
-                    View<CyNode> nodeView = networkView.getNodeView(cyNode);
+                    View<CyNode> nodeView = cyNetworkView.getNodeView(cyNode);
                     if (nodeView == null)
                         throw new Exception("Could not get view for node " + cyNode.getSUID());
                     nodeView.setVisualProperty(BasicVisualLexicon.NODE_Y_LOCATION, entry.getValue());
