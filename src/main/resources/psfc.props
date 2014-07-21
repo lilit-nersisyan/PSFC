@@ -8,3 +8,6 @@ nodeDataAttribute=N/A
 splitSignalOn=N/A
 splitSignalRule=N/A
 multipleSignalProcessingRule=N/A
+edgeRankAttribute=N/A
+edgeWeightsAttribute=N/A
+signalProcessingOrder=N/A

@@ -12,7 +12,10 @@ public enum EpsfcProps {
     NodeDataAttribute("nodeDataAttribute"),
     SplitSignalOn("splitSignalOn"),
     SplitSignalRule("splitSignalRule"),
-    MultipleSignalProcessingRule("multipleSignalProcessingRule");
+    MultipleSignalProcessingRule("multipleSignalProcessingRule"),
+    EdgeRankAttribute("edgeRankAttribute"),
+    EdgeWeigthsAttribute("edgeWeightsAttribute"),
+    SignalProcessingOrder("signalProcessingOrder");
 
     private boolean oldValue = true;
     private boolean newValue = true;
