@@ -290,6 +290,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 jsl_levels.setMinimum(0);
                 jsl_levels.setMaximum(levelNodeSignalMap.size());
                 jsl_levels.setEnabled(true);
+                jsl_levels.setPaintLabels(true);
 
 
                 taskMonitor.setStatusMessage("Flow calculation task complete");

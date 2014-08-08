@@ -85,6 +85,9 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
 
                 //Graph sorting
+                if (GraphSort.cycleExists(graph))
+                    taskMonitor.setStatusMessage("The supplied network contains cycles. Sorting will be performed after cycle removal.");
+
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = GraphSort.sort(graph, GraphSort.TOPOLOGICALSORT);
 
                 //Debugging
@@ -110,11 +113,10 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Applying level-based layout");
 
                 //Peforming Layout
-                for (CyNetworkView cyNetworkView : networkViews){
-                    assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph),cyNetworkView);
+                for (CyNetworkView cyNetworkView : networkViews) {
+                    assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph), cyNetworkView);
                     cyNetworkView.updateView();
                 }
-
 
 
                 //Debugging
@@ -195,6 +197,13 @@ public class SortNetworkAction extends AbstractCyAction {
                 for (CyNode cyNode : cyNodes) {
                     Node node = graph.getNode(cyNode);
                     ArrayList<Node> childNodes = graph.getChildNodes(node);
+                    ArrayList<Node> incomingBackwardNodes = graph.getIncomingBackwardNodes(node);
+                    childNodes.addAll(incomingBackwardNodes);
+                    boolean shiftDown = false; //Shift down node if it has two child nodes at the same horizontal level
+                    for (Node node1 : childNodes)
+                        for (Node node2 : childNodes)
+                            if (nodeYMap.get(node1) == nodeYMap.get(node2))
+                                shiftDown = true;
 
                     //The new Y coordinate of current node is the average of Y coordinates of its child Nodes.
                     if (level != levelCyNodeMap.lastKey()) {
@@ -213,8 +222,11 @@ public class SortNetworkAction extends AbstractCyAction {
                                 numOfChildren++;
                             }
                         }
-                        if (numOfChildren != 0)
+                        if (numOfChildren != 0) {
                             meanY /= numOfChildren;
+                            if (shiftDown)
+                                meanY += nodeHeightMap.get(graph.getCyNode(node));
+                        }
                         else
                             meanY = Double.MAX_VALUE;
                         tempYMap.put(cyNode, meanY);

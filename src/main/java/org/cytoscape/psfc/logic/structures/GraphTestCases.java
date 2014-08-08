@@ -58,9 +58,21 @@ public class GraphTestCases {
         return graph;
     }
 
+
     public static Graph doubleSourceDCG(){
         Graph graph = doubleSourceDAG();
         graph.addEdge(graph.getNode(9), graph.getNode(5));
+        return graph;
+    }
+
+    public static Graph doubleSourceManyLoopsDCG(){
+        Graph graph = doubleSourceDAG();
+        graph.addNode();
+        graph.addEdge(graph.getNode(8), graph.getNode(13));
+        graph.addEdge(graph.getNode(13), graph.getNode(12));
+        graph.addEdge(graph.getNode(13), graph.getNode(4));
+        graph.addEdge(graph.getNode(9), graph.getNode(5));
+        graph.addEdge(graph.getNode(10), graph.getNode(6));
         return graph;
     }
 

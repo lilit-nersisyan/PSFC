@@ -396,4 +396,34 @@ public class Graph {
         summary += "Number of edges (size): " + getSize();
         return summary;
     }
+
+    /**
+     * Sets loopCount field of all the edges to 0.
+     */
+    public void resetLoopCounts(){
+        for (Edge edge : edges)
+            edge.setLoopCount(0);
+    }
+
+    public void removeEdge(Edge maxLoopEdge) {
+        edges.remove(maxLoopEdge);
+        jgraph.removeEdge(maxLoopEdge);
+    }
+
+    /**
+     * Return nodes that have incoming edges to given node,
+     * which were assigned backward orientation as parts of loops during graph sorting.
+     *
+     * @param node
+     * @return list of nodes with incoming backward edges to given node; or empty list if such an edge does not exist.
+     */
+    public ArrayList<Node> getIncomingBackwardNodes(Node node) {
+        ArrayList<Node> incomingBackwardNodes = new ArrayList<Node>();
+        for (Node inputNode : getParentNodes(node))
+            if (getEdge(inputNode, node).isBackward())
+                incomingBackwardNodes.add(node);
+        return incomingBackwardNodes;
+    }
+
+
 }

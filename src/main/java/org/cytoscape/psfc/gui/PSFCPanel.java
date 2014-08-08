@@ -17,10 +17,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 /**
@@ -35,6 +32,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private String levelAttr = EColumnNames.Level.getName();
     private File edgeTypeRuleNameConfigFile;
     private File ruleNameRuleConfigFile;
+    private ImageIcon refreshIcon;
+    private String refreshIconName = "refresh_button.png";
 
     public PSFCPanel() {
         this.setPreferredSize(new Dimension(380, getHeight()));
@@ -260,7 +259,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jcb_nodeDataAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
 
-        jb_refreshNetworks.setIcon(new javax.swing.ImageIcon("C:\\Users\\User\\Desktop\\refresh-green.png")); // NOI18N
+
         jb_refreshNetworks.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNetworks.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNetworks.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -270,7 +269,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
-        jb_refreshEdgeTypeAttrs.setIcon(new javax.swing.ImageIcon("C:\\Users\\User\\Desktop\\refresh-green.png")); // NOI18N
+
         jb_refreshEdgeTypeAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -280,7 +279,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
-        jb_refreshNodeDataAttrs.setIcon(new javax.swing.ImageIcon("C:\\Users\\User\\Desktop\\refresh-green.png")); // NOI18N
+
         jb_refreshNodeDataAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -594,7 +593,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jcb_edgeRanks.setMinimumSize(new java.awt.Dimension(115, 20));
         jcb_edgeRanks.setPreferredSize(new java.awt.Dimension(115, 20));
 
-        jb_refreshEdgeRanks.setIcon(new javax.swing.ImageIcon("C:\\Users\\User\\Desktop\\refresh-green.png")); // NOI18N
+
         jb_refreshEdgeRanks.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeRanks.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeRanks.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -604,7 +603,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
-        jb_refreshWeigths.setIcon(new javax.swing.ImageIcon("C:\\Users\\User\\Desktop\\refresh-green.png")); // NOI18N
+
         jb_refreshWeigths.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshWeigths.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshWeigths.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -1629,6 +1628,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void setComponentProperties() {
+        //Refresh buttons
+        jb_refreshNodeDataAttrs.setIcon(getRefreshIcon());
+        jb_refreshNetworks.setIcon(getRefreshIcon());
+        jb_refreshEdgeTypeAttrs.setIcon(getRefreshIcon());
+        jb_refreshEdgeRanks.setIcon(getRefreshIcon());
+        jb_refreshWeigths.setIcon(getRefreshIcon());
+
         //Button groups
 
         //jbg_dataType
@@ -1808,6 +1814,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
 
     }
+
+    private ImageIcon getRefreshIcon(){
+        if (refreshIcon == null) {
+            ClassLoader cl = PSFCActivator.class.getClassLoader();
+            refreshIcon = new ImageIcon(cl.getResource(refreshIconName));
+        }
+        return refreshIcon;
+    }
+
 
 
 }

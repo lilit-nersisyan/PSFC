@@ -22,7 +22,8 @@ public class Edge {
     private double weight = 1;
     private double signal = 0;
     private Integer rank = 0;
-
+    private int loopCount = 0;
+    private boolean isBackward = false;
 
     Edge(Node source, Node target) {
         if (target == null || source == null)
@@ -54,7 +55,8 @@ public class Edge {
                 "target=" + target.getID() + "," +
                 "type='" + edgeType + '\'' + "," +
                 "weight='" + weight + '\'' + "," +
-                "rank='" + rank + '\'' +
+                "rank='" + rank + '\'' + "," +
+                "loopCount='"  + loopCount + '\'' +
                 "}\n";
     }
 
@@ -92,5 +94,25 @@ public class Edge {
 
     public Integer getRank() {
         return rank;
+    }
+
+    public void incrementLoopCount(int i) {
+        loopCount = loopCount + i;
+    }
+
+    public int getLoopCount() {
+        return loopCount;
+    }
+
+    public void setLoopCount(int loopCount) {
+        this.loopCount = loopCount;
+    }
+
+    public void setIsBackward(boolean isBackward) {
+        this.isBackward = isBackward;
+    }
+
+    public boolean isBackward() {
+        return isBackward;
     }
 }

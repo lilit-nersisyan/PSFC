@@ -3,7 +3,9 @@ package org.cytoscape.psfc.logic.algorithms;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.GraphTestCases;
 import org.cytoscape.psfc.logic.structures.Node;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.alg.DijkstraShortestPath;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.ClosestFirstIterator;
@@ -45,8 +47,17 @@ public class GraphSort {
             case BFSSORT:
                 bsfIterate(graph);
                 break;
-            case TOPOLOGICALSORT:
-                return sortByLevelFromStart(graph, topologicalOrderIterator(graph));
+            case TOPOLOGICALSORT: {
+                ArrayList<Edge> removedEdges = removeLoopEdges(graph);
+                TreeMap<Integer, ArrayList<Node>> levelNodeMap = sortByLevelFromStart(graph, topologicalOrderIterator(graph));
+                for (Edge edge : removedEdges) {
+                    System.out.println("Edge removed for sorting: " + edge);
+                    edge.setIsBackward(true);
+                    graph.addEdge(edge.getSource(), edge.getTarget());
+                }
+
+                return levelNodeMap;
+            }
             default:
                 throw new IllegalArgumentException(ExceptionMessages.NoSuchAlgorithm.getMessage());
         }
@@ -229,8 +240,10 @@ public class GraphSort {
                 levelSet = new ArrayList<Node>();
                 level++;
                 levelsMap.put(level, levelSet);
-                if (nextNode != null)
+                if (nextNode != null) {
                     levelSet.add(nextNode);
+                    nextNode.setLevel(level);
+                }
                 nextLevel = false;
             }
             nextNode = graphIterator.next();
@@ -247,6 +260,7 @@ public class GraphSort {
             }
             if (!nextLevel) {
                 levelSet.add(nextNode);
+                nextNode.setLevel(level);
             }
         }
         //Last level
@@ -255,10 +269,124 @@ public class GraphSort {
             level++;
             levelsMap.put(level, levelSet);
             levelSet.add(nextNode);
+            nextNode.setLevel(level);
         }
 
 
         return levelsMap;
     }
+
+    public static boolean cycleExists(Graph graph) {
+        CycleDetector cycleDetector = new CycleDetector(graph.getJgraph());
+        return cycleDetector.detectCycles();
+    }
+
+    /**
+     * Returns the first found edge between given node and any other nodes from
+     * the set of nodes.
+     *
+     * @param node  node for which an edge should be found
+     * @param set   set of nodes to search
+     * @param graph Graph containing the node set
+     * @return edge from given node to any node from the set; or null of no such edge exists
+     */
+    private static Edge findOutgoingEdge(Node node, Set<Node> set, Graph graph) {
+        Edge edge = null;
+        for (Node setNode : set) {
+            if ((edge = graph.getEdge(node, setNode)) != null)
+                return edge;
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first found edge between given node and any other nodes from
+     * the set of nodes, excluding the nodeToExclude node.
+     *
+     * @param node          node for which an edge should be found
+     * @param set           set of nodes to search
+     * @param graph         Graph containing the node set
+     * @param nodeToExclude node to be excluded from the set
+     * @return edge from given node to any node from the set; or null of no such edge exists
+     */
+    private static Edge findOutgoingEdge(Node node, Set<Node> set, Node nodeToExclude, Graph graph) {
+        Edge edge = null;
+        for (Node setNode : set) {
+            if (!setNode.equals(nodeToExclude))
+                if ((edge = graph.getEdge(node, setNode)) != null)
+                    return edge;
+        }
+        return null;
+    }
+
+    private static ArrayList<List<Edge>> detectLoops(Graph graph) {
+        CycleDetector cycleDetector = new CycleDetector(graph.getJgraph());
+        Set<Node> vertexSet = cycleDetector.findCycles();
+
+        ArrayList<Node> nodesToVisit = new ArrayList<Node>();
+        nodesToVisit.addAll(vertexSet);
+        Iterator<Node> nodeIterator = vertexSet.iterator();
+
+        ArrayList<List<Edge>> loops = new ArrayList<List<Edge>>();
+        while (nodeIterator.hasNext()) {
+            Node node = nodeIterator.next();
+            if (nodesToVisit.contains(node)) {
+                Edge edge = findOutgoingEdge(node, vertexSet, graph);
+                DijkstraShortestPath dijkstraShortestPath = new DijkstraShortestPath<Node, Edge>(graph.getJgraph(),
+                        edge.getTarget(), edge.getSource());
+                List<Edge> edgeList = dijkstraShortestPath.getPathEdgeList();
+                if (edgeList != null) {
+                    edgeList.add(edge);
+                    loops.add(edgeList);
+                    for (Edge edge1 : edgeList) {
+                        nodesToVisit.remove(edge1.getSource());
+                        nodesToVisit.remove(edge1.getTarget());
+                        edge1.incrementLoopCount(1);
+                    }
+                }
+            }
+        }
+        return loops;
+    }
+
+    private static ArrayList<Edge> removeLoopEdges(Graph graph){
+        boolean cycleExists = cycleExists(graph);
+        int iteration = 0;
+        ArrayList<Edge> removedEdges = new ArrayList<Edge>();
+
+        while (cycleExists) {
+            System.out.println("Iteration " + iteration);
+
+            ArrayList<Edge> loopEdges = new ArrayList<Edge>();
+            ArrayList<List<Edge>> loops = detectLoops(graph);
+            for (List<Edge> edges : loops) {
+                for (Edge edge : edges)
+                    if (!loopEdges.contains(edge))
+                        loopEdges.add(edge);
+            }
+            Collections.sort(loopEdges, new Comparator<Edge>() {
+                @Override
+                public int compare(Edge o1, Edge o2) {
+                    return o2.getLoopCount() - o1.getLoopCount();
+                }
+            });
+
+            System.out.println(loopEdges);
+            Edge maxLoopEdge = loopEdges.get(0);
+            graph.removeEdge(maxLoopEdge);
+            removedEdges.add(maxLoopEdge);
+            System.out.println("Removed edge: " + maxLoopEdge);
+            cycleExists = cycleExists(graph);
+            iteration++;
+            graph.resetLoopCounts();
+        }
+        return removedEdges;
+    }
+
+    public static void main(String[] args) {
+        Graph graph = GraphTestCases.doubleSourceManyLoopsDCG();
+        System.out.println(graph);
+    }
+
 
 }
