@@ -117,7 +117,7 @@ public class GraphTest {
 
     @Test
     public void testGetNodesList() throws Exception {
-        Collection<Node> nodes = graph.getNodesList();
+        Collection<Node> nodes = graph.getNodes();
         assert graph.getOrder() == nodes.size();
     }
 
@@ -149,12 +149,12 @@ public class GraphTest {
     @Test
     public void testGetChildNodes() throws Exception {
         Graph dsDAG = GraphTestCases.doubleSourceDAG();
-        for (Node parentNode : dsDAG.getNodesList()){
+        for (Node parentNode : dsDAG.getNodes()){
             ArrayList<Node> childNodes = dsDAG.getChildNodes(parentNode);
             for (Node childNode : childNodes){
                 //Assert that there is an edge between parentNode and each child node
                 assertTrue(dsDAG.containsEdge(parentNode, childNode));
-                for (Node node : dsDAG.getNodesList()){
+                for (Node node : dsDAG.getNodes()){
                     //Assert that there is no other node in the graph to which there is an edge from the parent node
                     if (!childNodes.contains(node))
                         assertFalse(dsDAG.containsEdge(parentNode, node));
@@ -166,12 +166,12 @@ public class GraphTest {
     @Test
     public void testGetParentNodes() throws Exception {
         Graph dsDAG = GraphTestCases.doubleSourceDAG();
-        for (Node childNode : dsDAG.getNodesList()){
+        for (Node childNode : dsDAG.getNodes()){
             ArrayList<Node> parentNodes = dsDAG.getParentNodes(childNode);
             for (Node parentNode : parentNodes){
                 //Assert that there is an edge between each parent node and the childNode
                 assertTrue(dsDAG.containsEdge(parentNode, childNode));
-                for (Node node : dsDAG.getNodesList()){
+                for (Node node : dsDAG.getNodes()){
                     //Assert that there is no other node in the graph from which there is an edge to the child node
                     if (!parentNodes.contains(node))
                         assertFalse(dsDAG.containsEdge(node, childNode));

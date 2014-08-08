@@ -190,7 +190,7 @@ public class Graph {
      *
      * @return list of Nodes
      */
-    public Collection<Node> getNodesList() {
+    public Collection<Node> getNodes() {
         return nodes.values();
     }
 

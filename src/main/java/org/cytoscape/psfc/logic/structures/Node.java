@@ -2,6 +2,8 @@ package org.cytoscape.psfc.logic.structures;
 
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
+import java.util.TreeMap;
+
 /**
  * PUBLIC CLASS Node
  * The Node class represents a node in the graph.
@@ -15,10 +17,11 @@ import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 public class Node {
 
     private int ID = -1;
-    private double value;
+    private double value = 1;
     private String name = "";
-    private int level;
+    private int level = 1;
     private static String defaultValue = "1";
+    private TreeMap<Integer, Double> signals = new TreeMap<Integer, Double>();
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
@@ -53,7 +56,8 @@ public class Node {
     }
 
     public void setValue(double value) {
-        this.value = value;
+        if (!Double.isNaN(value))
+            this.value = value;
     }
 
     public int getID() {
@@ -70,7 +74,6 @@ public class Node {
     }
 
 
-
     @Override
     public boolean equals(Object o) {
         if (o instanceof Node) {
@@ -79,12 +82,41 @@ public class Node {
         }
         return false;
     }
+
     @Override
     public String toString() {
         return "Node{" +
                 "ID=" + ID + "," +
+                "name=" + name + "," +
                 "value=" + value + "," +
-                "name=" + name +
+                "level=" + level + "," +
+                "signals=" + signals.toString() +
                 "}\n";
+    }
+
+    public int getLevel() {
+        return level;
+    }
+
+    public void setLevel(int level) {
+        if (level >= 0)
+            this.level = level;
+    }
+
+    public void setSignal(double signal, int iteration) {
+        if(!Double.isNaN(signal))
+            signals.put(iteration, signal);
+    }
+
+    public double getSignal(int iteration) {
+        return signals.get(iteration);
+    }
+
+    /**
+     * Returns the last signal value in the signals map.
+     * @return
+     */
+    public double getSignal() {
+        return signals.lastEntry().getValue();
     }
 }

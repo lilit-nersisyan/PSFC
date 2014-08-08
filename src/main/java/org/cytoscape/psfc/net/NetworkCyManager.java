@@ -3,6 +3,7 @@ package org.cytoscape.psfc.net;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
+import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.view.model.CyNetworkView;
@@ -88,6 +89,47 @@ public class NetworkCyManager {
         }
     }
 
+
+    /**
+     * Populate the CyTable with attributes of given attribute name from given
+     * <code>CyEdge</code> : attribute map.
+     * <p>
+     * If an attribute column with such name
+     * does not exist in the <code>CyTable</code>, it will be created. If it exists and its type
+     * does not match the attribute type given, an Exception will be returned.
+     * If the key type of the map is not <code>CyEdge</code>, an Exception is returned.
+     * Otherwise, rows for each of the <code>CyEdge</code>in the map will be populated with
+     * values from the map. If a CyEdge does not exist in the given CyNetwork this edge will be skipped.
+     * </p>
+     *
+     * @param cyNetwork          CyNetwork containing the CyEdges to be mapped.
+     * @param cyEdgeAttributeMap Map containing the CyEdges and their attribute values.
+     * @param attrName           the name of the attribute column
+     * @param attrType           the type of the attribute
+     */
+    public static void setEdgeAttributesFromMap(CyNetwork cyNetwork,
+                                                Map cyEdgeAttributeMap,
+                                                String attrName, Class<?> attrType) throws Exception {
+        if (cyEdgeAttributeMap.isEmpty())
+            throw new Exception(ExceptionMessages.EmptyMap.getMessage());
+        CyTable edgeTable = cyNetwork.getDefaultEdgeTable();
+
+        NetworkCyManager.getOrCreateAttributeColumn(edgeTable, attrName, attrType);
+
+        for (Object obj : cyEdgeAttributeMap.keySet()) {
+            if (obj instanceof CyEdge)
+                break;
+            else
+                throw new Exception(ExceptionMessages.NotCyEdgeKeyType.getMessage());
+        }
+        CyEdge cyEdge;
+        for (Object obj : cyEdgeAttributeMap.keySet()) {
+            cyEdge = (CyEdge) obj;
+            CyRow row = edgeTable.getRow(cyEdge.getSUID());
+            row.set(attrName, cyEdgeAttributeMap.get(cyEdge));
+        }
+    }
+
     /**
      * Return first of all the views of the given network, or create one if no view for the network exists.
      *
@@ -140,4 +182,28 @@ public class NetworkCyManager {
         }
         return nodeDoubleMap;
     }
+
+    public static HashMap<Edge, Double> convertCyEdgeDouble2EdgeDoubleMap
+            (Graph graph, HashMap<CyEdge, Double> cyEdgeWeightMap) {
+        HashMap<Edge, Double> map = new HashMap<Edge, Double>();
+        for (CyEdge cyEdge : cyEdgeWeightMap.keySet()) {
+            CyNode cySource = cyEdge.getSource();
+            CyNode cyTarget = cyEdge.getTarget();
+            Node source = graph.getNode(cySource);
+            Node target = graph.getNode(cyTarget);
+            if (source != null && target != null)
+                map.put(graph.getEdge(source, target), cyEdgeWeightMap.get(cyEdge));
+        }
+        return map;
+    }
+
+    public static CyEdge getCyEdge(CyNetwork network, CyNode cyNode, CyNode cyTarget) {
+        for (CyEdge cyEdge : network.getEdgeList()) {
+            if (cyEdge.getSource().equals(cyNode) && cyEdge.getTarget().equals(cyTarget))
+                return cyEdge;
+        }
+        return null;
+    }
+
+
 }

@@ -11,3 +11,4 @@ multipleSignalProcessingRule=N/A
 edgeRankAttribute=N/A
 edgeWeightsAttribute=N/A
 signalProcessingOrder=N/A
+NodeDefaultValue=1.0

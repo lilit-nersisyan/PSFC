@@ -13,6 +13,7 @@ public enum ExceptionMessages {
     NullNetwork("The network was null"),
     NullCyNode("The CyNode was null"),
     NotCyNodeKeyType("The key type should be of class CyNode"),
+    NotCyEdgeKeyType("The key type should be of class CyEdge"),
     ConflictingAttributeType("The attribute type does not match existing CyColumn"),
     NoSuchAlgorithm("No algorithm with specified argument exists"),
     NullConfigFile("Null configuration file"),

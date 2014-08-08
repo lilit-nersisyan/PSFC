@@ -11,6 +11,8 @@ import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.actions.SortNetworkAction;
+import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
+import org.cytoscape.psfc.gui.enums.ENodeDataProps;
 import org.cytoscape.psfc.properties.EpsfcProps;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
@@ -201,6 +203,21 @@ public class PSFCActivator extends AbstractCyActivator {
                     break;
                 }
             }
+            if (isPropsFileValid)
+                for (ENodeDataProps props : ENodeDataProps.values()) {
+                    if (psfcProps.getProperty(props.getName()) == null) {
+                        isPropsFileValid = false;
+                        break;
+                    }
+                }
+            if (isPropsFileValid)
+                for (EMultiSignalProps props : EMultiSignalProps.values()) {
+                    if (psfcProps.getProperty(props.getName()) == null) {
+                        isPropsFileValid = false;
+                        break;
+                    }
+                }
+
 
 
         } else

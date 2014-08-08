@@ -24,7 +24,6 @@ public class NodeTest {
     @Test
     public void testConstructorID(){
         assert node.getID() == index;
-        assert node.getValue() == 0.0;
     }
 
     @Test
