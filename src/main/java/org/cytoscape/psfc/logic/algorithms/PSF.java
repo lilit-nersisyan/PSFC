@@ -2,8 +2,6 @@ package org.cytoscape.psfc.logic.algorithms;
 
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
-import de.congrace.exp4j.UnknownFunctionException;
-import de.congrace.exp4j.UnparsableExpressionException;
 import org.apache.log4j.Logger;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
 import org.cytoscape.psfc.gui.enums.ENodeDataProps;
@@ -11,7 +9,6 @@ import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 
-import javax.script.ScriptException;
 import java.util.*;
 
 /**
@@ -398,10 +395,9 @@ public class PSF {
         }
 
         private double updateScoreBySimpleRule(double source, double target, String edgeType)
-                throws ScriptException, UnparsableExpressionException, UnknownFunctionException {
+                throws Exception {
             if (!edgeTypeRuleMap.containsKey(edgeType)) {
-                logger.debug("No rule found for edge type " + edgeType);
-                return 0;
+                throw new Exception("No rule found for edge type " + edgeType);
             }
             String rule = edgeTypeRuleMap.get(edgeType);
             Calculable calculable = new ExpressionBuilder(rule)

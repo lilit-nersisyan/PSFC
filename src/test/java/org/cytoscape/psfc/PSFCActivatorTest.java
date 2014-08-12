@@ -12,6 +12,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 
@@ -30,6 +31,7 @@ public final class PSFCActivatorTest {
     public static BundleContext bundleContext = new FakeBundleContext(
             CySwingApplication.class,
             DialogTaskManager.class,
+            SynchronousTaskManager.class,
             CySessionManager.class,
             CyNetworkFactory.class,
             CyNetworkManager.class,

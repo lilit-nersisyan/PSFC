@@ -21,6 +21,7 @@ import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
+import org.cytoscape.work.SynchronousTaskManager;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,7 @@ import java.util.Scanner;
 public class PSFCActivator extends AbstractCyActivator {
     public static CySwingApplication cytoscapeDesktopService;
     public static DialogTaskManager taskManager;
+    public static SynchronousTaskManager synchTaskManager;
     public static CySessionManager cySessionManager;
     public static CyNetworkFactory networkFactory;
     public static CyNetworkViewFactory networkViewFactory;
@@ -60,12 +62,35 @@ public class PSFCActivator extends AbstractCyActivator {
     private static Properties psfcProps = null;
     private static File psfcPropsFile = null;
     private static String psfcPropsFileName = "psfc.props";
+    private static String aboutText;
+    private static String aboutFileName = "about.txt";
+
+    public static String getAboutText() {
+        if (aboutText == null) {
+            aboutText = "";
+            ClassLoader classLoader = PSFCActivator.class.getClassLoader();
+            InputStream inputStream = classLoader.getResourceAsStream(aboutFileName);
+            Reader reader = new InputStreamReader(inputStream);
+            StringBuilder stringBuilder = new StringBuilder();
+            char[] chars = new char[1024];
+            try {
+                while ((reader.read(chars) > 0)){
+                    stringBuilder.append(chars);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            aboutText = stringBuilder.toString();
+        }
+        return aboutText;
+    }
 
 
     @Override
     public void start(BundleContext bc) throws Exception {
         cytoscapeDesktopService = getService(bc, CySwingApplication.class);
         taskManager = getService(bc, DialogTaskManager.class);
+        synchTaskManager = getService(bc, SynchronousTaskManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
         networkFactory = getService(bc, CyNetworkFactory.class);
         networkViewFactory = getService(bc, CyNetworkViewFactory.class);
@@ -89,6 +114,7 @@ public class PSFCActivator extends AbstractCyActivator {
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
         registerService(bc, taskManager, DialogTaskManager.class, new Properties());
+        registerService(bc, synchTaskManager, SynchronousTaskManager.class, new Properties());
         registerService(bc, cySessionManager, CySessionManager.class, new Properties());
         registerService(bc, networkFactory, CyNetworkFactory.class, new Properties());
         registerService(bc, networkViewFactory, CyNetworkViewFactory.class, new Properties());

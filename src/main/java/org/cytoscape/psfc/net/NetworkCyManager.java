@@ -2,16 +2,21 @@ package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.view.model.CyNetworkView;
+import org.cytoscape.view.model.View;
+import org.cytoscape.view.presentation.property.BasicVisualLexicon;
+import org.cytoscape.view.vizmap.VisualStyle;
+import org.cytoscape.view.vizmap.mappings.BoundaryRangeValues;
+import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+import javax.swing.*;
+import java.awt.*;
+import java.util.*;
 
 /**
  * PUBLIC CLASS NetworkManager
@@ -203,6 +208,70 @@ public class NetworkCyManager {
                 return cyEdge;
         }
         return null;
+    }
+
+    public static void visualizeNodeSignals(CyNetwork network, CyColumn nodeSignalColumn,
+                                            double minSignal, double maxSignal) throws Exception {
+        ContinuousMapping<Double, Paint> nodeColorMapping = null;
+        try {
+            nodeColorMapping = (ContinuousMapping<Double, Paint>) PSFCActivator.vmfFactoryC.createVisualMappingFunction
+                    (nodeSignalColumn.getName(), Double.class, BasicVisualLexicon.NODE_FILL_COLOR);
+        } catch (Exception e) {
+            throw new Exception(nodeSignalColumn.getName() + " should be of type " + Double.class.getName());
+        }
+
+        BoundaryRangeValues<Paint> brvMin = new BoundaryRangeValues<Paint>(Color.WHITE, Color.YELLOW, Color.GREEN);
+        nodeColorMapping.addPoint(minSignal, brvMin);
+        BoundaryRangeValues<Paint> brvMax = new BoundaryRangeValues<Paint>(Color.GREEN, Color.PINK, Color.RED);
+        nodeColorMapping.addPoint(maxSignal, brvMax);
+
+        VisualStyle visualStyle = PSFCActivator.visualStyleFactory.createVisualStyle("psfc_vs");
+        Set<VisualStyle> visualStyles = PSFCActivator.visualMappingManager.getAllVisualStyles();
+
+        boolean isVisualStylePresent = false;
+        for (VisualStyle vs : visualStyles) {
+            if (vs.getTitle().equals(visualStyle.getTitle())) {
+                isVisualStylePresent = true;
+                visualStyle = vs;
+            }
+        }
+        if (!isVisualStylePresent)
+            PSFCActivator.visualMappingManager.addVisualStyle(visualStyle);
+
+        CyNetworkView networkView = getNetworkView(network);
+        for (View<CyNode> nodeView : networkView.getNodeViews()) {
+            nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
+        }
+
+        visualStyle.addVisualMappingFunction(nodeColorMapping);
+        visualStyle.apply(getNetworkView(network));
+        getNetworkView(network).updateView();
+    }
+
+    public static void playFlow(CyNetwork network, final PSFCPanel psfcPanel) {
+        TreeMap<Integer, Thread> priorityThreadMap = new TreeMap<Integer, Thread>();
+
+        final JSlider jsl_levels = psfcPanel.getJsl_levels();
+        for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++) {
+            final int levelf = level;
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    jsl_levels.setValue(levelf);
+                }
+            });
+            priorityThreadMap.put(level, thread);
+
+        }
+        for (int level : priorityThreadMap.keySet()) {
+            try {
+                priorityThreadMap.get(level).start();
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Visualization level " + level);
+        }
     }
 
 

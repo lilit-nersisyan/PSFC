@@ -3,6 +3,7 @@ package org.cytoscape.psfc.gui.actions;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
@@ -39,6 +40,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
     private final Properties nodeDataProps;
     private final Properties multiSignalProps;
+    private final PSFCPanel psfcPanel;
     private CyNetwork network;
     private CyColumn edgeTypeColumn;
     private CyColumn nodeDataColumn;
@@ -49,6 +51,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private String networkName;
     private JSlider jsl_levels;
 
+    public static final String PSFC_SIGNAL = "psfc.signal_";
+
     public CalculateScoreFlowAction(CyNetwork network,
                                     CyColumn edgeTypeColumn,
                                     CyColumn nodeDataColumn,
@@ -57,7 +61,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     File ruleConfigFile,
                                     Properties nodeDataProperties,
                                     Properties multiSignalProps,
-                                    JSlider jsl_levels) {
+                                    PSFCPanel psfcPanel) {
         super("Calculate score flow");
 
         this.network = network;
@@ -68,7 +72,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.ruleConfigFile = ruleConfigFile;
         this.nodeDataProps = nodeDataProperties;
         this.multiSignalProps = multiSignalProps;
-        this.jsl_levels = jsl_levels;
+        this.psfcPanel = psfcPanel;
 
         this.networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
         this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + ".xls");
@@ -180,8 +184,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 } catch (Exception e) {
                     PSFCActivator.getLogger().error("Error occurred while flow score calculation. Reason: "
                             + e.getMessage(), e);
-                    throw new Exception("Error occurred while flow score calculation. See PSFC log file at " +
-                            PSFCActivator.getPSFCDir() + " for details");
+                    throw new Exception(e.getMessage(), e);
                 }
                 taskMonitor.setProgress(0.7);
                 PSFCActivator.getLogger().debug("Pathway flow signals successfully updated");
@@ -264,7 +267,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 try {
                     for (int level : levelCyNodeScoreMap.keySet()) {
                         NetworkCyManager.setNodeAttributesFromMap(network,
-                                levelCyNodeScoreMap.get(level), "psfc.score_" + level, Double.class);
+                                levelCyNodeScoreMap.get(level), PSFC_SIGNAL + level, Double.class);
                     }
                     PSFCActivator.getLogger().debug("Mapped CyNode score values to Cytoscape attributes");
                 } catch (Exception e) {
@@ -287,11 +290,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 }
 
                 // Set JSlider jsl_levels
-                jsl_levels.setMinimum(0);
-                jsl_levels.setMaximum(levelNodeSignalMap.size());
-                jsl_levels.setEnabled(true);
-                jsl_levels.setPaintLabels(true);
-
+                psfcPanel.setVisualizationComoponents(network, levelCyNodeScoreMap);
 
                 taskMonitor.setStatusMessage("Flow calculation task complete");
                 taskMonitor.setProgress(1);
