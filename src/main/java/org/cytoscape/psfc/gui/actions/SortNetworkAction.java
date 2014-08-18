@@ -25,6 +25,9 @@ import java.util.*;
 
 /**
  * PUBLIC CLASS SortCurrentNetworkAction
+ * Calls SortNetworkTask, which converts given network to a Graph,
+ * performs a call to GraphSort.sort(...) method with with given algorithm,
+ * and applies sorted network layout in Cytoscape.
  */
 public class SortNetworkAction extends AbstractCyAction {
     private CyNetwork network;
@@ -133,11 +136,6 @@ public class SortNetworkAction extends AbstractCyAction {
             }
         }
 
-        @Override
-        public void cancel() {
-            super.cancel();
-        }
-
         private void assignNodeCoordinates(TreeMap<Integer, ArrayList<CyNode>> levelCyNodeMap, CyNetworkView cyNetworkView)
                 throws Exception {
             HashMap<CyNode, Double> nodeWidthMap = new HashMap<CyNode, Double>();
@@ -188,7 +186,6 @@ public class SortNetworkAction extends AbstractCyAction {
             }
 
             //Assing node Y coordinates
-
             List sortedEntryList = null;
             for (int level : levelCyNodeMap.descendingKeySet()) {
                 ArrayList<CyNode> cyNodes = levelCyNodeMap.get(level);

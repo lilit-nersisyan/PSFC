@@ -4,7 +4,6 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
-import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.PSF;
@@ -18,14 +17,12 @@ import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
 
-import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -33,7 +30,8 @@ import java.util.Properties;
 /**
  * PUBLIC CLASS CalculateScoreFlowAction
  * <p/>
- * Initiates the task for calculating score flows of the network based on available scores,
+ * Processes given network and its attributes, instantiates a new PSF object and
+ * initiates the task for calculating score flows of the network based on available scores,
  * rules and topology.
  */
 public class CalculateScoreFlowAction extends AbstractCyAction {
@@ -49,7 +47,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private File ruleConfigFile;
     private File scoreBackupFile;
     private String networkName;
-    private JSlider jsl_levels;
 
     public static final String PSFC_SIGNAL = "psfc.signal_";
 
@@ -77,7 +74,10 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
         this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + ".xls");
         try {
-            scoreBackupFile.createNewFile();
+            boolean success = scoreBackupFile.createNewFile();
+            if (!success){
+                PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
+            }
         } catch (IOException e) {
             PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath(), e);
         }
@@ -162,6 +162,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 }
             }
 
+            //Instantiate new PSF class with generated graph, and perform pathway flow calculation
             try {
                 PSF psf = new PSF(graph, RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
                         PSFCActivator.getLogger());
@@ -190,10 +191,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 PSFCActivator.getLogger().debug("Pathway flow signals successfully updated");
 
                 //Process output signals for exporting
+
                 //Process node signals
                 HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap = psf.getLevelNodeSignalMap(0);
-
                 //A separate column of score attributes for each level will be kept in this map
+
                 taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
                 HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap = new HashMap<Integer, HashMap<CyNode, Double>>();
                 try {
@@ -220,7 +222,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     + score + "\n");
                         }
                         prevNodeMap = currentLevelCyNodeScoreMap;
-
                     }
                     writer.close();
                     PSFCActivator.getLogger().debug("Written flow scores to file "
@@ -235,7 +236,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
                 //Process edge signals
                 HashMap<Integer, HashMap<Edge, Double>> levelEdgeSignalMap = psf.getLevelEdgeSignalMap(0);
-
                 //A separate column of score attributes for each level will be kept in this map
                 HashMap<Integer, HashMap<CyEdge, Double>> levelCyEdgeScoreMap = new HashMap<Integer, HashMap<CyEdge, Double>>();
                 HashMap<CyEdge, Double> prevEdgeMap = new HashMap<CyEdge, Double>();
@@ -289,7 +289,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                             + e.getMessage(), e);
                 }
 
-                // Set JSlider jsl_levels
+                // Trigger psfcPanel to update Flow Visualization Panel
                 psfcPanel.setVisualizationComoponents(network, levelCyNodeScoreMap);
 
                 taskMonitor.setStatusMessage("Flow calculation task complete");
@@ -301,12 +301,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 System.gc();
             }
         }
-
-        @Override
-        public void cancel() {
-            super.cancel();
-        }
-
 
         private HashMap<CyNode, Integer> getCyNodeLevelMap() {
             HashMap<CyNode, Integer> cyNodeLevelMap = new HashMap<CyNode, Integer>();
@@ -320,53 +314,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             return cyNodeLevelMap;
         }
 
-        private HashMap<Integer, ArrayList<CyNode>> getLevelCyNodesMap() {
-            HashMap<Integer, ArrayList<CyNode>> levelCyNodesMap = new HashMap<Integer, ArrayList<CyNode>>();
-            String levelAttr = "Level";
-            for (Object cyNodeObj : network.getNodeList()) {
-                CyNode cyNode = (CyNode) cyNodeObj;
-                CyRow row = network.getDefaultNodeTable().getRow(cyNode.getSUID());
-                int level = row.get(levelAttr, Integer.class);
-                if (!levelCyNodesMap.containsKey(level))
-                    levelCyNodesMap.put(level, new ArrayList<CyNode>());
-                levelCyNodesMap.get(level).add(cyNode);
-            }
-            return levelCyNodesMap;
-        }
-
-        private HashMap<Integer, ArrayList<Node>> getLevelNodesMap(Graph graph) throws Exception {
-            HashMap<Integer, ArrayList<Node>> levelNodesMap = new HashMap<Integer, ArrayList<Node>>();
-            String levelAttr = EColumnNames.Level.getName();
-            for (Object cyNodeObj : network.getNodeList()) {
-                CyNode cyNode = (CyNode) cyNodeObj;
-                CyRow row = null;
-                try {
-                    row = network.getDefaultNodeTable().getRow(cyNode.getSUID());
-                } catch (Exception e) {
-                    throw new Exception("Exception while retrieving CyRow for node "
-                            + cyNode.getSUID() + ". Reason: "
-                            + e.getMessage(), e);
-                }
-                int level = row.get(levelAttr, Integer.class);
-                if (!levelNodesMap.containsKey(level))
-                    levelNodesMap.put(level, new ArrayList<Node>());
-                levelNodesMap.get(level).add(graph.getNode(cyNode));
-            }
-            return levelNodesMap;
-        }
-
-        private HashMap<CyEdge, String> getCyEdgeTypeMap() {
-            HashMap<CyEdge, String> cyEdgeTypeMap = new HashMap<CyEdge, String>();
-            String edgeTypeAttr = edgeTypeColumn.getName();
-            for (Object cyEdgeObj : network.getEdgeList()) {
-                CyEdge cyEdge = (CyEdge) cyEdgeObj;
-                CyRow row = network.getDefaultEdgeTable().getRow(cyEdge.getSUID());
-                String edgeType = row.get(edgeTypeAttr, String.class);
-                cyEdgeTypeMap.put(cyEdge, edgeType);
-            }
-            return cyEdgeTypeMap;
-        }
-
         private HashMap<CyNode, Double> getCyNodeDataMap() throws Exception {
             HashMap<CyNode, Double> map = new HashMap<CyNode, Double>();
             String attr = nodeDataColumn.getName();
@@ -377,7 +324,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 try {
                     obj = row.get(attr, nodeDataColumn.getType());
                 } catch (Exception e) {
-                    throw e;
+                    throw new Exception("Error while retrieving node data from row " + row.toString()
+                            + ".Reason: " + e.getMessage());
                 }
                 Double data = null;
                 if (obj instanceof Double)

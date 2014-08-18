@@ -327,4 +327,10 @@ public class PSFCActivator extends AbstractCyActivator {
             initProperties();
         return psfcPropsFile;
     }
+
+    public static File getPsfcLogFile(){
+        if (getLogger() != null)
+            return logFile;
+        return null;
+    }
 }

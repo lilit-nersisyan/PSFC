@@ -121,8 +121,6 @@ public class PSF {
      */
     private class State {
         int iteration;
-        HashMap<Node, Double> nodeSignalMap = new HashMap<Node, Double>();
-        HashMap<Edge, Double> edgeSignalMap = new HashMap<Edge, Double>();
         HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap = new HashMap<Integer, HashMap<Node, Double>>();
         int splitOn;
         int splitRule;

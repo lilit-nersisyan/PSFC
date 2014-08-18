@@ -21,16 +21,19 @@ import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 
 /**
- * Created by User on 8/11/2014.
+ * PUBLIC CLASS VisualizeFlowAction
+ * Initializes an iterator of ColorNodesTask,
+ * which performs node color visual mapping based on node signals.
+ *
  */
 public class VisualizeFlowAction extends AbstractCyAction {
     private final double minSignal;
     private final double maxSignal;
     private final PSFCPanel psfcPanel;
     private CyNetwork network;
-    private boolean done = false;
-    private ColorNodesTask colorNodesTask = null;
     private ArrayList<Integer> levels;
+    private Color minColor = Color.decode("#40E0D0");
+    private Color maxColor = Color.decode("#000000");
 
     public VisualizeFlowAction(CyNetwork network, double minSignal,
                                double maxSignal, ArrayList<Integer> levels,
@@ -47,7 +50,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
     public void actionPerformed(ActionEvent e) {
         TaskIterator taskIterator = new TaskIterator();
         for (int level : levels) {
-            colorNodesTask = new ColorNodesTask(level);
+            ColorNodesTask colorNodesTask = new ColorNodesTask(level);
             taskIterator.append(colorNodesTask);
         }
         PSFCActivator.taskManager.execute(taskIterator);
@@ -85,8 +88,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
                     throw new Exception(nodeSignalColumn.getName() + " should be of type " + Double.class.getName());
                 }
 
-                Color minColor = Color.decode("#669900");
-                Color maxColor = Color.decode("#FF0000");
+
                 BoundaryRangeValues<Paint> brvMin = new BoundaryRangeValues<Paint>(Color.WHITE, minColor, minColor);
 
                 nodeColorMapping.addPoint(minSignal, brvMin);
@@ -96,12 +98,10 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 VisualStyle visualStyle = PSFCActivator.visualMappingManager.getVisualStyle(NetworkCyManager.getNetworkView(network));
 
                 CyNetworkView networkView = NetworkCyManager.getNetworkView(network);
-                CyTable nodeTable = network.getDefaultNodeTable();
                 for (CyNode cyNode : network.getNodeList()){
                     View<CyNode> nodeView = networkView.getNodeView(cyNode);
                     nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
                 }
-
 
                 visualStyle.addVisualMappingFunction(nodeColorMapping);
                 visualStyle.apply(networkView);

@@ -12,10 +12,6 @@ import org.cytoscape.psfc.gui.enums.ExceptionMessages;
  * Unresolved: Should it keep the reference of the Graph it belongs to?
  */
 public class Edge {
-    private int ID;
-    public static int ACTIVATION = 1;
-    public static int INHIBITION = 0;
-
     private Node source;
     private Node target;
     private String edgeType = "";
@@ -51,8 +47,8 @@ public class Edge {
     @Override
     public String toString() {
         return "Edge{" +
-                "source=" + source.getID() +
-                "target=" + target.getID() + "," +
+                "source: ID=" + source.getID() + "; SUID=" + source.getID() +
+                "target: ID=" + + target.getID() + "; name=" + target.getName() +
                 "type='" + edgeType + '\'' + "," +
                 "weight='" + weight + '\'' + "," +
                 "rank='" + rank + '\'' + "," +
