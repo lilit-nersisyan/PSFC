@@ -97,16 +97,19 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 nodeColorMapping.addPoint(maxSignal, brvMax);
                 VisualStyle visualStyle = PSFCActivator.visualMappingManager.getVisualStyle(NetworkCyManager.getNetworkView(network));
 
-                CyNetworkView networkView = NetworkCyManager.getNetworkView(network);
-                for (CyNode cyNode : network.getNodeList()){
-                    View<CyNode> nodeView = networkView.getNodeView(cyNode);
-                    nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
-                }
+                ArrayList<CyNetworkView> networkViews = new ArrayList<CyNetworkView>();
+                networkViews.addAll(NetworkCyManager.getNetworkViews(network));
+                for (CyNetworkView networkView : networkViews) {
+                    for (CyNode cyNode : network.getNodeList()) {
+                        View<CyNode> nodeView = networkView.getNodeView(cyNode);
+                        nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
+                    }
 
-                visualStyle.addVisualMappingFunction(nodeColorMapping);
-                visualStyle.apply(networkView);
-                networkView.updateView();
-                Thread.sleep(500);
+                    visualStyle.addVisualMappingFunction(nodeColorMapping);
+                    visualStyle.apply(networkView);
+                    networkView.updateView();
+                    Thread.sleep(500);
+                }
             }
         }
 

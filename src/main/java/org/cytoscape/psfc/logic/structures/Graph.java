@@ -426,4 +426,12 @@ public class Graph {
     }
 
 
+    public ArrayList<Node> getTargetNodes() {
+        ArrayList<Node> targetNodes = new ArrayList<Node>();
+        for (Node node : nodes.values()) {
+            if (getChildNodes(node).isEmpty())
+                targetNodes.add(node);
+        }
+        return targetNodes;
+    }
 }

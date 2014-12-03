@@ -87,6 +87,7 @@ public class PSF {
         logger.debug(graph.toString());
     }
 
+
     private void checkForConversion(State state) {
         converged = true; //temporary solution
     }
@@ -111,6 +112,10 @@ public class PSF {
         if (!states.containsKey(iteration))
             return null;
         return states.get(iteration).getLevelEdgeSignalMap();
+    }
+
+    public Graph getGraph() {
+        return graph;
     }
 
     /**
@@ -148,8 +153,6 @@ public class PSF {
                     processLevel(level);
                 }
             }
-
-
         }
 
         private void initNodeSignalsFromValues() {
