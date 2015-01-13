@@ -108,6 +108,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_refreshWeigths;
     private javax.swing.JButton jb_saveSettings;
     private javax.swing.JButton jb_showEdgeTypes;
+    private javax.swing.JButton jb_showNodeTypes;
     private javax.swing.JButton jb_showState;
     private javax.swing.JButton jb_sortNetwork;
     private javax.swing.JButton jb_userManual;
@@ -130,7 +131,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_multiInOutRules;
     private javax.swing.JLabel jl_multiSignalProcessing;
     private javax.swing.JLabel jl_multipleDataRule;
-    private javax.swing.JLabel jl_noOfSamplings;
+    private javax.swing.JLabel jl_network_and_attrs;
+    private javax.swing.JLabel jl_network_and_attrs1;
+    private javax.swing.JLabel jl_network_and_attrs2;
+    private javax.swing.JLabel jl_numOfSamplings;
     private javax.swing.JLabel jl_psfc;
     private javax.swing.JLabel jl_ruleConfigFile;
     private javax.swing.JLabel jl_ruleNameRuleConfigFileName;
@@ -142,12 +146,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_simpleRules;
     private javax.swing.JLabel jl_sortingAlgorithm;
     private javax.swing.JPanel jp_Data;
+    private javax.swing.JPanel jp_General;
     private javax.swing.JPanel jp_Help;
-    private javax.swing.JPanel jp_Network;
+    private javax.swing.JPanel jp_Options;
     private javax.swing.JPanel jp_Rules;
-    private javax.swing.JPanel jp_Stats;
+    private javax.swing.JPanel jp_algorithms;
     private javax.swing.JPanel jp_flowVisualization;
     private javax.swing.JPanel jp_multiInOutRulesPanel;
+    private javax.swing.JPanel jp_network_attrs;
+    private javax.swing.JPanel jp_significance;
     private javax.swing.JPanel jp_simpleRules;
     private javax.swing.JRadioButton jrb_FC;
     private javax.swing.JRadioButton jrb_GeneCentric;
@@ -186,20 +193,20 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     private void initComponents() {
         jtp_psfc = new javax.swing.JTabbedPane();
-        jp_Network = new javax.swing.JPanel();
-        jcb_sortingAlgorithm = new javax.swing.JComboBox();
-        jb_sortNetwork = new javax.swing.JButton();
-        jl_chooseNetwork = new javax.swing.JLabel();
+        jp_General = new javax.swing.JPanel();
+        jp_network_attrs = new javax.swing.JPanel();
+        jl_network_and_attrs = new javax.swing.JLabel();
         jcb_network = new javax.swing.JComboBox();
-        jl_sortingAlgorithm = new javax.swing.JLabel();
+        jl_chooseNetwork = new javax.swing.JLabel();
+        jb_refreshNetworks = new javax.swing.JButton();
         jl_selectEdgeTypeAttribute = new javax.swing.JLabel();
         jcb_edgeTypeAttribute = new javax.swing.JComboBox();
-        jb_showEdgeTypes = new javax.swing.JButton();
-        jl_selectNodeDataAttribute = new javax.swing.JLabel();
-        jcb_nodeDataAttribute = new javax.swing.JComboBox();
-        jb_refreshNetworks = new javax.swing.JButton();
         jb_refreshEdgeTypeAttrs = new javax.swing.JButton();
+        jb_showEdgeTypes = new javax.swing.JButton();
+        jcb_nodeDataAttribute = new javax.swing.JComboBox();
+        jl_selectNodeDataAttribute = new javax.swing.JLabel();
         jb_refreshNodeDataAttrs = new javax.swing.JButton();
+        jb_showNodeTypes = new javax.swing.JButton();
         jp_flowVisualization = new javax.swing.JPanel();
         jsl_levels = new javax.swing.JSlider();
         jl_flowVisualization = new javax.swing.JLabel();
@@ -207,19 +214,24 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_showState = new javax.swing.JButton();
         jl_level = new javax.swing.JLabel();
         jtxt_level = new javax.swing.JTextField();
-        jp_Data = new javax.swing.JPanel();
-        jl_dataMappingRules = new javax.swing.JLabel();
-        jl_dataType = new javax.swing.JLabel();
-        jrb_linear = new javax.swing.JRadioButton();
-        jrb_log = new javax.swing.JRadioButton();
-        jrb_logFC = new javax.swing.JRadioButton();
-        jrb_FC = new javax.swing.JRadioButton();
-        jl_defaultValue = new javax.swing.JLabel();
-        jtxt_defaultValue = new javax.swing.JTextField();
-        jl_multipleDataRule = new javax.swing.JLabel();
-        jrb_min = new javax.swing.JRadioButton();
-        jrb_max = new javax.swing.JRadioButton();
-        jrb_mean = new javax.swing.JRadioButton();
+        jb_saveSettings = new javax.swing.JButton();
+        jp_Options = new javax.swing.JPanel();
+        jp_significance = new javax.swing.JPanel();
+        jl_network_and_attrs1 = new javax.swing.JLabel();
+        jchb_CalculateSignificance = new javax.swing.JCheckBox();
+        jl_numOfSamplings = new javax.swing.JLabel();
+        jtxt_numOfSamplings = new javax.swing.JTextField();
+        jl_samplingType = new javax.swing.JLabel();
+        jrb_SampleCentric = new javax.swing.JRadioButton();
+        jrb_GeneCentric = new javax.swing.JRadioButton();
+        jb_GeneMatrixFile = new javax.swing.JButton();
+        jp_algorithms = new javax.swing.JPanel();
+        jl_network_and_attrs2 = new javax.swing.JLabel();
+        jl_sortingAlgorithm = new javax.swing.JLabel();
+        jcb_sortingAlgorithm = new javax.swing.JComboBox();
+        jb_sortNetwork = new javax.swing.JButton();
+        jb_Defaults = new javax.swing.JButton();
+        jb_SaveStatsSettings = new javax.swing.JButton();
         jp_Rules = new javax.swing.JPanel();
         jp_multiInOutRulesPanel = new javax.swing.JPanel();
         jl_multiInOutRules = new javax.swing.JLabel();
@@ -250,68 +262,39 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_chooseRuleNameRuleConfigFile = new javax.swing.JButton();
         jl_ruleConfigFile = new javax.swing.JLabel();
         jl_ruleNameRuleConfigFileName = new javax.swing.JLabel();
-        jp_Stats = new javax.swing.JPanel();
-        jl_noOfSamplings = new javax.swing.JLabel();
-        jtxt_numOfSamplings = new javax.swing.JTextField();
-        jl_samplingType = new javax.swing.JLabel();
-        jrb_SampleCentric = new javax.swing.JRadioButton();
-        jrb_GeneCentric = new javax.swing.JRadioButton();
-        jb_GeneMatrixFile = new javax.swing.JButton();
-        jb_Defaults = new javax.swing.JButton();
-        jb_SaveStatsSettings = new javax.swing.JButton();
-        jchb_CalculateSignificance = new javax.swing.JCheckBox();
+        jp_Data = new javax.swing.JPanel();
+        jl_dataMappingRules = new javax.swing.JLabel();
+        jl_dataType = new javax.swing.JLabel();
+        jrb_linear = new javax.swing.JRadioButton();
+        jrb_log = new javax.swing.JRadioButton();
+        jrb_logFC = new javax.swing.JRadioButton();
+        jrb_FC = new javax.swing.JRadioButton();
+        jl_defaultValue = new javax.swing.JLabel();
+        jtxt_defaultValue = new javax.swing.JTextField();
+        jl_multipleDataRule = new javax.swing.JLabel();
+        jrb_min = new javax.swing.JRadioButton();
+        jrb_max = new javax.swing.JRadioButton();
+        jrb_mean = new javax.swing.JRadioButton();
         jp_Help = new javax.swing.JPanel();
         jl_psfc = new javax.swing.JLabel();
         jb_projectWebPage = new javax.swing.JButton();
         jb_userManual = new javax.swing.JButton();
         jta_about = new javax.swing.JTextArea();
         jb_calculateFlow = new javax.swing.JButton();
-        jb_saveSettings = new javax.swing.JButton();
         jb_openLogFile = new javax.swing.JButton();
 
-        jp_Network.setPreferredSize(new java.awt.Dimension(400, 500));
+        jp_network_attrs.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jcb_sortingAlgorithm.setPreferredSize(new java.awt.Dimension(201, 20));
-        jcb_sortingAlgorithm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcb_sortingAlgorithmActionPerformed(evt);
-            }
-        });
-
-        jb_sortNetwork.setText("Sort");
-        jb_sortNetwork.setPreferredSize(new java.awt.Dimension(59, 20));
-        jb_sortNetwork.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_sortNetworkActionPerformed(evt);
-            }
-        });
-
-        jl_chooseNetwork.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_chooseNetwork.setText("Network");
+        jl_network_and_attrs.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_network_and_attrs.setForeground(new java.awt.Color(51, 102, 0));
+        jl_network_and_attrs.setText("Network and attributes");
 
         jcb_network.setToolTipText("");
         jcb_network.setPreferredSize(new java.awt.Dimension(201, 20));
 
-        jl_sortingAlgorithm.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_sortingAlgorithm.setText("Sorting algorithm");
-
-        jl_selectEdgeTypeAttribute.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_selectEdgeTypeAttribute.setText("Select Edge type attribute");
-
-        jcb_edgeTypeAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
-
-        jb_showEdgeTypes.setText("Show");
-        jb_showEdgeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
-        jb_showEdgeTypes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_showEdgeTypesActionPerformed(evt);
-            }
-        });
-
-        jl_selectNodeDataAttribute.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_selectNodeDataAttribute.setText("Select Node data attribute");
-
-        jcb_nodeDataAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
+        jl_chooseNetwork.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_chooseNetwork.setForeground(new java.awt.Color(102, 102, 102));
+        jl_chooseNetwork.setText("Network");
 
         jb_refreshNetworks.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNetworks.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -322,6 +305,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
+        jl_selectEdgeTypeAttribute.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_selectEdgeTypeAttribute.setForeground(new java.awt.Color(102, 102, 102));
+        jl_selectEdgeTypeAttribute.setText("Edge type attribute");
+
+        jcb_edgeTypeAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
+
         jb_refreshEdgeTypeAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
@@ -330,6 +319,20 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jb_refreshEdgeTypeAttrsActionPerformed(evt);
             }
         });
+
+        jb_showEdgeTypes.setText("Check");
+        jb_showEdgeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
+        jb_showEdgeTypes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_showEdgeTypesActionPerformed(evt);
+            }
+        });
+
+        jcb_nodeDataAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
+
+        jl_selectNodeDataAttribute.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_selectNodeDataAttribute.setForeground(new java.awt.Color(102, 102, 102));
+        jl_selectNodeDataAttribute.setText("Node data attribute");
 
         jb_refreshNodeDataAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
@@ -340,17 +343,85 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
+        jb_showNodeTypes.setText("Check");
+        jb_showNodeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
+        jb_showNodeTypes.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_showNodeTypesActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jp_network_attrsLayout = new javax.swing.GroupLayout(jp_network_attrs);
+        jp_network_attrs.setLayout(jp_network_attrsLayout);
+        jp_network_attrsLayout.setHorizontalGroup(
+                jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jl_chooseNetwork)
+                                        .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_showNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
+                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jp_network_attrsLayout.setVerticalGroup(
+                jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs)
+                                .addGap(12, 12, 12)
+                                .addComponent(jl_chooseNetwork)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jb_showNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         jp_flowVisualization.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jl_flowVisualization.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_flowVisualization.setForeground(new java.awt.Color(51, 153, 0));
+        jl_flowVisualization.setForeground(new java.awt.Color(51, 102, 0));
         jl_flowVisualization.setText("Flow visualization");
+        jl_flowVisualization.setMaximumSize(new java.awt.Dimension(145, 15));
 
         jb_playFlow.setText("Play flow");
 
         jb_showState.setText("Show state");
 
         jl_level.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_level.setForeground(new java.awt.Color(102, 102, 102));
         jl_level.setText("Level:");
 
         jtxt_level.setText("0");
@@ -367,24 +438,26 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_flowVisualization)
                                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
                                                 .addComponent(jl_level)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(jtxt_level, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
-                                                .addComponent(jsl_levels, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_showState))
-                                        .addComponent(jb_playFlow, javax.swing.GroupLayout.PREFERRED_SIZE, 182, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(18, Short.MAX_VALUE))
+                                                .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(jb_playFlow, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 182, Short.MAX_VALUE)
+                                                        .addComponent(jsl_levels, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jb_showState)))
+                                .addContainerGap())
+                        .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
+                                .addComponent(jl_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
         );
         jp_flowVisualizationLayout.setVerticalGroup(
                 jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addComponent(jl_flowVisualization)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jl_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jl_level)
                                         .addComponent(jtxt_level, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -392,208 +465,204 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jb_showState)
                                         .addComponent(jsl_levels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jb_playFlow)
-                                .addContainerGap(23, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
-        javax.swing.GroupLayout jp_NetworkLayout = new javax.swing.GroupLayout(jp_Network);
-        jp_Network.setLayout(jp_NetworkLayout);
-        jp_NetworkLayout.setHorizontalGroup(
-                jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_NetworkLayout.createSequentialGroup()
+        jb_saveSettings.setText("Save settings");
+
+        javax.swing.GroupLayout jp_GeneralLayout = new javax.swing.GroupLayout(jp_General);
+        jp_General.setLayout(jp_GeneralLayout);
+        jp_GeneralLayout.setHorizontalGroup(
+                jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_GeneralLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_chooseNetwork)
-                                        .addGroup(jp_NetworkLayout.createSequentialGroup()
-                                                .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jl_sortingAlgorithm)
-                                        .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jp_NetworkLayout.createSequentialGroup()
-                                                .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addGroup(jp_NetworkLayout.createSequentialGroup()
-                                                        .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                                .addGroup(jp_NetworkLayout.createSequentialGroup()
-                                                                        .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                                        .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                                .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                                                .addComponent(jb_sortNetwork, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                                                                .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))))
-                                .addContainerGap(19, Short.MAX_VALUE))
+                                .addGroup(jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jp_network_attrs, javax.swing.GroupLayout.DEFAULT_SIZE, 322, Short.MAX_VALUE)
+                                        .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_GeneralLayout.createSequentialGroup()
+                                                .addGap(0, 0, Short.MAX_VALUE)
+                                                .addComponent(jb_saveSettings)))
+                                .addContainerGap())
         );
-        jp_NetworkLayout.setVerticalGroup(
-                jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_NetworkLayout.createSequentialGroup()
+        jp_GeneralLayout.setVerticalGroup(
+                jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_GeneralLayout.createSequentialGroup()
+                                .addGap(5, 5, 5)
+                                .addComponent(jp_network_attrs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
+                                .addComponent(jp_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(38, 38, 38)
+                                .addComponent(jb_saveSettings)
+                                .addContainerGap())
+        );
+
+        jtp_psfc.addTab("General", jp_General);
+
+        jp_Options.setPreferredSize(new java.awt.Dimension(400, 500));
+
+        jp_significance.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jl_network_and_attrs1.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_network_and_attrs1.setForeground(new java.awt.Color(51, 102, 0));
+        jl_network_and_attrs1.setText("Significance calculation");
+
+        jchb_CalculateSignificance.setText("Calculate significance after calculating flow");
+
+        jl_numOfSamplings.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_numOfSamplings.setForeground(new java.awt.Color(102, 102, 102));
+        jl_numOfSamplings.setText("No. of samplings");
+
+        jtxt_numOfSamplings.setText("200");
+
+        jl_samplingType.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_samplingType.setForeground(new java.awt.Color(102, 102, 102));
+        jl_samplingType.setText("Sampling type");
+
+        jrb_SampleCentric.setText("Sample centric");
+
+        jrb_GeneCentric.setText("Gene centric");
+
+        jb_GeneMatrixFile.setText("Expr Matrix File");
+
+        javax.swing.GroupLayout jp_significanceLayout = new javax.swing.GroupLayout(jp_significance);
+        jp_significance.setLayout(jp_significanceLayout);
+        jp_significanceLayout.setHorizontalGroup(
+                jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs1)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jp_significanceLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jl_chooseNetwork)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
+                                .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jchb_CalculateSignificance)
+                                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                                .addComponent(jl_numOfSamplings)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jl_samplingType)
+                                        .addComponent(jrb_SampleCentric)
+                                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                                .addComponent(jrb_GeneCentric)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jb_GeneMatrixFile)))
+                                .addContainerGap())
+        );
+        jp_significanceLayout.setVerticalGroup(
+                jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jchb_CalculateSignificance)
+                                .addGap(13, 13, 13)
+                                .addComponent(jl_samplingType)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jrb_SampleCentric, javax.swing.GroupLayout.PREFERRED_SIZE, 18, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(1, 1, 1)
+                                .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jrb_GeneCentric)
+                                        .addComponent(jb_GeneMatrixFile))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jl_numOfSamplings)
+                                        .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(21, Short.MAX_VALUE))
+        );
+
+        jp_algorithms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jl_network_and_attrs2.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_network_and_attrs2.setForeground(new java.awt.Color(51, 102, 0));
+        jl_network_and_attrs2.setText("Algorithms");
+
+        jl_sortingAlgorithm.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_sortingAlgorithm.setForeground(new java.awt.Color(102, 102, 102));
+        jl_sortingAlgorithm.setText("Sorting algorithm");
+
+        jcb_sortingAlgorithm.setPreferredSize(new java.awt.Dimension(201, 20));
+        jcb_sortingAlgorithm.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jcb_sortingAlgorithmActionPerformed(evt);
+            }
+        });
+
+        jb_sortNetwork.setText("Sort");
+        jb_sortNetwork.setPreferredSize(new java.awt.Dimension(59, 20));
+        jb_sortNetwork.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jb_sortNetworkActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jp_algorithmsLayout = new javax.swing.GroupLayout(jp_algorithms);
+        jp_algorithms.setLayout(jp_algorithmsLayout);
+        jp_algorithmsLayout.setHorizontalGroup(
+                jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_algorithmsLayout.createSequentialGroup()
+                                .addGroup(jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jl_network_and_attrs2)
+                                        .addGroup(jp_algorithmsLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addGroup(jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jl_sortingAlgorithm))
+                                                .addGap(17, 17, 17)
+                                                .addComponent(jb_sortNetwork, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 20, Short.MAX_VALUE))
+        );
+        jp_algorithmsLayout.setVerticalGroup(
+                jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_algorithmsLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jl_sortingAlgorithm)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addGroup(jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_sortNetwork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_NetworkLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(26, 26, 26)
-                                .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(28, 28, 28))
+                                .addGap(0, 17, Short.MAX_VALUE))
         );
 
-        jtp_psfc.addTab("Network", jp_Network);
+        jb_Defaults.setText("Restore defaults");
 
-        jl_dataMappingRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_dataMappingRules.setText("Data mapping rules");
+        jb_SaveStatsSettings.setText("Save Settings");
 
-        jl_dataType.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_dataType.setText("Data type");
-
-        jrb_linear.setText("Linear");
-
-        jrb_log.setText("Log");
-        jrb_log.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_logActionPerformed(evt);
-            }
-        });
-
-        jrb_logFC.setText("LogFC");
-        jrb_logFC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_logFCActionPerformed(evt);
-            }
-        });
-
-        jrb_FC.setText("FC");
-        jrb_FC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_FCActionPerformed(evt);
-            }
-        });
-
-        jl_defaultValue.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_defaultValue.setText("Default value");
-
-        jtxt_defaultValue.setText("0");
-        jtxt_defaultValue.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtxt_defaultValueActionPerformed(evt);
-            }
-        });
-
-        jl_multipleDataRule.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_multipleDataRule.setText("Multiple data rule");
-
-        jrb_min.setText("Min");
-        jrb_min.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_minActionPerformed(evt);
-            }
-        });
-
-        jrb_max.setText("Max");
-        jrb_max.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_maxActionPerformed(evt);
-            }
-        });
-
-        jrb_mean.setText("Mean");
-        jrb_mean.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_meanActionPerformed(evt);
-            }
-        });
-
-        javax.swing.GroupLayout jp_DataLayout = new javax.swing.GroupLayout(jp_Data);
-        jp_Data.setLayout(jp_DataLayout);
-        jp_DataLayout.setHorizontalGroup(
-                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_DataLayout.createSequentialGroup()
+        javax.swing.GroupLayout jp_OptionsLayout = new javax.swing.GroupLayout(jp_Options);
+        jp_Options.setLayout(jp_OptionsLayout);
+        jp_OptionsLayout.setHorizontalGroup(
+                jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_OptionsLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_dataMappingRules)
-                                        .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addComponent(jl_defaultValue)
-                                                .addGap(31, 31, 31)
-                                                .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jl_multipleDataRule)
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addComponent(jrb_min)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jrb_max)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jrb_mean))
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jrb_linear, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jrb_log))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jrb_logFC, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jrb_FC))))
-                                .addContainerGap(163, Short.MAX_VALUE))
+                                .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jp_algorithms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jp_significance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jp_OptionsLayout.createSequentialGroup()
+                                                .addComponent(jb_Defaults)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jb_SaveStatsSettings)))
+                                .addContainerGap())
         );
-        jp_DataLayout.setVerticalGroup(
-                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_DataLayout.createSequentialGroup()
+        jp_OptionsLayout.setVerticalGroup(
+                jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_OptionsLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jl_dataMappingRules)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_linear)
-                                        .addComponent(jrb_FC))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_log)
-                                        .addComponent(jrb_logFC))
-                                .addGap(18, 18, 18)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jl_defaultValue)
-                                        .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)
-                                .addComponent(jl_multipleDataRule)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_min)
-                                        .addComponent(jrb_max)
-                                        .addComponent(jrb_mean))
-                                .addContainerGap(218, Short.MAX_VALUE))
+                                .addComponent(jp_algorithms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(57, 57, 57)
+                                .addComponent(jp_significance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
+                                .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jb_Defaults)
+                                        .addComponent(jb_SaveStatsSettings))
+                                .addGap(23, 23, 23))
         );
 
-        jtp_psfc.addTab("Data", jp_Data);
+        jtp_psfc.addTab("Options", jp_Options);
 
         jp_multiInOutRulesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jl_multiInOutRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_multiInOutRules.setForeground(new java.awt.Color(51, 153, 0));
+        jl_multiInOutRules.setForeground(new java.awt.Color(51, 102, 0));
         jl_multiInOutRules.setText("Multiple input and output edge rules");
 
         jl_signalSplitRule.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -721,7 +790,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jrb_incomingEdges)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(jrb_outgoingEdges)))
-                                .addContainerGap(29, Short.MAX_VALUE))
+                                .addContainerGap(35, Short.MAX_VALUE))
         );
         jp_multiInOutRulesPanelLayout.setVerticalGroup(
                 jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -771,7 +840,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jp_simpleRules.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jl_simpleRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_simpleRules.setForeground(new java.awt.Color(51, 153, 0));
+        jl_simpleRules.setForeground(new java.awt.Color(51, 102, 0));
         jl_simpleRules.setText("Simple rules");
 
         jl_edgeTypeConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -862,76 +931,135 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jtp_psfc.addTab("Rules", jp_Rules);
 
-        jl_noOfSamplings.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_noOfSamplings.setText("No. of samplings");
+        jp_Data.setForeground(new java.awt.Color(102, 102, 102));
 
-        jtxt_numOfSamplings.setText("200");
+        jl_dataMappingRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_dataMappingRules.setForeground(new java.awt.Color(102, 102, 102));
+        jl_dataMappingRules.setText("Data mapping rules");
 
-        jl_samplingType.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_samplingType.setText("Sampling type");
+        jl_dataType.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_dataType.setForeground(new java.awt.Color(102, 102, 102));
+        jl_dataType.setText("Data type");
 
-        jrb_SampleCentric.setText("Sample centric");
+        jrb_linear.setText("Linear");
 
-        jrb_GeneCentric.setText("Gene centric");
+        jrb_log.setText("Log");
+        jrb_log.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_logActionPerformed(evt);
+            }
+        });
 
-        jb_GeneMatrixFile.setText("Expr Matrix File");
+        jrb_logFC.setText("LogFC");
+        jrb_logFC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_logFCActionPerformed(evt);
+            }
+        });
 
-        jb_Defaults.setText("Set defaults");
+        jrb_FC.setText("FC");
+        jrb_FC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_FCActionPerformed(evt);
+            }
+        });
 
-        jb_SaveStatsSettings.setText("Save Settings");
+        jl_defaultValue.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_defaultValue.setForeground(new java.awt.Color(102, 102, 102));
+        jl_defaultValue.setText("Default value");
 
-        jchb_CalculateSignificance.setText("Calculate significance after flow computation");
+        jtxt_defaultValue.setText("0");
+        jtxt_defaultValue.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jtxt_defaultValueActionPerformed(evt);
+            }
+        });
 
-        javax.swing.GroupLayout jp_StatsLayout = new javax.swing.GroupLayout(jp_Stats);
-        jp_Stats.setLayout(jp_StatsLayout);
-        jp_StatsLayout.setHorizontalGroup(
-                jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_StatsLayout.createSequentialGroup()
-                                .addGap(0, 0, Short.MAX_VALUE)
-                                .addComponent(jb_SaveStatsSettings)
-                                .addGap(35, 35, 35))
-                        .addGroup(jp_StatsLayout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jchb_CalculateSignificance)
-                                        .addComponent(jl_samplingType)
-                                        .addComponent(jrb_SampleCentric)
-                                        .addGroup(jp_StatsLayout.createSequentialGroup()
-                                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jl_noOfSamplings)
-                                                        .addComponent(jrb_GeneCentric))
-                                                .addGap(18, 18, 18)
-                                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jb_GeneMatrixFile)
-                                                        .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                        .addComponent(jb_Defaults, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(76, Short.MAX_VALUE))
+        jl_multipleDataRule.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_multipleDataRule.setForeground(new java.awt.Color(102, 102, 102));
+        jl_multipleDataRule.setText("Multiple data rule");
+
+        jrb_min.setText("Min");
+        jrb_min.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_minActionPerformed(evt);
+            }
+        });
+
+        jrb_max.setText("Max");
+        jrb_max.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_maxActionPerformed(evt);
+            }
+        });
+
+        jrb_mean.setText("Mean");
+        jrb_mean.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jrb_meanActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jp_DataLayout = new javax.swing.GroupLayout(jp_Data);
+        jp_Data.setLayout(jp_DataLayout);
+        jp_DataLayout.setHorizontalGroup(
+                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_DataLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jl_dataMappingRules)
+                                        .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(jp_DataLayout.createSequentialGroup()
+                                                .addComponent(jl_defaultValue)
+                                                .addGap(31, 31, 31)
+                                                .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jl_multipleDataRule)
+                                        .addGroup(jp_DataLayout.createSequentialGroup()
+                                                .addComponent(jrb_min)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jrb_max)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jrb_mean))
+                                        .addGroup(jp_DataLayout.createSequentialGroup()
+                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jrb_linear, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jrb_log))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jrb_logFC, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jrb_FC))))
+                                .addContainerGap(169, Short.MAX_VALUE))
         );
-        jp_StatsLayout.setVerticalGroup(
-                jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_StatsLayout.createSequentialGroup()
-                                .addGap(33, 33, 33)
-                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jl_noOfSamplings)
-                                        .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(18, 18, 18)
-                                .addComponent(jl_samplingType)
+        jp_DataLayout.setVerticalGroup(
+                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_DataLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jl_dataMappingRules)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jrb_SampleCentric)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_GeneCentric)
-                                        .addComponent(jb_GeneMatrixFile))
+                                .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jrb_linear)
+                                        .addComponent(jrb_FC))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jrb_log)
+                                        .addComponent(jrb_logFC))
                                 .addGap(18, 18, 18)
-                                .addComponent(jchb_CalculateSignificance)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
-                                .addGroup(jp_StatsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jb_SaveStatsSettings)
-                                        .addComponent(jb_Defaults))
-                                .addGap(22, 22, 22))
+                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jl_defaultValue)
+                                        .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(30, 30, 30)
+                                .addComponent(jl_multipleDataRule)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jrb_min)
+                                        .addComponent(jrb_max)
+                                        .addComponent(jrb_mean))
+                                .addContainerGap(218, Short.MAX_VALUE))
         );
 
-        jtp_psfc.addTab("Stats", jp_Stats);
+        jtp_psfc.addTab("Data", jp_Data);
 
         jl_psfc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
@@ -963,7 +1091,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addGroup(jp_HelpLayout.createSequentialGroup()
                                                 .addGap(47, 47, 47)
                                                 .addComponent(jl_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(39, Short.MAX_VALUE))
+                                .addContainerGap(45, Short.MAX_VALUE))
         );
         jp_HelpLayout.setVerticalGroup(
                 jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -983,8 +1111,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jb_calculateFlow.setText("Calculate flow");
 
-        jb_saveSettings.setText("Save settings");
-
         jb_openLogFile.setText("PSFC log");
         jb_openLogFile.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1000,14 +1126,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
+                                                .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                                .addContainerGap())
+                                        .addGroup(layout.createSequentialGroup()
                                                 .addComponent(jb_openLogFile, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jb_saveSettings)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 129, Short.MAX_VALUE)
                                                 .addComponent(jb_calculateFlow)
-                                                .addGap(0, 15, Short.MAX_VALUE))
-                                        .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                                .addContainerGap())
+                                                .addGap(23, 23, 23))))
         );
         layout.setVerticalGroup(
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1017,10 +1142,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jb_calculateFlow)
-                                        .addComponent(jb_saveSettings)
                                         .addComponent(jb_openLogFile))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+    }
+
+    private void jb_showNodeTypesActionPerformed(ActionEvent evt) {
 
     }
 
