@@ -22,8 +22,9 @@ public class PSF {
 
     private final HashMap<String, String> edgeTypeRuleMap;
     private final Logger logger;
+    private boolean silentMode = false;
     Graph graph;
-    HashMap<Integer, State> states = new HashMap<Integer, State>();
+    HashMap<Integer, State> states;
 
     Properties multiSignalProps = new Properties();
     Properties nodeDataProps = new Properties();
@@ -49,6 +50,10 @@ public class PSF {
         }
     }
 
+    public void setSilentMode(boolean silentMode) {
+        this.silentMode = silentMode;
+    }
+
     private void initNodeDataPropsByDefaults() {
         nodeDataProps.put(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), 1);
     }
@@ -61,18 +66,23 @@ public class PSF {
     }
 
     public void calculateFlow() throws Exception {
-        logger.debug("PSF calculation started");
+        if (!silentMode) {
+            logger.debug("PSF calculation started");
 
-        logger.debug("Preprocessed graph");
-        logger.debug(graph.toString());
+            logger.debug("Preprocessed graph");
+            logger.debug(graph.toString());
 
-        logger.debug("Node data properties:");
-        logger.debug(nodeDataProps.toString());
-        logger.debug("Multiple signal processing rules");
-        logger.debug(multiSignalProps.toString());
+            logger.debug("Node data properties:");
+            logger.debug(nodeDataProps.toString());
+            logger.debug("Multiple signal processing rules");
+            logger.debug(multiSignalProps.toString());
+        }
+        converged = false;
+        states = new HashMap<Integer, State>();
 
         while (!converged) {
-            logger.debug("\nIteration: " + states.size());
+            if (!silentMode)
+                logger.debug("\nIteration: " + states.size());
             State state = new State(states.size());
             states.put(states.size(), state);
             try {
@@ -82,9 +92,11 @@ public class PSF {
             }
             checkForConversion(state);
         }
-        logger.debug("\nSuccess: psf computation complete!");
-        logger.debug("PostProcessed graph:");
-        logger.debug(graph.toString());
+        if (!silentMode) {
+            logger.debug("\nSuccess: psf computation complete!");
+            logger.debug("PostProcessed graph:");
+            logger.debug(graph.toString());
+        }
     }
 
 
@@ -406,7 +418,7 @@ public class PSF {
                     .withVariable(TARGET, target)
                     .build();
             double result = calculable.calculate();
-            System.out.println(rule + " " + source + ":" + target + " = " + result);
+//            System.out.println(rule + " " + source + ":" + target + " = " + result);
             return result;
         }
 

@@ -5,6 +5,7 @@ import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
+import org.cytoscape.psfc.logic.algorithms.Bootstrap;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.PSF;
 import org.cytoscape.psfc.logic.parsers.RuleFilesParser;
@@ -47,8 +48,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private File ruleConfigFile;
     private File scoreBackupFile;
     private String networkName;
+    private boolean calculateSignificance;
 
     public static final String PSFC_SIGNAL = "psfc.signal_";
+    private Properties bootstrapProps;
+    private PSF psf;
 
     public CalculateScoreFlowAction(CyNetwork network,
                                     CyColumn edgeTypeColumn,
@@ -58,6 +62,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     File ruleConfigFile,
                                     Properties nodeDataProperties,
                                     Properties multiSignalProps,
+                                    boolean calculateSignificance,
                                     PSFCPanel psfcPanel) {
         super("Calculate score flow");
 
@@ -70,12 +75,14 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.nodeDataProps = nodeDataProperties;
         this.multiSignalProps = multiSignalProps;
         this.psfcPanel = psfcPanel;
+        this.calculateSignificance = calculateSignificance;
+
 
         this.networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
         this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + ".xls");
         try {
             boolean success = scoreBackupFile.createNewFile();
-            if (!success){
+            if (!success) {
                 PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
             }
         } catch (IOException e) {
@@ -85,8 +92,19 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final CalculateScoreFlowTask task = new CalculateScoreFlowTask();
-        PSFCActivator.taskManager.execute(new TaskIterator(task));
+        final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
+        TaskIterator taskIterator = new TaskIterator();
+        taskIterator.append(psfTask);
+        if (calculateSignificance) {
+            final CalculateSignificanceTask calculateSignificanceTask =
+                    new CalculateSignificanceTask();
+            taskIterator.append(calculateSignificanceTask);
+        }
+        PSFCActivator.taskManager.execute(taskIterator);
+    }
+
+    public void setBootstrapProps(Properties bootstrapProps) {
+        this.bootstrapProps = bootstrapProps;
     }
 
     private class CalculateScoreFlowTask extends AbstractTask {
@@ -164,7 +182,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
             //Instantiate new PSF class with generated graph, and perform pathway flow calculation
             try {
-                PSF psf = new PSF(graph, RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
+                psf = new PSF(graph, RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
                         PSFCActivator.getLogger());
                 psf.setNodeDataProps(nodeDataProps);
                 psf.setMultiSignalProps(multiSignalProps);
@@ -344,6 +362,45 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             return map;
         }
 
+    }
+
+    private class CalculateSignificanceTask extends AbstractTask {
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            taskMonitor.setTitle("PSFC.CalculateSignificanceTask");
+            taskMonitor.setProgress(0);
+            String prop = "";
+
+            final int numOfSamplings;
+            try {
+                prop = bootstrapProps
+                        .getProperty(Bootstrap.NUMOFSAMPLINGSPROP);
+                numOfSamplings = Integer.parseInt(prop);
+            } catch (NumberFormatException e) {
+                throw new Exception("Unable to parse integer " + prop);
+            }
+
+            int samplingType;
+            try {
+                prop = bootstrapProps
+                        .getProperty(Bootstrap.SAMPLINGTYPEPROP);
+                samplingType = Integer.parseInt(prop);
+            } catch (NumberFormatException e) {
+                throw new Exception("Unable to parse integer " + prop);
+            }
+
+            Bootstrap bootstrap = new Bootstrap(numOfSamplings, samplingType,
+                    psf, PSFCActivator.getLogger());
+            bootstrap.setTaskMonitor(taskMonitor);
+            try {
+                bootstrap.performBootstrap();
+                taskMonitor.setStatusMessage("Bootstrap significance calculation complete");
+                taskMonitor.setProgress(1);
+            } catch (Exception e) {
+                throw new Exception("Problem performing bootstrap significance calculation");
+            }
+        }
     }
 
     private HashMap<CyEdge, Integer> getCyEdgeRankMap(CyColumn cyEdgeRankColumn) throws Exception {
