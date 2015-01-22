@@ -308,7 +308,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 }
 
                 // Trigger psfcPanel to update Flow Visualization Panel
-                psfcPanel.setVisualizationComoponents(network, levelCyNodeScoreMap);
+                psfcPanel.setVisualizationComponents(network, levelCyNodeScoreMap);
 
                 taskMonitor.setStatusMessage("Flow calculation task complete");
                 taskMonitor.setProgress(1);

@@ -92,9 +92,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return icon;
     }
 
-    private javax.swing.JButton jb_Defaults;
+    private javax.swing.JButton jb_restoreDefaultOptions;
     private javax.swing.JButton jb_GeneMatrixFile;
-    private javax.swing.JButton jb_SaveStatsSettings;
+    private javax.swing.JButton jb_SaveOptionsSettings;
     private javax.swing.JButton jb_calculateFlow;
     private javax.swing.JButton jb_chooseEdgeTypeConfigFile;
     private javax.swing.JButton jb_chooseRuleNameRuleConfigFile;
@@ -106,9 +106,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_refreshNetworks;
     private javax.swing.JButton jb_refreshNodeDataAttrs;
     private javax.swing.JButton jb_refreshWeigths;
-    private javax.swing.JButton jb_saveSettings;
-    private javax.swing.JButton jb_showEdgeTypes;
-    private javax.swing.JButton jb_showNodeTypes;
+    private javax.swing.JButton jb_saveGeneralSettings;
+    private javax.swing.JButton jb_checkEdgeTypes;
+    private javax.swing.JButton jb_checkNodeTypes;
     private javax.swing.JButton jb_showState;
     private javax.swing.JButton jb_sortNetwork;
     private javax.swing.JButton jb_userManual;
@@ -202,11 +202,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_selectEdgeTypeAttribute = new javax.swing.JLabel();
         jcb_edgeTypeAttribute = new javax.swing.JComboBox();
         jb_refreshEdgeTypeAttrs = new javax.swing.JButton();
-        jb_showEdgeTypes = new javax.swing.JButton();
+        jb_checkEdgeTypes = new javax.swing.JButton();
         jcb_nodeDataAttribute = new javax.swing.JComboBox();
         jl_selectNodeDataAttribute = new javax.swing.JLabel();
         jb_refreshNodeDataAttrs = new javax.swing.JButton();
-        jb_showNodeTypes = new javax.swing.JButton();
+        jb_checkNodeTypes = new javax.swing.JButton();
         jp_flowVisualization = new javax.swing.JPanel();
         jsl_levels = new javax.swing.JSlider();
         jl_flowVisualization = new javax.swing.JLabel();
@@ -214,7 +214,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_showState = new javax.swing.JButton();
         jl_level = new javax.swing.JLabel();
         jtxt_level = new javax.swing.JTextField();
-        jb_saveSettings = new javax.swing.JButton();
+        jb_saveGeneralSettings = new javax.swing.JButton();
         jp_Options = new javax.swing.JPanel();
         jp_significance = new javax.swing.JPanel();
         jl_network_and_attrs1 = new javax.swing.JLabel();
@@ -230,8 +230,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_sortingAlgorithm = new javax.swing.JLabel();
         jcb_sortingAlgorithm = new javax.swing.JComboBox();
         jb_sortNetwork = new javax.swing.JButton();
-        jb_Defaults = new javax.swing.JButton();
-        jb_SaveStatsSettings = new javax.swing.JButton();
+        jb_restoreDefaultOptions = new javax.swing.JButton();
+        jb_SaveOptionsSettings = new javax.swing.JButton();
         jp_Rules = new javax.swing.JPanel();
         jp_multiInOutRulesPanel = new javax.swing.JPanel();
         jl_multiInOutRules = new javax.swing.JLabel();
@@ -299,11 +299,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshNetworks.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNetworks.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNetworks.setPreferredSize(new java.awt.Dimension(20, 20));
-        jb_refreshNetworks.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_refreshNetworksActionPerformed(evt);
-            }
-        });
 
         jl_selectEdgeTypeAttribute.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jl_selectEdgeTypeAttribute.setForeground(new java.awt.Color(102, 102, 102));
@@ -314,19 +309,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshEdgeTypeAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeTypeAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
-        jb_refreshEdgeTypeAttrs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_refreshEdgeTypeAttrsActionPerformed(evt);
-            }
-        });
 
-        jb_showEdgeTypes.setText("Check");
-        jb_showEdgeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
-        jb_showEdgeTypes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_showEdgeTypesActionPerformed(evt);
-            }
-        });
+        jb_checkEdgeTypes.setText("Check");
+        jb_checkEdgeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
 
         jcb_nodeDataAttribute.setPreferredSize(new java.awt.Dimension(201, 20));
 
@@ -337,19 +322,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshNodeDataAttrs.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
-        jb_refreshNodeDataAttrs.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_refreshNodeDataAttrsActionPerformed(evt);
-            }
-        });
 
-        jb_showNodeTypes.setText("Check");
-        jb_showNodeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
-        jb_showNodeTypes.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_showNodeTypesActionPerformed(evt);
-            }
-        });
+        jb_checkNodeTypes.setText("Check");
+        jb_checkNodeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
 
         javax.swing.GroupLayout jp_network_attrsLayout = new javax.swing.GroupLayout(jp_network_attrs);
         jp_network_attrs.setLayout(jp_network_attrsLayout);
@@ -366,7 +341,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(jb_checkEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                 .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -376,7 +351,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_showNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jb_checkNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap())
                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                 .addComponent(jl_network_and_attrs)
@@ -396,7 +371,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jb_showEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jb_checkEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -405,7 +380,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jb_showNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jb_checkNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -470,7 +445,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap())
         );
 
-        jb_saveSettings.setText("Save settings");
+        jb_saveGeneralSettings.setText("Save settings");
 
         javax.swing.GroupLayout jp_GeneralLayout = new javax.swing.GroupLayout(jp_General);
         jp_General.setLayout(jp_GeneralLayout);
@@ -483,7 +458,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_GeneralLayout.createSequentialGroup()
                                                 .addGap(0, 0, Short.MAX_VALUE)
-                                                .addComponent(jb_saveSettings)))
+                                                .addComponent(jb_saveGeneralSettings)))
                                 .addContainerGap())
         );
         jp_GeneralLayout.setVerticalGroup(
@@ -494,7 +469,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 53, Short.MAX_VALUE)
                                 .addComponent(jp_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(38, 38, 38)
-                                .addComponent(jb_saveSettings)
+                                .addComponent(jb_saveGeneralSettings)
                                 .addContainerGap())
         );
 
@@ -583,7 +558,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jcb_sortingAlgorithm.setPreferredSize(new java.awt.Dimension(201, 20));
         jcb_sortingAlgorithm.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcb_sortingAlgorithmActionPerformed(evt);
+                jcb_sortingAlgorithmActionPerformed();
             }
         });
 
@@ -624,9 +599,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGap(0, 17, Short.MAX_VALUE))
         );
 
-        jb_Defaults.setText("Restore defaults");
+        jb_restoreDefaultOptions.setText("Restore defaults");
 
-        jb_SaveStatsSettings.setText("Save Settings");
+        jb_SaveOptionsSettings.setText("Save Settings");
 
         javax.swing.GroupLayout jp_OptionsLayout = new javax.swing.GroupLayout(jp_Options);
         jp_Options.setLayout(jp_OptionsLayout);
@@ -638,9 +613,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addComponent(jp_algorithms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jp_significance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jp_OptionsLayout.createSequentialGroup()
-                                                .addComponent(jb_Defaults)
+                                                .addComponent(jb_restoreDefaultOptions)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                .addComponent(jb_SaveStatsSettings)))
+                                                .addComponent(jb_SaveOptionsSettings)))
                                 .addContainerGap())
         );
         jp_OptionsLayout.setVerticalGroup(
@@ -652,8 +627,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addComponent(jp_significance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 58, Short.MAX_VALUE)
                                 .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jb_Defaults)
-                                        .addComponent(jb_SaveStatsSettings))
+                                        .addComponent(jb_restoreDefaultOptions)
+                                        .addComponent(jb_SaveOptionsSettings))
                                 .addGap(23, 23, 23))
         );
 
@@ -672,11 +647,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jrb_equal.setText("Equal");
 
         jrb_proportional.setText("Proportional");
-        jrb_proportional.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_proportionalActionPerformed(evt);
-            }
-        });
 
         jrb_noSplitRule.setText("None");
 
@@ -710,38 +680,18 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshEdgeRanks.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeRanks.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshEdgeRanks.setPreferredSize(new java.awt.Dimension(20, 20));
-        jb_refreshEdgeRanks.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_refreshEdgeRanksActionPerformed(evt);
-            }
-        });
 
         jb_refreshWeigths.setMaximumSize(new java.awt.Dimension(20, 20));
         jb_refreshWeigths.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshWeigths.setPreferredSize(new java.awt.Dimension(20, 20));
-        jb_refreshWeigths.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_refreshWeigthsActionPerformed(evt);
-            }
-        });
 
         jrb_multiplication.setText("Multiplication");
-        jrb_multiplication.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_multiplicationActionPerformed(evt);
-            }
-        });
 
         jl_signalSplitOn.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jl_signalSplitOn.setForeground(new java.awt.Color(102, 102, 102));
         jl_signalSplitOn.setText("Split signal on ");
 
         jrb_incomingEdges.setText("Incoming edges");
-        jrb_incomingEdges.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_incomingEdgesActionPerformed(evt);
-            }
-        });
 
         jrb_outgoingEdges.setText("Outgoing edges");
 
@@ -848,20 +798,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_edgeTypeConfigFile.setText("EdgeTypes config file");
 
         jb_chooseEdgeTypeConfigFile.setText("Choose file");
-        jb_chooseEdgeTypeConfigFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_chooseEdgeTypeConfigFileActionPerformed(evt);
-            }
-        });
 
         jl_edgeTypeConfigFileName.setText("n/a");
 
         jb_chooseRuleNameRuleConfigFile.setText("Choose file");
-        jb_chooseRuleNameRuleConfigFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_chooseRuleNameRuleConfigFileActionPerformed(evt);
-            }
-        });
 
         jl_ruleConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jl_ruleConfigFile.setForeground(new java.awt.Color(102, 102, 102));
@@ -944,61 +884,26 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jrb_linear.setText("Linear");
 
         jrb_log.setText("Log");
-        jrb_log.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_logActionPerformed(evt);
-            }
-        });
 
         jrb_logFC.setText("LogFC");
-        jrb_logFC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_logFCActionPerformed(evt);
-            }
-        });
 
         jrb_FC.setText("FC");
-        jrb_FC.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_FCActionPerformed(evt);
-            }
-        });
 
         jl_defaultValue.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jl_defaultValue.setForeground(new java.awt.Color(102, 102, 102));
         jl_defaultValue.setText("Default value");
 
         jtxt_defaultValue.setText("0");
-        jtxt_defaultValue.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jtxt_defaultValueActionPerformed(evt);
-            }
-        });
 
         jl_multipleDataRule.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
         jl_multipleDataRule.setForeground(new java.awt.Color(102, 102, 102));
         jl_multipleDataRule.setText("Multiple data rule");
 
         jrb_min.setText("Min");
-        jrb_min.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_minActionPerformed(evt);
-            }
-        });
 
         jrb_max.setText("Max");
-        jrb_max.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_maxActionPerformed(evt);
-            }
-        });
 
         jrb_mean.setText("Mean");
-        jrb_mean.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jrb_meanActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jp_DataLayout = new javax.swing.GroupLayout(jp_Data);
         jp_Data.setLayout(jp_DataLayout);
@@ -1112,11 +1017,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_calculateFlow.setText("Calculate flow");
 
         jb_openLogFile.setText("PSFC log");
-        jb_openLogFile.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_openLogFileActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         setLayout(layout);
@@ -1147,278 +1047,52 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         );
     }
 
-    private void jb_showNodeTypesActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jb_openLogFileActionPerformed(ActionEvent evt) {
-        final File logFile = PSFCActivator.getPsfcLogFile();
-        if (logFile == null || !logFile.exists())
-            JOptionPane.showMessageDialog(this, "PSFC uesr message",
-                    "Problem loading log file.", JOptionPane.OK_OPTION);
-
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                        if(System.getProperty("os.name").toLowerCase().contains("windows")){
-                            String cmd = "rundll32 url.dll,FileProtocolHandler "
-                                    + logFile.getCanonicalPath();
-                            Runtime.getRuntime().exec(cmd);
-                        } else {
-                            Desktop.getDesktop().edit(logFile);
-                        }
-                        } catch (IllegalArgumentException iae) {
-                            System.out.println("File Not Found");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }).run();
-    }
-
-    private void jcb_sortingAlgorithmActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jtxt_levelActionPerformed(ActionEvent evt) {
-        int value;
-        try {
-            value = Integer.parseInt(jtxt_level.getText());
-        } catch (NumberFormatException e) {
-            value = 0;
-        }
-        if (value > jsl_levels.getMaximum())
-            value = jsl_levels.getMaximum();
-        else if (value < 0)
-            value = 0;
-        jtxt_level.setText(value + "");
-        jsl_levels.setValue(value);
-    }
-
-    private void jrb_incomingEdgesActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jb_refreshWeigthsActionPerformed(ActionEvent evt) {
-        setJcb_edgeAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
-    }
-
-    private void jb_refreshEdgeRanksActionPerformed(ActionEvent evt) {
-        setJcb_edgeAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
-    }
-
-    private void jcb_edgeRanksActionPerformed(ActionEvent evt) {
-        setJcb_edgeAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
-    }
-
-    private void jrb_multiplicationActionPerformed(ActionEvent evt) {
-        enableButtons();
-    }
-
-    private void jrb_proportionalActionPerformed(ActionEvent evt) {
-        enableButtons();
-    }
-
-    private void jb_showNodeDataActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jb_refreshNodeDataAttrsActionPerformed(ActionEvent evt) {
-        setjcb_nodeDataAttributes();
-        enableButtons();
-    }
-
-    private void jb_refreshEdgeTypeAttrsActionPerformed(ActionEvent evt) {
-        setJcb_edgeAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
-        enableButtons();
-    }
-
-    private void jb_refreshNetworksActionPerformed(ActionEvent evt) {
-        setjcb_networkModel();
-        enableButtons();
-    }
-
-    private void jb_ruleWizardActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jb_chooseRuleNameRuleConfigFileActionPerformed(ActionEvent evt) {
-        JFrame fileLoadFrame = new JFrame("RuleName-Rule configuration");
-        fileLoadFrame.setLocation(400, 250);
-        fileLoadFrame.setSize(400, 200);
-        JFileChooser fileChooser = new JFileChooser();
-        File recentDirectory = PSFCActivator.getRecentDirectory();
-        fileChooser.setCurrentDirectory(recentDirectory);
-
-
-        fileChooser.setDialogTitle("Select RuleName-Rule configuration file");
-        fileChooser.showOpenDialog(fileLoadFrame);
-        String selectedFilePath = null;
-
-        if (fileChooser.getSelectedFile() != null) {
-            selectedFilePath = fileChooser.getSelectedFile().getPath();
-            PSFCActivator.writeRecentDirectory(selectedFilePath);
-        }
-
-        String noFile = "No file selected";
-        String name;
-        if (selectedFilePath != null) {
-            name = fileChooser.getSelectedFile().getName();
-//            int size = noFile.length();
-            int size = 40;
-            if (name.length() > size)
-                name = name.substring(0, size) + "...";
-            jl_ruleNameRuleConfigFileName.setText(name);
-            this.ruleNameRuleConfigFile = new File(selectedFilePath);
-        }
-        enableButtons();
-    }
-
-    private boolean setRuleNameRuleConfigFile(File file) {
-        if (file.exists()) {
-            String name = file.getName();
-            int size = 40;
-            if (name.length() > size)
-                name = name.substring(0, size) + "...";
-            jl_ruleNameRuleConfigFileName.setText(name);
-            ruleNameRuleConfigFile = file;
-            enableButtons();
-            return true;
-        }
-        return false;
-    }
-
-    private void jb_chooseEdgeTypeConfigFileActionPerformed(ActionEvent evt) {
-        JFrame fileLoadFrame = new JFrame("EdgeType-RuleName configuration");
-        fileLoadFrame.setLocation(400, 250);
-        fileLoadFrame.setSize(400, 200);
-        JFileChooser fileChooser = new JFileChooser();
-        File recentDirectory = PSFCActivator.getRecentDirectory();
-        fileChooser.setCurrentDirectory(recentDirectory);
-
-
-        fileChooser.setDialogTitle("Select EdgeType-RuleName configuration file");
-        fileChooser.showOpenDialog(fileLoadFrame);
-        String selectedFilePath = null;
-
-        if (fileChooser.getSelectedFile() != null) {
-            selectedFilePath = fileChooser.getSelectedFile().getPath();
-            PSFCActivator.writeRecentDirectory(selectedFilePath);
-
-        }
-
-        if (selectedFilePath != null) {
-            setEdgeTypeRuleNameConfigFile(new File(selectedFilePath));
-        }
-
-        enableButtons();
-    }
-
-    private boolean setEdgeTypeRuleNameConfigFile(File file) {
-        if (file.exists()) {
-            String name = file.getName();
-            int size = 40;
-            if (name.length() > size)
-                name = name.substring(0, size) + "...";
-            jl_edgeTypeConfigFileName.setText(name);
-            this.edgeTypeRuleNameConfigFile = file;
-            enableButtons();
-            return true;
-        }
-        return false;
-    }
-
-    private void jrb_meanActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jrb_maxActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jrb_minActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jtxt_defaultValueActionPerformed(ActionEvent evt) {
-        String text = jtxt_defaultValue.getText();
-        try {
-            Double.parseDouble(text);
-        } catch (NumberFormatException e) {
-            jtxt_defaultValue.setText(Node.getDefaultValue());
-        }
-    }
-
-    private void jrb_FCActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jrb_logFCActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jrb_logActionPerformed(ActionEvent evt) {
-
-    }
-
-    private void jb_showEdgeTypesActionPerformed(ActionEvent evt) {
-        if (jcb_edgeTypeAttribute.getSelectedItem() == null)
-            return;
-        String edgeTypeAttr = jcb_edgeTypeAttribute.getSelectedItem().toString();
-        CyNetwork selectedNetwork = getSelectedNetwork();
-        if (selectedNetwork == null)
-            return;
-        TreeSet<String> uniqueValues = new TreeSet<String>();
-        for (CyRow row : selectedNetwork.getDefaultEdgeTable().getAllRows()) {
-            try {
-                uniqueValues.add(row.get(edgeTypeAttr, selectedNetwork.getDefaultEdgeTable().
-                        getColumn(edgeTypeAttr).getType()).toString());
-            } catch (NullPointerException e) {
-                return;
-            }
-        }
-        JFrame frame = new JFrame("Unique values of the attribute " + edgeTypeAttr);
-        frame.setName(frame.getTitle());
-        DefaultListModel<String> listModel = new DefaultListModel<String>();
-        for (String value : uniqueValues) {
-            listModel.addElement(value);
-        }
-
-        JList<String> list = new JList<String>(listModel);
-        JScrollPane panel = new JScrollPane(list);
-        frame.setContentPane(panel);
-        frame.setLocation(jb_showEdgeTypes.getLocation());
-        frame.pack();
-        frame.setVisible(true);
-    }
-
-    private void jb_sortNetworkActionPerformed(ActionEvent evt) {
-        CyNetwork selectedNetwork = getSelectedNetwork();
-        if (selectedNetwork != null) {
-            SortNetworkAction sortNetworkAction = new SortNetworkAction(selectedNetwork, getSortingAlgorithm());
-            sortNetworkAction.actionPerformed(evt);
-        }
-    }
-
-    private int getSortingAlgorithm() {
-        return ESortingAlgorithms.getNum(jcb_sortingAlgorithm.getSelectedItem().toString());
-    }
-
-
     private void setModels() {
         setjcb_networkModel();
         setjcb_sortingAlgorithmsModel();
-        setJcb_edgeAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
+        setJcbAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
         setjcb_nodeDataAttributes();
         if (jrb_suppliedWeights.isSelected())
-            setJcb_edgeAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
+            setJcbAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
         if (jrb_edgeRanks.isSelected())
-            setJcb_edgeAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+            setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
     }
 
 
+
     private void addActionListeners() {
+        // Actions: shared buttons
+        addActionListeners_sharedButtons();
+        // Actions: jp_General
+        addActionListeners_jp_General();
+        // Actions: jp_Options
+        addActionListeners_jp_Options();
+        // Actions: jp_Rules
+        addActionListeners_jp_Rules();
+        // Actions: jp_Data
+        addActionListeners_jp_Data();
+        // Actions: jp_Help
+        addActionListeners_jp_Help();
+    }
+
+    private void addActionListeners_sharedButtons() {
+        jb_openLogFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_openLogFileActionPerformed();
+            }
+        });
+
+        jb_calculateFlow.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_calculateFlowActionPerformed(e);
+            }
+        });
+    }
+
+    private void addActionListeners_jp_General() {
+        //Networks and attributes
         jcb_network.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1447,88 +1121,53 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 return this;
             }
         });
-
-        jb_calculateFlow.addActionListener(new ActionListener() {
+        jb_refreshNetworks.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jb_calculateFlowActionPerformed(e);
+                jb_refreshNetworksActionPerformed();
             }
         });
 
-        jb_saveSettings.addActionListener(new ActionListener() {
+        //no action for jcb_edgeTypeAttribute
+        jb_refreshEdgeTypeAttrs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jb_saveSettingsActionPerformed();
+                jb_refreshEdgeTypeAttrsActionPerformed();
+            }
+        });
+        jb_checkEdgeTypes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_checkEdgeTypesActionPerformed();
             }
         });
 
-        jrb_noSplitRule.addActionListener(new ActionListener() {
+        //no action for jcb_nodeDataAttribute
+        jb_refreshNodeDataAttrs.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jrb_noSplitRuleActionPerformed();
+                jb_refreshNodeDataAttrsActionPerformed();
+            }
+        });
+        jb_checkNodeTypes.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_checkNodeTypesActionPerformed();
             }
         });
 
-        jrb_proportional.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_proportionalActionPerformed(e);
-            }
-        });
 
-        jrb_equal.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_equalActionPerformed();
-            }
-        });
-
-        jrb_suppliedWeights.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_suppliedWeightsActionPerformed();
-            }
-        });
-
-        jrb_noRanks.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_noRanksActionPerformed();
-            }
-        });
-
-        jb_refreshWeigths.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jb_refreshWeigthsActionPerformed(e);
-            }
-        });
-
-        jrb_edgeRanks.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_edgeRanksActionPerformed();
-            }
-        });
-
-        jrb_addition.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_additionActionPerformed();
-            }
-        });
-
-        jrb_updatedNodeScores.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jrb_updatedNodeScoresActionPerformed();
-            }
-        });
-
+        //Flow visualization
         jsl_levels.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
                 jtxt_level.setText("" + jsl_levels.getValue());
+            }
+        });
+        jb_showState.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_showStateActionPerformed();
             }
         });
         jb_playFlow.addActionListener(new ActionListener() {
@@ -1538,124 +1177,218 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
-        jb_showState.addActionListener(new ActionListener() {
+        //Save settings
+        jb_saveGeneralSettings.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jb_showStateActionPerformed();
+                jb_saveGeneralSettingsActionPerformed();
             }
         });
     }
 
-    private void jrb_updatedNodeScoresActionPerformed() {
-        enableButtons();
+    private void addActionListeners_jp_Options() {
+        //Algorithms
+        jcb_sortingAlgorithm.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jcb_sortingAlgorithmActionPerformed();
+            }
+        });
+        jb_sortNetwork.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_sortNetworkActionPerformed(e);
+            }
+        });
+
+        //Significance calculation
+        //no action for jchb_calculateSignificance
+        //no action for jrb_SampleCentric
+        //no action for jrb_GeneCentric
+        jb_GeneMatrixFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_GeneMatrixFileActionPerformed();
+            }
+        });
+
+        jtxt_numOfSamplings.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jtxt_numOfSamplingsActionPerformed();
+            }
+        });
+
+        jb_restoreDefaultOptions.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_restoreDefaultOptionsActionPerformed();
+            }
+        });
+
+        jb_SaveOptionsSettings.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_SaveOptionsSettingsActionPerformed();
+            }
+        });
     }
 
-    private void jrb_additionActionPerformed() {
-        enableButtons();
+    private void addActionListeners_jp_Rules() {
+        // Simple rules
+        jb_chooseEdgeTypeConfigFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_chooseEdgeTypeConfigFileActionPerformed();
+            }
+        });
+
+        jb_chooseRuleNameRuleConfigFile.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_chooseRuleNameRuleConfigFileActionPerformed();
+            }
+        });
+
+        // Multiple input and output edge rules: Signal split rule
+        jrb_noSplitRule.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_noSplitRuleActionPerformed();
+            }
+        });
+        jrb_proportional.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_proportionalActionPerformed();
+            }
+        });
+        jrb_equal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_equalActionPerformed();
+            }
+        });
+        jrb_suppliedWeights.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_suppliedWeightsActionPerformed();
+            }
+        });
+        jb_refreshWeigths.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_refreshWeigthsActionPerformed();
+            }
+        });
+
+        // Multiple input and output edge rules: Split signal on
+        // No action for jrb_incomingEdges
+        // No action for jrb_outgoingEdges
+
+        // Multiple input and output edge rules: Multiple signal processing rule
+        jrb_updatedNodeScores.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_updatedNodeScoresActionPerformed();
+            }
+        });
+        jrb_multiplication.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_multiplicationActionPerformed();
+            }
+        });
+        jrb_addition.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_additionActionPerformed();
+            }
+        });
+
+        // Multiple input and output edge rules: Signal processing order
+        jrb_noRanks.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_noRanksActionPerformed();
+            }
+        });
+        jrb_edgeRanks.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_edgeRanksActionPerformed();
+            }
+        });
+        jcb_edgeRanks.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jcb_edgeRanksActionPerformed();
+            }
+        });
+        jb_refreshEdgeRanks.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_refreshEdgeRanksActionPerformed();
+            }
+        });
     }
 
-    private void jrb_edgeRanksActionPerformed() {
-        enableButtons();
-        setJcb_edgeAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+    private void addActionListeners_jp_Data() {
+        //jrb_linear
+        //jrb_FC
+        //jrb_log
+        //jrb_logFC
+        //jtxt_defaultValue
+        //jrb_min
+        //jrb_max
+        //jrb_mean
     }
 
-    private void jrb_noRanksActionPerformed() {
-        enableButtons();
+    private void addActionListeners_jp_Help() {
+        jb_projectWebPage.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_projectWebPageActionPerformed();
+            }
+        });
+
+        jb_userManual.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_userManualActionPerformed();
+            }
+        });
     }
 
-    private void jrb_suppliedWeightsActionPerformed() {
-        setJcb_edgeAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
-        enableButtons();
+
+    /******************
+     Actions: shared buttons
+     ******************/
+    private void jb_openLogFileActionPerformed() {
+        final File logFile = PSFCActivator.getPsfcLogFile();
+        if (logFile == null || !logFile.exists())
+            JOptionPane.showMessageDialog(this, "PSFC uesr message",
+                    "Problem loading log file.", JOptionPane.OK_OPTION);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if(System.getProperty("os.name").toLowerCase().contains("windows")){
+                        String cmd = "rundll32 url.dll,FileProtocolHandler "
+                                + logFile.getCanonicalPath();
+                        Runtime.getRuntime().exec(cmd);
+                    } else {
+                        Desktop.getDesktop().edit(logFile);
+                    }
+                } catch (IllegalArgumentException iae) {
+                    System.out.println("File Not Found");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).run();
     }
-
-    private void jrb_equalActionPerformed() {
-        enableButtons();
-    }
-
-    private void jrb_noSplitRuleActionPerformed() {
-        enableButtons();
-    }
-
-    private void jb_saveSettingsActionPerformed() {
-        Properties psfcProps = PSFCActivator.getPsfcProps();
-        //columns
-        try {
-            psfcProps.setProperty(EpsfcProps.NodeDataAttribute.getName(), jcb_nodeDataAttribute.getSelectedItem().toString());
-            psfcProps.setProperty(EpsfcProps.EdgeTypeAttribute.getName(), jcb_edgeTypeAttribute.getSelectedItem().toString());
-            psfcProps.setProperty(EpsfcProps.EdgeWeigthsAttribute.getName(), jcb_edgeWeights.getSelectedItem().toString());
-            psfcProps.setProperty(EpsfcProps.EdgeRankAttribute.getName(), jcb_edgeRanks.getSelectedItem().toString());
-        } catch (NullPointerException e) {
-        }
-
-
-        //Node data type
-        Enumeration<AbstractButton> buttons = jbg_dataType.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.NodeDataType.getName(), button.getText());
-        }
-
-        //Node default value
-        //???????
-        //Multiple data rule
-        buttons = jbg_multipleDataOption.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.MultipleDataOption.getName(), button.getText());
-        }
-
-        //edgeTypeRuleNameConfigFile
-        if (edgeTypeRuleNameConfigFile != null)
-            psfcProps.setProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName(), edgeTypeRuleNameConfigFile.getAbsolutePath());
-        //ruleNameRuleConfigFile
-        if (ruleNameRuleConfigFile != null)
-            psfcProps.setProperty(EpsfcProps.RuleNameRuleConfigFile.getName(), ruleNameRuleConfigFile.getAbsolutePath());
-
-
-        //MultipleEdgeRUles
-        buttons = jbg_signalSplitRule.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.SplitSignalRule.getName(), button.getText());
-        }
-
-
-        buttons = jbg_splitSignalOn.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.SplitSignalOn.getName(), button.getText());
-        }
-
-        buttons = jbg_signalProcessingOrder.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.SignalProcessingOrder.getName(), button.getText());
-        }
-
-        buttons = jbg_multipleSignalProcessingRule.getElements();
-        while (buttons.hasMoreElements()) {
-            JRadioButton button = (JRadioButton) buttons.nextElement();
-            if (button.isSelected())
-                psfcProps.setProperty(EpsfcProps.MultipleSignalProcessingRule.getName(), button.getText());
-        }
-
-        FileOutputStream outputStream = null;
-        try {
-            outputStream = new FileOutputStream(PSFCActivator.getPsfcPropsFile());
-            PSFCActivator.getPsfcProps().store(outputStream, "PSFC property file");
-            outputStream.close();
-        } catch (FileNotFoundException e) {
-            PSFCActivator.getLogger().error("Could not write to psfc.props file. Reason: " + e.getMessage(), e);
-        } catch (IOException e) {
-            PSFCActivator.getLogger().error("Could not write to psfc.props file. Reason: " + e.getMessage(), e);
-        }
-    }
-
     private void jb_calculateFlowActionPerformed(ActionEvent e) {
         CyNetwork network = getSelectedNetwork();
         if (network == null) {
@@ -1757,209 +1490,38 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         calculateFlowAction.actionPerformed(e);
     }
 
-    private Properties getNodeDataProperties() {
-        Properties properties = new Properties();
-        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), jtxt_defaultValue.getText());
-        return properties;
-    }
-
-    private Properties getMultiSignalProperties() {
-        Properties properties = new Properties();
-        int splitRule;
-        if (jrb_noSplitRule.isSelected())
-            splitRule = EMultiSignalProps.SPLIT_NONE;
-        else if (jrb_equal.isSelected())
-            splitRule = EMultiSignalProps.SPLIT_EQUAL;
-        else if (jrb_proportional.isSelected())
-            splitRule = EMultiSignalProps.SPLIT_PROPORTIONAL;
-        else {
-            splitRule = EMultiSignalProps.SPLIT_WEIGHTS;
+    /******************
+     Actions: jp_General
+     ******************/
+    //Network and attributes
+    private void setjcb_networkModel() {
+        Set<CyNetwork> networkSet = PSFCActivator.networkManager.getNetworkSet();
+        String[] networkTitles = new String[networkSet.size()];
+        int index = 0;
+        for (CyNetwork network : networkSet) {
+            networkTitles[index++] = network.getRow(network).get("Name", String.class) + suidSplit + network.getSUID();
         }
-        properties.put(EMultiSignalProps.SplitSignalRule.getName(), splitRule);
-        if (splitRule == EMultiSignalProps.SPLIT_WEIGHTS) {
-            CyColumn edgeWeightColumn = getEdgeWeightColumn();
-            if (edgeWeightColumn == null) {
-                JOptionPane.showMessageDialog(this,
-                        "Selected EdgeWeight column does not exist. " +
-                                "\nPlease, refresh the column list and choose a valid EdgeWeight column for pathway flow calculation.",
-                        "PSFC user message", JOptionPane.OK_OPTION
-                );
-                return null;
-            }
-            boolean isNumber = true;
-            if (!edgeWeightColumn.getType().getName().equals(Double.class.getName()))
-                if (!edgeWeightColumn.getType().getName().equals(Integer.class.getName()))
-                    isNumber = false;
-            if (!isNumber) {
-                JOptionPane.showMessageDialog(this,
-                        "Illegal EdgeWeight column: should be numeric. " +
-                                "\nPlease, choose a valid column for pathway flow calculation.",
-                        "PSFC user message", JOptionPane.OK_OPTION
-                );
-                return null;
-            }
-            properties.put(EMultiSignalProps.EdgeWeightsAttribute.getName(), edgeWeightColumn);
-        }
-
-        int splitOn;
-        if (jrb_incomingEdges.isSelected())
-            splitOn = EMultiSignalProps.SPLIT_INCOMING;
-        else
-            splitOn = EMultiSignalProps.SPLIT_OUTGOING;
-
-        properties.put(EMultiSignalProps.SplitSignalOn.getName(), splitOn);
-
-        int multiProcessingRule;
-        if (jrb_updatedNodeScores.isSelected())
-            multiProcessingRule = EMultiSignalProps.UPDATE_NODE_SCORES;
-        else if (jrb_multiplication.isSelected())
-            multiProcessingRule = EMultiSignalProps.MULTIPLICATION;
-        else
-            multiProcessingRule = EMultiSignalProps.ADDITION;
-        properties.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(), multiProcessingRule);
-
-        int edgeOrder;
-        if (jrb_noRanks.isSelected())
-            edgeOrder = EMultiSignalProps.ORDER_NONE;
-        else
-            edgeOrder = EMultiSignalProps.ORDER_RANKS;
-        properties.put(EMultiSignalProps.SignalProcessingOrder.getName(), edgeOrder);
-
-        if (edgeOrder == EMultiSignalProps.ORDER_RANKS) {
-            CyColumn edgeRankColumn = getEdgeRankColumn();
-            if (edgeRankColumn == null) {
-                JOptionPane.showMessageDialog(this,
-                        "Selected EdgeRank column does not exist. " +
-                                "\nPlease, refresh the column list and choose a valid EdgeRank column for pathway flow calculation.",
-                        "PSFC user message", JOptionPane.OK_OPTION
-                );
-                return null;
-            }
-            boolean isInteger = true;
-            if (!edgeRankColumn.getType().getName().equals(Integer.class.getName()))
-                isInteger = false;
-            if (!isInteger) {
-                JOptionPane.showMessageDialog(this,
-                        "Illegal EdgeRank column: should be Integer. " +
-                                "\nPlease, choose a valid column for pathway flow calculation.",
-                        "PSFC user message", JOptionPane.OK_OPTION
-                );
-                return null;
-            }
-            properties.put(EMultiSignalProps.EdgeRankAttribute.getName(), edgeRankColumn);
-        }
-        return properties;
-    }
-
-
-    private boolean checkSorted(CyNetwork network) {
-        CyColumn nodeLevelColumn = getNodeLevelColumn();
-        if (nodeLevelColumn == null)
-            return false;
-        try {
-            if (nodeLevelColumn.getType().newInstance() instanceof Integer)
-                return false;
-            for (Object nodeObj : network.getNodeList()) {
-                CyNode cyNode = (CyNode) nodeObj;
-
-                if (network.getDefaultNodeTable().getRow(cyNode.getSUID())
-                        .get(nodeLevelColumn.getName(), nodeLevelColumn.getType())
-                        == null)
-                    return false;
-            }
-        } catch (InstantiationException e) {
-            return false;
-        } catch (IllegalAccessException e) {
-            return false;
-        }
-        return true;
-    }
-
-
-    private CyColumn getNodeDataColumn() {
-        return getNodeColumn(jcb_nodeDataAttribute);
-
-    }
-
-    private CyColumn getNodeLevelColumn() {
-        try {
-            CyNetwork network = getSelectedNetwork();
-            return network.getDefaultNodeTable().getColumn(levelAttr);
-        } catch (Exception e) {
-            return null;
+        jcb_network.setModel(new DefaultComboBoxModel(networkTitles));
+        for (int i = 0; i < jcb_network.getItemCount(); i++) {
+            Object item = jcb_network.getItemAt(i);
+            CyNetwork currentNetwork = PSFCActivator.cyApplicationManager.getCurrentNetwork();
+            if (currentNetwork != null)
+                if (item.toString().equals(currentNetwork.getRow(currentNetwork).get("Name", String.class)))
+                    jcb_network.setSelectedItem(item);
         }
     }
-
-    private CyColumn getNodeColumn(JComboBox comboBox) {
-        try {
-            CyNetwork network = getSelectedNetwork();
-            String attr = comboBox.getSelectedItem().toString();
-            return network.getDefaultNodeTable().getColumn(attr);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private CyColumn getEdgeTypeColumn() {
-        return getEdgeColumn(jcb_edgeTypeAttribute);
-    }
-
-    private CyColumn getEdgeWeightColumn() {
-        return getEdgeColumn(jcb_edgeWeights);
-    }
-
-    private CyColumn getEdgeRankColumn() {
-        return getEdgeColumn(jcb_edgeRanks);
-    }
-
-    private CyColumn getEdgeColumn(JComboBox comboBox) {
-        try {
-            CyNetwork network = getSelectedNetwork();
-            String attr = comboBox.getSelectedItem().toString();
-            return network.getDefaultEdgeTable().getColumn(attr);
-        } catch (NullPointerException e) {
-            return null;
-        }
-    }
-
-
     private void jcb_networkActionPerformed() {
-        setJcb_edgeAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
+        setJcbAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
         setjcb_nodeDataAttributes();
         if (jrb_suppliedWeights.isSelected())
-            setJcb_edgeAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
+            setJcbAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
         if (jrb_edgeRanks.isSelected())
-            setJcb_edgeAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+            setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
         enableButtons();
         activateFlowVisualizationPanel(getSelectedNetwork());
     }
-
-
-    private void setJcb_edgeAttributes(JComboBox comboBox) {
-        CyNetwork selectedNetwork = getSelectedNetwork();
-        if (selectedNetwork == null)
-            comboBox.setModel(new DefaultComboBoxModel());
-        else {
-            Collection<CyColumn> columns = selectedNetwork.getDefaultEdgeTable().getColumns();
-            String[] attributes = new String[columns.size()];
-            int i = 0;
-            for (CyColumn column : columns) {
-                attributes[i++] = column.getName();
-            }
-            comboBox.setModel(new DefaultComboBoxModel(attributes));
-        }
-        enableButtons();
-    }
-
-    private void setJcb_edgeAttributes(JComboBox comboBox, EpsfcProps property) {
-        setJcb_edgeAttributes(comboBox);
-        //Select item from properties, if valid
-        String edgeTypeAttr = PSFCActivator.getPsfcProps().getProperty(property.getName());
-        for (int i = 0; i < comboBox.getItemCount(); i++) {
-            Object item = comboBox.getItemAt(i);
-            if (item.toString().equals(edgeTypeAttr))
-                comboBox.setSelectedItem(item);
-        }
+    private void jb_refreshNetworksActionPerformed() {
+        setjcb_networkModel();
         enableButtons();
     }
 
@@ -1987,60 +1549,402 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
 
     }
+    private void jb_refreshNodeDataAttrsActionPerformed() {
+        setjcb_nodeDataAttributes();
+        enableButtons();
+    }
+    private void jb_checkNodeTypesActionPerformed() {
 
-    private CyNetwork getSelectedNetwork() {
-        CyNetwork selectedNetwork = null;
-
-        if (jcb_network.getSelectedItem() == null)
-            return null;
-        String networkSelection = jcb_network.getSelectedItem().toString();
-        Long suid = null;
-        if (networkSelection.isEmpty())
-            return null;
-        if (networkSelection.contains(suidSplit)) {
-            String[] tokens = networkSelection.split(suidSplit);
-            try {
-                suid = Long.decode(tokens[tokens.length - 1]);
-            } catch (NumberFormatException e) {
-                String message = "Could not convert SUID " + suid + " to java.lang.Long";
-                PSFCActivator.getLogger().error(message);
-            }
-        } else {
-            String message = "Network selection " + networkSelection + "does not contain SUID";
-            PSFCActivator.getLogger().error(message);
-        }
-
-        for (CyNetwork network : PSFCActivator.networkManager.getNetworkSet())
-//                if (network.getRow(network).get(CyNetwork.NAME, String.class).
-//                        equals(jcb_network.getSelectedItem().toString()))
-            if (network.getSUID().equals(suid))
-                selectedNetwork = network;
-        return selectedNetwork;
     }
 
+    private void jb_refreshEdgeTypeAttrsActionPerformed() {
+        setJcbAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
+        enableButtons();
+    }
+    private void jb_checkEdgeTypesActionPerformed() {
+        if (jcb_edgeTypeAttribute.getSelectedItem() == null)
+            return;
+        String edgeTypeAttr = jcb_edgeTypeAttribute.getSelectedItem().toString();
+        CyNetwork selectedNetwork = getSelectedNetwork();
+        if (selectedNetwork == null)
+            return;
+        TreeSet<String> uniqueValues = new TreeSet<String>();
+        for (CyRow row : selectedNetwork.getDefaultEdgeTable().getAllRows()) {
+            try {
+                uniqueValues.add(row.get(edgeTypeAttr, selectedNetwork.getDefaultEdgeTable().
+                        getColumn(edgeTypeAttr).getType()).toString());
+            } catch (NullPointerException e) {
+                return;
+            }
+        }
+        JFrame frame = new JFrame("Unique values of the attribute " + edgeTypeAttr);
+        frame.setName(frame.getTitle());
+        DefaultListModel<String> listModel = new DefaultListModel<String>();
+        for (String value : uniqueValues) {
+            listModel.addElement(value);
+        }
 
+        JList<String> list = new JList<String>(listModel);
+        JScrollPane panel = new JScrollPane(list);
+        frame.setContentPane(panel);
+        frame.setLocation(jb_checkEdgeTypes.getLocation());
+        frame.pack();
+        frame.setVisible(true);
+    }
+
+    //Flow visualization
+    private void jtxt_levelActionPerformed(ActionEvent evt) {
+        int value;
+        try {
+            value = Integer.parseInt(jtxt_level.getText());
+        } catch (NumberFormatException e) {
+            value = 0;
+        }
+        if (value > jsl_levels.getMaximum())
+            value = jsl_levels.getMaximum();
+        else if (value < 0)
+            value = 0;
+        jtxt_level.setText(value + "");
+        jsl_levels.setValue(value);
+    }
+    private void jb_showStateActionPerformed() {
+        ArrayList<Integer> levels = new ArrayList<Integer>();
+        levels.add(jsl_levels.getValue());
+        VisualizeFlowAction visualizeFlowAction = createVisualizeFlowAction(levels);
+        visualizeFlowAction.actionPerformed(null);
+    }
+    private VisualizeFlowAction createVisualizeFlowAction(ArrayList<Integer> levels) {
+        CyNetwork network = getSelectedNetwork();
+        if (network == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Selected network does not exist. \nPlease, refresh the network list and choose a valid network for pathway flow calculation.",
+                    "PSFC user message", JOptionPane.OK_OPTION);
+            return null;
+        }
+        double minSignal = Double.MAX_VALUE;
+        double maxSignal = Double.MIN_VALUE;
+        for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++) {
+            HashMap<CyNode, Double> nodeSignalMap = networkLevelNodeSignalMap.get(network).get(level);
+            if (nodeSignalMap != null)
+                for (CyNode cyNode : nodeSignalMap.keySet()) {
+                    double signal = nodeSignalMap.get(cyNode);
+                    if (signal < minSignal)
+                        minSignal = signal;
+                    else if (signal > maxSignal)
+                        maxSignal = signal;
+                }
+        }
+
+        return new VisualizeFlowAction(network, minSignal, maxSignal, levels, this);
+    }
+    private void jb_playFlowActionPerformed() {
+        ArrayList<Integer> levels = new ArrayList<Integer>();
+        for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++)
+            levels.add(level);
+        VisualizeFlowAction visualizeFlowAction = createVisualizeFlowAction(levels);
+        visualizeFlowAction.actionPerformed(null);
+    }
+    public void setVisualizationComponents(CyNetwork network,
+                                           HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap) {
+        networkLevelNodeSignalMap.put(network, levelNodeSignalMap);
+        activateFlowVisualizationPanel(network);
+    }
+    private void activateFlowVisualizationPanel(CyNetwork network) {
+        HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap = networkLevelNodeSignalMap.get(network);
+        if (levelNodeSignalMap == null) {
+            jsl_levels.setEnabled(false);
+            jtxt_level.setEnabled(false);
+            jb_showState.setEnabled(false);
+            jb_playFlow.setEnabled(false);
+        } else {
+            jsl_levels.setMinimum(0);
+            jsl_levels.setMaximum(levelNodeSignalMap.size() - 1);
+            jsl_levels.setEnabled(true);
+            jtxt_level.setEnabled(true);
+            jb_showState.setEnabled(true);
+            jb_playFlow.setEnabled(true);
+        }
+    }
+    public JSlider getJsl_levels() {
+        return jsl_levels;
+    }
+
+    private void jb_saveGeneralSettingsActionPerformed() {
+        Properties psfcProps = PSFCActivator.getPsfcProps();
+        //columns
+        try {
+            psfcProps.setProperty(EpsfcProps.NodeDataAttribute.getName(), jcb_nodeDataAttribute.getSelectedItem().toString());
+            psfcProps.setProperty(EpsfcProps.EdgeTypeAttribute.getName(), jcb_edgeTypeAttribute.getSelectedItem().toString());
+            psfcProps.setProperty(EpsfcProps.EdgeWeigthsAttribute.getName(), jcb_edgeWeights.getSelectedItem().toString());
+            psfcProps.setProperty(EpsfcProps.EdgeRankAttribute.getName(), jcb_edgeRanks.getSelectedItem().toString());
+        } catch (NullPointerException e) {
+        }
+
+
+        //Node data type
+        Enumeration<AbstractButton> buttons = jbg_dataType.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.NodeDataType.getName(), button.getText());
+        }
+
+        //Node default value
+        //???????
+        //Multiple data rule
+        buttons = jbg_multipleDataOption.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.MultipleDataOption.getName(), button.getText());
+        }
+
+        //edgeTypeRuleNameConfigFile
+        if (edgeTypeRuleNameConfigFile != null)
+            psfcProps.setProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName(), edgeTypeRuleNameConfigFile.getAbsolutePath());
+        //ruleNameRuleConfigFile
+        if (ruleNameRuleConfigFile != null)
+            psfcProps.setProperty(EpsfcProps.RuleNameRuleConfigFile.getName(), ruleNameRuleConfigFile.getAbsolutePath());
+
+
+        //MultipleEdgeRules
+        buttons = jbg_signalSplitRule.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.SplitSignalRule.getName(), button.getText());
+        }
+
+
+        buttons = jbg_splitSignalOn.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.SplitSignalOn.getName(), button.getText());
+        }
+
+        buttons = jbg_signalProcessingOrder.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.SignalProcessingOrder.getName(), button.getText());
+        }
+
+        buttons = jbg_multipleSignalProcessingRule.getElements();
+        while (buttons.hasMoreElements()) {
+            JRadioButton button = (JRadioButton) buttons.nextElement();
+            if (button.isSelected())
+                psfcProps.setProperty(EpsfcProps.MultipleSignalProcessingRule.getName(), button.getText());
+        }
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(PSFCActivator.getPsfcPropsFile());
+            PSFCActivator.getPsfcProps().store(outputStream, "PSFC property file");
+            outputStream.close();
+        } catch (FileNotFoundException e) {
+            PSFCActivator.getLogger().error("Could not write to psfc.props file. Reason: " + e.getMessage(), e);
+        } catch (IOException e) {
+            PSFCActivator.getLogger().error("Could not write to psfc.props file. Reason: " + e.getMessage(), e);
+        }
+    }
+    /******************
+     Actions: jp_Options
+     ******************/
+    //Algorithms
     private void setjcb_sortingAlgorithmsModel() {
 //        String[] sortingAlgorithms = ESortingAlgorithms.getAlgorithmNames();
         String[] sortingAlgorithms = new String[]{ESortingAlgorithms.TOPOLOGICALSORT.getName()};
         jcb_sortingAlgorithm.setModel(new DefaultComboBoxModel(sortingAlgorithms));
     }
+    private void jcb_sortingAlgorithmActionPerformed() {
 
-    private void setjcb_networkModel() {
-        Set<CyNetwork> networkSet = PSFCActivator.networkManager.getNetworkSet();
-        String[] networkTitles = new String[networkSet.size()];
-        int index = 0;
-        for (CyNetwork network : networkSet) {
-            networkTitles[index++] = network.getRow(network).get("Name", String.class) + suidSplit + network.getSUID();
-        }
-        jcb_network.setModel(new DefaultComboBoxModel(networkTitles));
-        for (int i = 0; i < jcb_network.getItemCount(); i++) {
-            Object item = jcb_network.getItemAt(i);
-            CyNetwork currentNetwork = PSFCActivator.cyApplicationManager.getCurrentNetwork();
-            if (currentNetwork != null)
-                if (item.toString().equals(currentNetwork.getRow(currentNetwork).get("Name", String.class)))
-                    jcb_network.setSelectedItem(item);
+    }
+    private void jb_sortNetworkActionPerformed(ActionEvent e) {
+        CyNetwork selectedNetwork = getSelectedNetwork();
+        if (selectedNetwork != null) {
+            SortNetworkAction sortNetworkAction = new SortNetworkAction(selectedNetwork, getSortingAlgorithm());
+            sortNetworkAction.actionPerformed(e);
         }
     }
+    private int getSortingAlgorithm() {
+        return ESortingAlgorithms.getNum(jcb_sortingAlgorithm.getSelectedItem().toString());
+    }
+
+    //Significance calculation
+    private void jb_GeneMatrixFileActionPerformed() {
+
+    }
+    private void jtxt_numOfSamplingsActionPerformed() {
+
+    }
+    private void jb_restoreDefaultOptionsActionPerformed() {
+
+    }
+    private void jb_SaveOptionsSettingsActionPerformed() {
+
+    }
+
+    /******************
+     Actions: jp_Rules
+     ******************/
+    /****Simple rules****/
+    private void jb_chooseRuleNameRuleConfigFileActionPerformed() {
+        JFrame fileLoadFrame = new JFrame("RuleName-Rule configuration");
+        fileLoadFrame.setLocation(400, 250);
+        fileLoadFrame.setSize(400, 200);
+        JFileChooser fileChooser = new JFileChooser();
+        File recentDirectory = PSFCActivator.getRecentDirectory();
+        fileChooser.setCurrentDirectory(recentDirectory);
+
+
+        fileChooser.setDialogTitle("Select RuleName-Rule configuration file");
+        fileChooser.showOpenDialog(fileLoadFrame);
+        String selectedFilePath = null;
+
+        if (fileChooser.getSelectedFile() != null) {
+            selectedFilePath = fileChooser.getSelectedFile().getPath();
+            PSFCActivator.writeRecentDirectory(selectedFilePath);
+        }
+
+        String noFile = "No file selected";
+        String name;
+        if (selectedFilePath != null) {
+            name = fileChooser.getSelectedFile().getName();
+//            int size = noFile.length();
+            int size = 40;
+            if (name.length() > size)
+                name = name.substring(0, size) + "...";
+            jl_ruleNameRuleConfigFileName.setText(name);
+            this.ruleNameRuleConfigFile = new File(selectedFilePath);
+        }
+        enableButtons();
+    }
+    private boolean setRuleNameRuleConfigFile(File file) {
+        if (file.exists()) {
+            String name = file.getName();
+            int size = 40;
+            if (name.length() > size)
+                name = name.substring(0, size) + "...";
+            jl_ruleNameRuleConfigFileName.setText(name);
+            ruleNameRuleConfigFile = file;
+            enableButtons();
+            return true;
+        }
+        return false;
+    }
+    private void jb_chooseEdgeTypeConfigFileActionPerformed() {
+        JFrame fileLoadFrame = new JFrame("EdgeType-RuleName configuration");
+        fileLoadFrame.setLocation(400, 250);
+        fileLoadFrame.setSize(400, 200);
+        JFileChooser fileChooser = new JFileChooser();
+        File recentDirectory = PSFCActivator.getRecentDirectory();
+        fileChooser.setCurrentDirectory(recentDirectory);
+
+
+        fileChooser.setDialogTitle("Select EdgeType-RuleName configuration file");
+        fileChooser.showOpenDialog(fileLoadFrame);
+        String selectedFilePath = null;
+
+        if (fileChooser.getSelectedFile() != null) {
+            selectedFilePath = fileChooser.getSelectedFile().getPath();
+            PSFCActivator.writeRecentDirectory(selectedFilePath);
+
+        }
+
+        if (selectedFilePath != null) {
+            setEdgeTypeRuleNameConfigFile(new File(selectedFilePath));
+        }
+
+        enableButtons();
+    }
+    private boolean setEdgeTypeRuleNameConfigFile(File file) {
+        if (file.exists()) {
+            String name = file.getName();
+            int size = 40;
+            if (name.length() > size)
+                name = name.substring(0, size) + "...";
+            jl_edgeTypeConfigFileName.setText(name);
+            this.edgeTypeRuleNameConfigFile = file;
+            enableButtons();
+            return true;
+        }
+        return false;
+    }
+
+
+    /****Multipule input and output rules****/
+    //Signal split rule
+    private void jrb_noSplitRuleActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_equalActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_proportionalActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_suppliedWeightsActionPerformed() {
+        setJcbAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
+        enableButtons();
+    }
+    private void jb_refreshWeigthsActionPerformed() {
+        setJcbAttributes(jcb_edgeWeights, EpsfcProps.EdgeWeigthsAttribute);
+    }
+
+    //Split signal on
+
+    //Multiple signal processing rule
+    private void jrb_multiplicationActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_updatedNodeScoresActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_additionActionPerformed() {
+        enableButtons();
+    }
+
+
+    //Signal processing order
+    private void jrb_noRanksActionPerformed() {
+        enableButtons();
+    }
+    private void jcb_edgeRanksActionPerformed() {
+        setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+    }
+    private void jrb_edgeRanksActionPerformed() {
+        enableButtons();
+        setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+    }
+    private void jb_refreshEdgeRanksActionPerformed() {
+        setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+    }
+
+    /******************
+     Actions: jp_Data
+     ******************/
+    private void jtxt_defaultValueActionPerformed(ActionEvent evt) {
+        String text = jtxt_defaultValue.getText();
+        try {
+            Double.parseDouble(text);
+        } catch (NumberFormatException e) {
+            jtxt_defaultValue.setText(Node.getDefaultValue());
+        }
+    }
+    /******************
+     Actions: jp_Help
+     ******************/
+
+    private void jb_projectWebPageActionPerformed() {
+    }
+    private void jb_userManualActionPerformed() {
+    }
+
+    /******************************
+    *********Other methods*********
+     ******************************/
+
 
     private void setComponentProperties() {
         //Refresh buttons
@@ -2195,8 +2099,62 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     }
 
-    public JSlider getJsl_levels() {
-        return jsl_levels;
+    private CyNetwork getSelectedNetwork() {
+        CyNetwork selectedNetwork = null;
+
+        if (jcb_network.getSelectedItem() == null)
+            return null;
+        String networkSelection = jcb_network.getSelectedItem().toString();
+        Long suid = null;
+        if (networkSelection.isEmpty())
+            return null;
+        if (networkSelection.contains(suidSplit)) {
+            String[] tokens = networkSelection.split(suidSplit);
+            try {
+                suid = Long.decode(tokens[tokens.length - 1]);
+            } catch (NumberFormatException e) {
+                String message = "Could not convert SUID " + suid + " to java.lang.Long";
+                PSFCActivator.getLogger().error(message);
+            }
+        } else {
+            String message = "Network selection " + networkSelection + "does not contain SUID";
+            PSFCActivator.getLogger().error(message);
+        }
+
+        for (CyNetwork network : PSFCActivator.networkManager.getNetworkSet())
+//                if (network.getRow(network).get(CyNetwork.NAME, String.class).
+//                        equals(jcb_network.getSelectedItem().toString()))
+            if (network.getSUID().equals(suid))
+                selectedNetwork = network;
+        return selectedNetwork;
+    }
+
+    private void setJcbAttributes(JComboBox comboBox) {
+        CyNetwork selectedNetwork = getSelectedNetwork();
+        if (selectedNetwork == null)
+            comboBox.setModel(new DefaultComboBoxModel());
+        else {
+            Collection<CyColumn> columns = selectedNetwork.getDefaultEdgeTable().getColumns();
+            String[] attributes = new String[columns.size()];
+            int i = 0;
+            for (CyColumn column : columns) {
+                attributes[i++] = column.getName();
+            }
+            comboBox.setModel(new DefaultComboBoxModel(attributes));
+        }
+        enableButtons();
+    }
+
+    private void setJcbAttributes(JComboBox comboBox, EpsfcProps property) {
+        setJcbAttributes(comboBox);
+        //Select item from properties, if valid
+        String edgeTypeAttr = PSFCActivator.getPsfcProps().getProperty(property.getName());
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            Object item = comboBox.getItemAt(i);
+            if (item.toString().equals(edgeTypeAttr))
+                comboBox.setSelectedItem(item);
+        }
+        enableButtons();
     }
 
     private void setRadioButton(ButtonGroup buttonGroup, String buttonName) {
@@ -2268,69 +2226,99 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return refreshIcon;
     }
 
-    public void setVisualizationComoponents(CyNetwork network,
-                                            HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap) {
-        networkLevelNodeSignalMap.put(network, levelNodeSignalMap);
-        activateFlowVisualizationPanel(network);
+    private Properties getNodeDataProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), jtxt_defaultValue.getText());
+        return properties;
     }
 
-    private void activateFlowVisualizationPanel(CyNetwork network) {
-        HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap = networkLevelNodeSignalMap.get(network);
-        if (levelNodeSignalMap == null) {
-            jsl_levels.setEnabled(false);
-            jtxt_level.setEnabled(false);
-            jb_showState.setEnabled(false);
-            jb_playFlow.setEnabled(false);
-        } else {
-            jsl_levels.setMinimum(0);
-            jsl_levels.setMaximum(levelNodeSignalMap.size() - 1);
-            jsl_levels.setEnabled(true);
-            jtxt_level.setEnabled(true);
-            jb_showState.setEnabled(true);
-            jb_playFlow.setEnabled(true);
+    private Properties getMultiSignalProperties() {
+        Properties properties = new Properties();
+        int splitRule;
+        if (jrb_noSplitRule.isSelected())
+            splitRule = EMultiSignalProps.SPLIT_NONE;
+        else if (jrb_equal.isSelected())
+            splitRule = EMultiSignalProps.SPLIT_EQUAL;
+        else if (jrb_proportional.isSelected())
+            splitRule = EMultiSignalProps.SPLIT_PROPORTIONAL;
+        else {
+            splitRule = EMultiSignalProps.SPLIT_WEIGHTS;
         }
-    }
-
-    private void jb_showStateActionPerformed() {
-        ArrayList<Integer> levels = new ArrayList<Integer>();
-        levels.add(jsl_levels.getValue());
-        VisualizeFlowAction visualizeFlowAction = createVisualizeFlowAction(levels);
-        visualizeFlowAction.actionPerformed(null);
-    }
-
-    private VisualizeFlowAction createVisualizeFlowAction(ArrayList<Integer> levels) {
-        CyNetwork network = getSelectedNetwork();
-        if (network == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Selected network does not exist. \nPlease, refresh the network list and choose a valid network for pathway flow calculation.",
-                    "PSFC user message", JOptionPane.OK_OPTION);
-            return null;
-        }
-        double minSignal = Double.MAX_VALUE;
-        double maxSignal = Double.MIN_VALUE;
-        for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++) {
-            HashMap<CyNode, Double> nodeSignalMap = networkLevelNodeSignalMap.get(network).get(level);
-            if (nodeSignalMap != null)
-                for (CyNode cyNode : nodeSignalMap.keySet()) {
-                    double signal = nodeSignalMap.get(cyNode);
-                    if (signal < minSignal)
-                        minSignal = signal;
-                    else if (signal > maxSignal)
-                        maxSignal = signal;
-                }
+        properties.put(EMultiSignalProps.SplitSignalRule.getName(), splitRule);
+        if (splitRule == EMultiSignalProps.SPLIT_WEIGHTS) {
+            CyColumn edgeWeightColumn = getEdgeWeightColumn();
+            if (edgeWeightColumn == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Selected EdgeWeight column does not exist. " +
+                                "\nPlease, refresh the column list and choose a valid EdgeWeight column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION
+                );
+                return null;
+            }
+            boolean isNumber = true;
+            if (!edgeWeightColumn.getType().getName().equals(Double.class.getName()))
+                if (!edgeWeightColumn.getType().getName().equals(Integer.class.getName()))
+                    isNumber = false;
+            if (!isNumber) {
+                JOptionPane.showMessageDialog(this,
+                        "Illegal EdgeWeight column: should be numeric. " +
+                                "\nPlease, choose a valid column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION
+                );
+                return null;
+            }
+            properties.put(EMultiSignalProps.EdgeWeightsAttribute.getName(), edgeWeightColumn);
         }
 
-        return new VisualizeFlowAction(network, minSignal, maxSignal, levels, this);
-    }
+        int splitOn;
+        if (jrb_incomingEdges.isSelected())
+            splitOn = EMultiSignalProps.SPLIT_INCOMING;
+        else
+            splitOn = EMultiSignalProps.SPLIT_OUTGOING;
 
-    private void jb_playFlowActionPerformed() {
-        ArrayList<Integer> levels = new ArrayList<Integer>();
-        for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++)
-            levels.add(level);
-        VisualizeFlowAction visualizeFlowAction = createVisualizeFlowAction(levels);
-        visualizeFlowAction.actionPerformed(null);
-    }
+        properties.put(EMultiSignalProps.SplitSignalOn.getName(), splitOn);
 
+        int multiProcessingRule;
+        if (jrb_updatedNodeScores.isSelected())
+            multiProcessingRule = EMultiSignalProps.UPDATE_NODE_SCORES;
+        else if (jrb_multiplication.isSelected())
+            multiProcessingRule = EMultiSignalProps.MULTIPLICATION;
+        else
+            multiProcessingRule = EMultiSignalProps.ADDITION;
+        properties.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(), multiProcessingRule);
+
+        int edgeOrder;
+        if (jrb_noRanks.isSelected())
+            edgeOrder = EMultiSignalProps.ORDER_NONE;
+        else
+            edgeOrder = EMultiSignalProps.ORDER_RANKS;
+        properties.put(EMultiSignalProps.SignalProcessingOrder.getName(), edgeOrder);
+
+        if (edgeOrder == EMultiSignalProps.ORDER_RANKS) {
+            CyColumn edgeRankColumn = getEdgeRankColumn();
+            if (edgeRankColumn == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Selected EdgeRank column does not exist. " +
+                                "\nPlease, refresh the column list and choose a valid EdgeRank column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION
+                );
+                return null;
+            }
+            boolean isInteger = true;
+            if (!edgeRankColumn.getType().getName().equals(Integer.class.getName()))
+                isInteger = false;
+            if (!isInteger) {
+                JOptionPane.showMessageDialog(this,
+                        "Illegal EdgeRank column: should be Integer. " +
+                                "\nPlease, choose a valid column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION
+                );
+                return null;
+            }
+            properties.put(EMultiSignalProps.EdgeRankAttribute.getName(), edgeRankColumn);
+        }
+        return properties;
+    }
 
     public Properties getBootstrapProperties() {
         Properties properties = new Properties();
@@ -2339,4 +2327,75 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 (jrb_SampleCentric.isSelected()? Bootstrap.SAMPLECENTRIC : Bootstrap.GENECENTRIC) + "");
         return properties;
     }
+
+    private boolean checkSorted(CyNetwork network) {
+        CyColumn nodeLevelColumn = getNodeLevelColumn();
+        if (nodeLevelColumn == null)
+            return false;
+        try {
+            if (nodeLevelColumn.getType().newInstance() instanceof Integer)
+                return false;
+            for (Object nodeObj : network.getNodeList()) {
+                CyNode cyNode = (CyNode) nodeObj;
+
+                if (network.getDefaultNodeTable().getRow(cyNode.getSUID())
+                        .get(nodeLevelColumn.getName(), nodeLevelColumn.getType())
+                        == null)
+                    return false;
+            }
+        } catch (InstantiationException e) {
+            return false;
+        } catch (IllegalAccessException e) {
+            return false;
+        }
+        return true;
+    }
+
+    private CyColumn getNodeDataColumn() {
+        return getNodeColumn(jcb_nodeDataAttribute);
+
+    }
+
+    private CyColumn getNodeLevelColumn() {
+        try {
+            CyNetwork network = getSelectedNetwork();
+            return network.getDefaultNodeTable().getColumn(levelAttr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private CyColumn getNodeColumn(JComboBox comboBox) {
+        try {
+            CyNetwork network = getSelectedNetwork();
+            String attr = comboBox.getSelectedItem().toString();
+            return network.getDefaultNodeTable().getColumn(attr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private CyColumn getEdgeTypeColumn() {
+        return getEdgeColumn(jcb_edgeTypeAttribute);
+    }
+
+    private CyColumn getEdgeWeightColumn() {
+        return getEdgeColumn(jcb_edgeWeights);
+    }
+
+    private CyColumn getEdgeRankColumn() {
+        return getEdgeColumn(jcb_edgeRanks);
+    }
+
+    private CyColumn getEdgeColumn(JComboBox comboBox) {
+        try {
+            CyNetwork network = getSelectedNetwork();
+            String attr = comboBox.getSelectedItem().toString();
+            return network.getDefaultEdgeTable().getColumn(attr);
+        } catch (NullPointerException e) {
+            return null;
+        }
+    }
+
+
 }
