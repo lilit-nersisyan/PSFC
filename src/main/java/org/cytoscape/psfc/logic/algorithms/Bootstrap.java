@@ -17,7 +17,9 @@ public class Bootstrap {
 
     public static int SAMPLECENTRIC = 0;
     public static int GENECENTRIC = 1;
-    public static int minNumOfSamplings = 200;
+    public static int minNumOfSamplings = 2;
+    public static int defaultNumOfSamplings = 200;
+    public static int maxNumOfSamplings = 500;
     private final Logger logger;
 
     private PSF psf;
@@ -114,7 +116,7 @@ public class Bootstrap {
 
             PriorityQueue<Double> polledValues = new PriorityQueue<Double>();
             double value;
-            while (signal >= (value = bootstrapValues.poll())) {
+            while (!bootstrapValues.isEmpty() && signal >= (value = bootstrapValues.poll())) {
                 polledValues.add(value);
             }
             if (signal >= mean)

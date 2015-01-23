@@ -372,7 +372,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             taskMonitor.setProgress(0);
             String prop = "";
 
-            final int numOfSamplings;
+            int numOfSamplings;
             try {
                 prop = bootstrapProps
                         .getProperty(Bootstrap.NUMOFSAMPLINGSPROP);

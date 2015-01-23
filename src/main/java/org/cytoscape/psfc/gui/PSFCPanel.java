@@ -44,9 +44,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private File edgeTypeRuleNameConfigFile;
     private File ruleNameRuleConfigFile;
     private ImageIcon refreshIcon;
+    private ImageIcon warningIcon;
     private String refreshIconName = "refresh_button.png";
+    private String warningIconName = "warning_icon.png";
     private HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>> networkLevelNodeSignalMap = new HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>>();
     private CalculateScoreFlowAction calculateFlowAction = null;
+
 
 
     public PSFCPanel() {
@@ -54,6 +57,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         loadProps();
         initComponents();
         setComponentProperties();
+        setToolTips();
         setModels();
         addActionListeners();
         enableButtons();
@@ -92,10 +96,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return icon;
     }
 
-    private javax.swing.JButton jb_restoreDefaultOptions;
     private javax.swing.JButton jb_GeneMatrixFile;
     private javax.swing.JButton jb_SaveOptionsSettings;
     private javax.swing.JButton jb_calculateFlow;
+    private javax.swing.JButton jb_checkEdgeTypes;
     private javax.swing.JButton jb_chooseEdgeTypeConfigFile;
     private javax.swing.JButton jb_chooseRuleNameRuleConfigFile;
     private javax.swing.JButton jb_openLogFile;
@@ -106,9 +110,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_refreshNetworks;
     private javax.swing.JButton jb_refreshNodeDataAttrs;
     private javax.swing.JButton jb_refreshWeigths;
+    private javax.swing.JButton jb_restoreDefaultOptions;
     private javax.swing.JButton jb_saveGeneralSettings;
-    private javax.swing.JButton jb_checkEdgeTypes;
-    private javax.swing.JButton jb_checkNodeTypes;
     private javax.swing.JButton jb_showState;
     private javax.swing.JButton jb_sortNetwork;
     private javax.swing.JButton jb_userManual;
@@ -145,6 +148,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_signalSplitRule;
     private javax.swing.JLabel jl_simpleRules;
     private javax.swing.JLabel jl_sortingAlgorithm;
+    private javax.swing.JLabel jl_warnNumSamplings;
     private javax.swing.JPanel jp_Data;
     private javax.swing.JPanel jp_General;
     private javax.swing.JPanel jp_Help;
@@ -189,6 +193,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private ButtonGroup jbg_signalSplitRule;
     private ButtonGroup jbg_multipleSignalProcessingRule;
     private ButtonGroup jbg_signalProcessingOrder;
+    private ButtonGroup jbg_bootstrapType;
 
 
     private void initComponents() {
@@ -206,7 +211,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jcb_nodeDataAttribute = new javax.swing.JComboBox();
         jl_selectNodeDataAttribute = new javax.swing.JLabel();
         jb_refreshNodeDataAttrs = new javax.swing.JButton();
-        jb_checkNodeTypes = new javax.swing.JButton();
         jp_flowVisualization = new javax.swing.JPanel();
         jsl_levels = new javax.swing.JSlider();
         jl_flowVisualization = new javax.swing.JLabel();
@@ -225,6 +229,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jrb_SampleCentric = new javax.swing.JRadioButton();
         jrb_GeneCentric = new javax.swing.JRadioButton();
         jb_GeneMatrixFile = new javax.swing.JButton();
+        jl_warnNumSamplings = new javax.swing.JLabel();
         jp_algorithms = new javax.swing.JPanel();
         jl_network_and_attrs2 = new javax.swing.JLabel();
         jl_sortingAlgorithm = new javax.swing.JLabel();
@@ -323,9 +328,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshNodeDataAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
 
-        jb_checkNodeTypes.setText("Check");
-        jb_checkNodeTypes.setPreferredSize(new java.awt.Dimension(59, 20));
-
         javax.swing.GroupLayout jp_network_attrsLayout = new javax.swing.GroupLayout(jp_network_attrs);
         jp_network_attrs.setLayout(jp_network_attrsLayout);
         jp_network_attrsLayout.setHorizontalGroup(
@@ -349,9 +351,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                 .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_checkNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap())
                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                 .addComponent(jl_network_and_attrs)
@@ -379,8 +379,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jb_checkNodeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -501,6 +500,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jb_GeneMatrixFile.setText("Expr Matrix File");
 
+        jl_warnNumSamplings.setText(" ");
+
         javax.swing.GroupLayout jp_significanceLayout = new javax.swing.GroupLayout(jp_significance);
         jp_significance.setLayout(jp_significanceLayout);
         jp_significanceLayout.setHorizontalGroup(
@@ -515,7 +516,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addGroup(jp_significanceLayout.createSequentialGroup()
                                                 .addComponent(jl_numOfSamplings)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jl_warnNumSamplings))
                                         .addComponent(jl_samplingType)
                                         .addComponent(jrb_SampleCentric)
                                         .addGroup(jp_significanceLayout.createSequentialGroup()
@@ -541,7 +544,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jl_numOfSamplings)
-                                        .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jl_warnNumSamplings))
                                 .addContainerGap(21, Short.MAX_VALUE))
         );
 
@@ -556,19 +560,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_sortingAlgorithm.setText("Sorting algorithm");
 
         jcb_sortingAlgorithm.setPreferredSize(new java.awt.Dimension(201, 20));
-        jcb_sortingAlgorithm.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jcb_sortingAlgorithmActionPerformed();
-            }
-        });
 
         jb_sortNetwork.setText("Sort");
         jb_sortNetwork.setPreferredSize(new java.awt.Dimension(59, 20));
-        jb_sortNetwork.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jb_sortNetworkActionPerformed(evt);
-            }
-        });
 
         javax.swing.GroupLayout jp_algorithmsLayout = new javax.swing.GroupLayout(jp_algorithms);
         jp_algorithms.setLayout(jp_algorithmsLayout);
@@ -1014,7 +1008,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jtp_psfc.addTab("Help", jp_Help);
 
+        jb_calculateFlow.setBackground(new java.awt.Color(51, 102, 0));
         jb_calculateFlow.setText("Calculate flow");
+        jb_calculateFlow.setBorderPainted(false);
 
         jb_openLogFile.setText("PSFC log");
 
@@ -1149,12 +1145,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jb_refreshNodeDataAttrsActionPerformed();
             }
         });
-        jb_checkNodeTypes.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                jb_checkNodeTypesActionPerformed();
-            }
-        });
 
 
         //Flow visualization
@@ -1203,8 +1193,19 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         //Significance calculation
         //no action for jchb_calculateSignificance
-        //no action for jrb_SampleCentric
+        jrb_SampleCentric.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_SampleCentricActionPerformed();
+            }
+        });
         //no action for jrb_GeneCentric
+        jrb_GeneCentric.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_GeneCentricActionPerformed();
+            }
+        });
         jb_GeneMatrixFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1553,9 +1554,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         setjcb_nodeDataAttributes();
         enableButtons();
     }
-    private void jb_checkNodeTypesActionPerformed() {
-
-    }
 
     private void jb_refreshEdgeTypeAttrsActionPerformed() {
         setJcbAttributes(jcb_edgeTypeAttribute, EpsfcProps.EdgeTypeAttribute);
@@ -1772,12 +1770,38 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     //Significance calculation
+    private void jrb_SampleCentricActionPerformed() {
+        enableButtons();
+    }
+    private void jrb_GeneCentricActionPerformed() {
+        enableButtons();
+    }
     private void jb_GeneMatrixFileActionPerformed() {
 
     }
     private void jtxt_numOfSamplingsActionPerformed() {
+        int numOfSamplings;
+        try{
+            numOfSamplings = Integer.parseInt(jtxt_numOfSamplings.getText());
+            if (numOfSamplings < 1)
+                numOfSamplings = Bootstrap.defaultNumOfSamplings;
+        } catch (NumberFormatException e){
+            numOfSamplings = Bootstrap.defaultNumOfSamplings;
+            jtxt_numOfSamplings.setText(numOfSamplings + "");
+        }
 
+        jl_warnNumSamplings.setIcon(getWarningIcon());
+
+        if (numOfSamplings < Bootstrap.defaultNumOfSamplings)
+            jl_warnNumSamplings.setToolTipText("Lower than the recommended 200! May return unreliable results.");
+        else if (numOfSamplings > Bootstrap.maxNumOfSamplings)
+            jl_warnNumSamplings.setToolTipText("Larger than the recommended 200. May take too long to compute.");
+        else {
+            jl_warnNumSamplings.setIcon(null);
+            jl_warnNumSamplings.setToolTipText("");
+        }
     }
+
     private void jb_restoreDefaultOptionsActionPerformed() {
 
     }
@@ -1954,6 +1978,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshEdgeRanks.setIcon(getRefreshIcon());
         jb_refreshWeigths.setIcon(getRefreshIcon());
 
+        //Buttons
+        jb_calculateFlow.setBackground(new Color(51, 102, 0));
+        jb_calculateFlow.setOpaque(true);
+        jb_calculateFlow.setBorderPainted(false);
+
         //Button groups
 
         //jbg_dataType
@@ -1964,6 +1993,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jbg_dataType.add(jrb_logFC);
         //default selection
         jrb_linear.setSelected(true);
+
+        jbg_bootstrapType = new ButtonGroup();
+        jbg_bootstrapType.add(jrb_SampleCentric);
+        jbg_bootstrapType.add(jrb_GeneCentric);
+        jrb_SampleCentric.setSelected(true);
 
         //Set selectionFromProperties
         String dataType = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.NodeDataType.getName());
@@ -2093,9 +2127,41 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_showState.setEnabled(false);
         jb_playFlow.setEnabled(false);
 
+
         //Help components
         jl_psfc.setIcon(getPsfcIcon());
         jta_about.setText(PSFCActivator.getAboutText());
+
+    }
+
+    private void setToolTips(){
+        jl_selectEdgeTypeAttribute.setToolTipText("String attribute where types of edges are specified.");
+        jb_checkEdgeTypes.setToolTipText("Check the unique edge types in selected attribute");
+        jl_selectNodeDataAttribute.setToolTipText("Numeric attribute where the node values are present");
+
+
+        jb_sortNetwork.setToolTipText("See how the network will look like after sorting");
+        jrb_SampleCentric.setToolTipText("Bootstrap resampling will be performed by randomly redistributing node values among all the nodes in the network.");
+        jrb_GeneCentric.setToolTipText("Bootstrap resampling will be performed by randomly assigning each gene a value from a set of values provided with the Gene Matrix File");
+        jb_GeneMatrixFile.setToolTipText("Tab delimited file where each row contains gene name and a series of its values (usually from sample-series)");
+        jl_warnNumSamplings.setToolTipText("Number of bootstrap resamplings. The recommended minimum value is 200.");
+
+        jl_edgeTypeConfigFile.setToolTipText("File where rule names corresponding to each edge type are provided");
+        jl_ruleConfigFile.setToolTipText("File where rules corresponding to each rule name are provided");
+
+        jl_signalSplitRule.setToolTipText("Options for splitting node signals by multiple incoming/outgoing edges");
+        jrb_proportional.setToolTipText("Split signal among many nodes is proportional to their relative scores");
+        jrb_equal.setToolTipText("Splitting is performed by simple division to the number of nodes");
+        jrb_suppliedWeights.setToolTipText("Split signal is proportional to each edge weight");
+
+        jl_signalSplitOn.setToolTipText("Specify if signal splitting is performed based on multiple incoming or outgoing edges");
+        jl_multiSignalProcessing.setToolTipText("This rule specifies how a node's signal is changed by multiple input signals");
+        jrb_updatedNodeScores.setToolTipText("The node value is changed after receiving a signal from a single edge, then the next edge signal is processed");
+        jrb_addition.setToolTipText("Signals from multiple incoming edges are processed based on initial node value, and then added together");
+        jrb_multiplication.setToolTipText("Signals from multiple incoming edges are processed based on initial node value, and then multiplied");
+
+        jrb_edgeRanks.setToolTipText("Specifies the order in which multiple edge signals should be processed in case of \"Updated node scores\" rule");
+        jcb_edgeRanks.setToolTipText("Integer attribute specifying edge ranks. The higher the edge rank the lower its priority");
 
     }
 
@@ -2216,6 +2282,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jb_refreshEdgeRanks.setEnabled(false);
         }
 
+        if (jrb_SampleCentric.isSelected())
+            jb_GeneMatrixFile.setEnabled(false);
+        else
+            jb_GeneMatrixFile.setEnabled(true);
+
     }
 
     private ImageIcon getRefreshIcon() {
@@ -2224,6 +2295,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             refreshIcon = new ImageIcon(cl.getResource(refreshIconName));
         }
         return refreshIcon;
+    }
+
+    private Icon getWarningIcon() {
+        if (warningIcon == null) {
+            ClassLoader cl = PSFCActivator.class.getClassLoader();
+            warningIcon = new ImageIcon(cl.getResource(warningIconName));
+        }
+        return warningIcon;
     }
 
     private Properties getNodeDataProperties() {
