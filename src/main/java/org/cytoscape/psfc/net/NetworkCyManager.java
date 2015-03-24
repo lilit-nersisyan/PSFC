@@ -53,6 +53,51 @@ public class NetworkCyManager {
         table.createColumn(attrName, attrType, false);
         return table.getColumn(attrName);
     }
+    /**
+     * Deletes the CyColumn from the given CyTable with the given name.
+     * If such a column does not exist, the method does nothing.
+     *
+     * @param table    CyTable where the CyColumn should be
+     * @param attrName name of the attribute column
+     * @return int 0, if the column is found and deleted; 1, if no such column existed
+     */
+    public static int deleteAttributeColumn(CyTable table,
+                                                      String attrName) throws Exception {
+        Iterator<CyColumn> iterator = table.getColumns().iterator();
+
+        while (iterator.hasNext()) {
+            CyColumn column = iterator.next();
+            if (attrName.equals(column.getName())) {
+                table.deleteColumn(column.getName());
+                return 0;
+            }
+        }
+        return 1;
+    }
+
+    /**
+     * Deletes the CyColumn from the given CyTable with the given pattern.
+     * The pattern is the substring with which the column name begins.
+     * If such a column does not exist, the method does nothing.
+     *
+     * @param table    CyTable where the CyColumn should be
+     * @param prefix name of the attribute column
+     * @return int 0, if the column is found and deleted; 1, if no such column existed
+     */
+    public static int deleteAttributeColumnByPrefix(CyTable table,
+                                            String prefix) throws Exception {
+
+        Iterator<CyColumn> iterator = table.getColumns().iterator();
+
+        while (iterator.hasNext()) {
+            CyColumn column = iterator.next();
+            if (column.getName().startsWith(prefix)) {
+                table.deleteColumn(column.getName());
+                return 0;
+            }
+        }
+        return 1;
+    }
 
     /**
      * Populate the CyTable with attributes of given attribute name from given

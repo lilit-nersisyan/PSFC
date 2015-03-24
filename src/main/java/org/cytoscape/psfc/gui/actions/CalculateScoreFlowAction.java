@@ -4,6 +4,7 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
+import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
 import org.cytoscape.psfc.logic.algorithms.Bootstrap;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
@@ -50,9 +51,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private String networkName;
     private boolean calculateSignificance;
 
-    public static final String PSFC_SIGNAL = "psfc.signal_";
+
     private Properties bootstrapProps;
     private PSF psf;
+    HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap =
+            new HashMap<Integer, HashMap<CyNode, Double>>();
 
     public CalculateScoreFlowAction(CyNetwork network,
                                     CyColumn edgeTypeColumn,
@@ -93,6 +96,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     @Override
     public void actionPerformed(ActionEvent e) {
         final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
+        final BackupResultsTask backupResultsTask = new BackupResultsTask();
         TaskIterator taskIterator = new TaskIterator();
         taskIterator.append(psfTask);
         if (calculateSignificance) {
@@ -100,6 +104,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                     new CalculateSignificanceTask();
             taskIterator.append(calculateSignificanceTask);
         }
+        taskIterator.append(backupResultsTask);
         PSFCActivator.taskManager.execute(taskIterator);
     }
 
@@ -180,6 +185,14 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 }
             }
 
+            //Delete previous signal and p value columns if present
+            taskMonitor.setStatusMessage("Deleting PSFC columns, if previously present.");
+            NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultNodeTable(), EColumnNames.PSFC_NODE_SIGNAL.getName());
+            NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultNodeTable(), EColumnNames.PSFC_EDGE_SIGNAL.getName());
+            NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_PVAL.getName());
+            NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_FINAL.getName());
+
+
             //Instantiate new PSF class with generated graph, and perform pathway flow calculation
             try {
                 psf = new PSF(graph, RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
@@ -198,6 +211,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
                 taskMonitor.setStatusMessage("Calculating flow scores");
 
+
                 try {
                     psf.calculateFlow();
                 } catch (Exception e) {
@@ -211,44 +225,22 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 //Process output signals for exporting
 
                 //Process node signals
-                HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap = psf.getLevelNodeSignalMap(0);
                 //A separate column of score attributes for each level will be kept in this map
-
-                taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
-                HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap = new HashMap<Integer, HashMap<CyNode, Double>>();
-                try {
-                    PrintWriter writer = new PrintWriter(scoreBackupFile);
-                    writer.append("SUID\tName\tLevel\tScore0\tScore1\n");
-
-                    HashMap<CyNode, Double> prevNodeMap = new HashMap<CyNode, Double>();
-                    for (Node node : graph.getNodes()) {
-                        prevNodeMap.put(graph.getCyNode(node), node.getValue());
+                HashMap<CyNode, Double> prevNodeMap = new HashMap<CyNode, Double>();
+                for (Node node : psf.getGraph().getNodes()) {
+                    prevNodeMap.put(psf.getGraph().getCyNode(node), node.getValue());
+                }
+                for (int level : psf.getLevelNodeSignalMap(0).keySet()) {
+                    HashMap<CyNode, Double> currentLevelCyNodeScoreMap = new HashMap<CyNode, Double>();
+                    levelCyNodeScoreMap.put(level, currentLevelCyNodeScoreMap);
+                    currentLevelCyNodeScoreMap.putAll(prevNodeMap);
+                    for (Node node : psf.getLevelNodeSignalMap(0).get(level).keySet()) {
+                        CyNode cyNode = psf.getGraph().getCyNode(node);
+                        double score = psf.getLevelNodeSignalMap(0).get(level).get(node);
+                        currentLevelCyNodeScoreMap.remove(cyNode);
+                        currentLevelCyNodeScoreMap.put(cyNode, score);
                     }
-                    for (int level : levelNodeSignalMap.keySet()) {
-                        HashMap<CyNode, Double> currentLevelCyNodeScoreMap = new HashMap<CyNode, Double>();
-                        levelCyNodeScoreMap.put(level, currentLevelCyNodeScoreMap);
-                        currentLevelCyNodeScoreMap.putAll(prevNodeMap);
-                        for (Node node : levelNodeSignalMap.get(level).keySet()) {
-                            CyNode cyNode = graph.getCyNode(node);
-                            double score = levelNodeSignalMap.get(level).get(node);
-                            currentLevelCyNodeScoreMap.remove(cyNode);
-                            currentLevelCyNodeScoreMap.put(cyNode, score);
-                            writer.append(cyNode.getSUID() + "\t"
-                                    + node.getName() + "\t"
-                                    + level + "\t"
-                                    + node.getValue() + "\t"
-                                    + score + "\n");
-                        }
-                        prevNodeMap = currentLevelCyNodeScoreMap;
-                    }
-                    writer.close();
-                    PSFCActivator.getLogger().debug("Written flow scores to file "
-                            + scoreBackupFile.getAbsolutePath());
-
-                } catch (FileNotFoundException e) {
-                    throw new Exception("Problem writing node scores to file "
-                            + scoreBackupFile.getAbsolutePath()
-                            + ". Reason: " + e.getMessage(), e);
+                    prevNodeMap = currentLevelCyNodeScoreMap;
                 }
 
 
@@ -279,17 +271,19 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 taskMonitor.setProgress(0.9);
 
                 //Importing updated signals to Cytoscape
-
                 taskMonitor.setStatusMessage("Importing updated signals to Cytoscape");
+
                 //nodes
                 try {
                     for (int level : levelCyNodeScoreMap.keySet()) {
                         NetworkCyManager.setNodeAttributesFromMap(network,
-                                levelCyNodeScoreMap.get(level), PSFC_SIGNAL + level, Double.class);
+                                levelCyNodeScoreMap.get(level), EColumnNames.PSFC_NODE_SIGNAL.getName() + level, Double.class);
                     }
+                    NetworkCyManager.setNodeAttributesFromMap(network,
+                            levelCyNodeScoreMap.get(levelCyNodeScoreMap.size() - 1), EColumnNames.PSFC_FINAL.getName(), Double.class);
                     PSFCActivator.getLogger().debug("Mapped CyNode score values to Cytoscape attributes");
                 } catch (Exception e) {
-                    throw new Exception("Error occured while mapping CyNode scores " +
+                    throw new Exception("Error occurred while mapping CyNode scores " +
                             "to Cytoscape attributes. Reason : "
                             + e.getMessage(), e);
                 }
@@ -298,11 +292,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 try {
                     for (int level : levelCyEdgeScoreMap.keySet()) {
                         NetworkCyManager.setEdgeAttributesFromMap(network,
-                                levelCyEdgeScoreMap.get(level), "psfc.signal_" + level, Double.class);
+                                levelCyEdgeScoreMap.get(level), EColumnNames.PSFC_EDGE_SIGNAL.getName() + level, Double.class);
                     }
                     PSFCActivator.getLogger().debug("Mapped CyEdge signal values to Cytoscape attributes");
                 } catch (Exception e) {
-                    throw new Exception("Error occured while mapping CyEdge scores " +
+                    throw new Exception("Error occurred while mapping CyEdge scores " +
                             "to Cytoscape attributes. Reason : "
                             + e.getMessage(), e);
                 }
@@ -364,6 +358,53 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
     }
 
+    private class BackupResultsTask extends AbstractTask {
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
+            try {
+                PrintWriter writer = new PrintWriter(scoreBackupFile);
+                HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap = psf.getLevelNodeSignalMap(0);
+                String columnNames = "SUID\tName\tLevel\tValue";
+                for (int level : levelNodeSignalMap.keySet()) {
+                    columnNames += "\tsignal_" + level;
+                }
+                columnNames += "\n";
+                writer.append(columnNames);
+                double score;
+                for (Node node : psf.getGraph().getNodes()) {
+                    CyNode cyNode = psf.getGraph().getCyNode(node);
+                    String line = cyNode.getSUID().toString() + "\t"
+                            + node.getName() + "\t"
+                            + node.getLevel() + "\t"
+                            + node.getValue();
+
+                    for (Integer level : levelNodeSignalMap.keySet()) {
+                        if(node.getLevel() == level)
+                            score = levelNodeSignalMap.get(level).get(node);
+                        else if (node.getLevel() < level)
+                            score = node.getValue();
+                        else
+                            score = node.getSignal();
+                        line += "\t" + score;
+                    }
+                    line += "\n";
+                    writer.append(line);
+                }
+                writer.close();
+                PSFCActivator.getLogger().debug("Written flow scores to file "
+                        + scoreBackupFile.getAbsolutePath());
+
+            } catch (FileNotFoundException e) {
+                throw new Exception("Problem writing node scores to file "
+                        + scoreBackupFile.getAbsolutePath()
+                        + ". Reason: " + e.getMessage(), e);
+            }
+
+        }
+    }
+
     private class CalculateSignificanceTask extends AbstractTask {
 
         @Override
@@ -394,11 +435,18 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                     psf, PSFCActivator.getLogger());
             bootstrap.setTaskMonitor(taskMonitor);
             try {
-                bootstrap.performBootstrap();
+                HashMap<Node, Double> targetPValueMap = bootstrap.performBootstrap();
+                Graph graph = psf.getGraph();
+                HashMap<CyNode, Double> cyNodePValueMap = new HashMap<CyNode, Double>();
+                for (Node node : targetPValueMap.keySet()) {
+                    cyNodePValueMap.put(graph.getCyNode(node), targetPValueMap.get(node));
+                }
+
+                NetworkCyManager.setNodeAttributesFromMap(network, cyNodePValueMap, EColumnNames.PSFC_PVAL.getName(), Double.class);
                 taskMonitor.setStatusMessage("Bootstrap significance calculation complete");
                 taskMonitor.setProgress(1);
             } catch (Exception e) {
-                throw new Exception("Problem performing bootstrap significance calculation");
+                throw new Exception("Problem performing bootstrap significance calculation " + e.getMessage());
             }
         }
     }
@@ -457,5 +505,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         }
         return map;
     }
+
 
 }

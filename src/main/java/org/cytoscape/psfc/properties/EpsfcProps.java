@@ -15,7 +15,8 @@ public enum EpsfcProps {
     MultipleSignalProcessingRule("multipleSignalProcessingRule"),
     EdgeRankAttribute("edgeRankAttribute"),
     EdgeWeigthsAttribute("edgeWeightsAttribute"),
-    SignalProcessingOrder("signalProcessingOrder");
+    SignalProcessingOrder("signalProcessingOrder"),
+    SortingAlgorithm("sortingAlgorithm");
 
     private boolean oldValue = true;
     private boolean newValue = true;

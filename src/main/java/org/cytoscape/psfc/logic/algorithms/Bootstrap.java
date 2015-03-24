@@ -44,6 +44,11 @@ public class Bootstrap {
         this.logger = logger;
     }
 
+    public Bootstrap(int numOfSamplings) {
+        this.numOfSamplings = numOfSamplings;
+        this.logger = null;
+    }
+
     public void setTaskMonitor(TaskMonitor taskMonitor) {
         this.taskMonitor = taskMonitor;
     }
@@ -81,58 +86,92 @@ public class Bootstrap {
         // loop on the number of resamplings
         psf.setSilentMode(true); // restrict PSF logging
 
-        logger.debug("Performing bootstrap cycles:\n");
+        logger.debug("Performing bootstrap for " + numOfSamplings + " cycles:\n");
         for (int sampling = 0; sampling < numOfSamplings; sampling++) {
             //reassign node values according to the resampling type
             this.cycle = sampling;
             logger.debug("Bootstrap cycle " + sampling);
-            if(taskMonitor != null) {
-                taskMonitor.setProgress(cycle/((double)numOfSamplings));
-//                taskMonitor.setStatusMessage("Bootstrap cycle: " + cycle + " (of )" + numOfSamplings);
+            if (taskMonitor != null) {
+                taskMonitor.setProgress(cycle / ((double) numOfSamplings));
+                taskMonitor.setStatusMessage("Bootstrap cycle: " + cycle + " (of )" + numOfSamplings);
             }
             resample();
+            logger.debug(graph.toString());
 
             //calculate PSF with the resampled values and keep the
             // target signals in a priority queue per each target node
             try {
                 psf.calculateFlow();
-                for (Node target : targetNodes)
+                for (Node target : targetNodes) {
                     targetSampleValuesMap.get(target).add(target.getSignal());
+//                    logger.debug(sampling + ": " + target.getName() + " - " +  target.getSignal());
+                }
             } catch (Exception e) {
                 throw new Exception("Exception at psf computation at sampling number "
                         + sampling, e);
             }
         }
 
-        // calculate p values of target signals comparing them to the proportion of signals
-        // with higher absolute values
+
         for (Node target : targetNodes) {
             double signal = targetNodeSignals.get(target);
             PriorityQueue<Double> bootstrapValues = targetSampleValuesMap.get(target);
-            double mean = 0;
-            for (int i =0; i < bootstrapValues.size(); i++)
-                mean += bootstrapValues.peek();
-            mean /= bootstrapValues.size();
-
-            PriorityQueue<Double> polledValues = new PriorityQueue<Double>();
-            double value;
-            while (!bootstrapValues.isEmpty() && signal >= (value = bootstrapValues.poll())) {
-                polledValues.add(value);
-            }
-            if (signal >= mean)
-                targetPvalueMap.put(target, ((numOfSamplings-polledValues.size())/((double)numOfSamplings)));
-            else
-                targetPvalueMap.put(target, (polledValues.size()/((double)numOfSamplings)));
+            logger.debug("Bootstrap summary for target node: " + target.getName());
+            targetPvalueMap.put(target, getBootstrapPValue(signal, bootstrapValues));
         }
         System.out.println(targetPvalueMap);
         logger.debug("Bootstrap computation complete\n");
-        logger.debug("p values for target nodes:\n");
-        for (Node target : targetNodes) {
-            logger.debug(target.getName() + targetPvalueMap.get(target) + "\n");
-        }
+
         resetGraphOriginalValues();
 
         return targetPvalueMap;
+    }
+
+    /**
+     * Calculates the p value of the given value based on the proportion
+     * of bigger bootstrap values.
+     * If the given value is less than the mean of the queue, the proportion of lesser values is computed.
+     * Otherwise, the proportion of greater or equal values is computed.
+     * This takes into consideration the case where all the values in the queue are equal to the given value.
+     * In this case the numOfSamplings - lessValues.size() will be equal to the numOfSamplings, and the p value will be 1.
+     *
+     * @param value           : the value for which the significance should be computed
+     * @param bootstrapValues : the values generated with bootstrap resampling
+     * @return p value
+     */
+    public double getBootstrapPValue(double value, PriorityQueue<Double> bootstrapValues) throws Exception {
+        if (bootstrapValues.isEmpty()) {
+            if (logger != null)
+                logger.debug("Empty queue!");
+            return 1;
+        }
+        double mean = 0;
+        for (Double bv : bootstrapValues) mean += bv;
+        mean /= bootstrapValues.size();
+        double bootstrapValue;
+        PriorityQueue<Double> lessValues = new PriorityQueue<Double>();
+        while (!bootstrapValues.isEmpty() && value > (bootstrapValue = bootstrapValues.poll())) {
+            lessValues.add(bootstrapValue);
+        }
+        double pValue;
+        if (logger != null)
+            logger.debug(String.format("#Test value: %f\t#Queue mean: %f",value,mean));
+        if (value >= mean) {
+            int gteq = numOfSamplings - lessValues.size();
+            pValue = gteq / ((double) numOfSamplings);
+            if (logger != null) {
+                logger.debug(String.format("#Number of extreme (gteq) values: %d out of %d", gteq, numOfSamplings));
+                logger.debug(String.format("#p value: " + "%d/%d = %f", gteq, numOfSamplings, pValue));
+            }
+        } else {
+            int lt = lessValues.size();
+            pValue = lt / ((double) numOfSamplings);
+            if (logger != null) {
+                logger.debug(String.format("#Number of extreme (lt) values: %d out of %d",lt,numOfSamplings));
+                logger.debug(String.format("p value: " + "%d/%d = %f", lessValues.size(), numOfSamplings, pValue));
+            }
+        }
+        return pValue;
     }
 
     private void resetGraphOriginalValues() {
@@ -150,6 +189,7 @@ public class Bootstrap {
                 nodes.get(i).setValue(originalNodeValues.get(nodes.get(one2oneCor[i][1])));
             }
         } else {
+            System.out.println("Gene centric");
 
         }
     }
@@ -182,4 +222,5 @@ public class Bootstrap {
     public int getCycle() {
         return cycle;
     }
+
 }

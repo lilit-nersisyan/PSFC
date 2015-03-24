@@ -4,6 +4,7 @@ import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
+import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
@@ -63,7 +64,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
 
         private ColorNodesTask(int level) {
            this.level = level;
-            String columnName = CalculateScoreFlowAction.PSFC_SIGNAL + level;
+            String columnName = EColumnNames.PSFC_NODE_SIGNAL.getName() + level;
             nodeSignalColumn = network.getDefaultNodeTable().getColumn(columnName);
             if (nodeSignalColumn == null) {
                 JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),

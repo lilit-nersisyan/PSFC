@@ -196,12 +196,14 @@ public class SortNetworkAction extends AbstractCyAction {
                     ArrayList<Node> childNodes = graph.getChildNodes(node);
                     ArrayList<Node> incomingBackwardNodes = graph.getIncomingBackwardNodes(node);
                     childNodes.addAll(incomingBackwardNodes);
-                    boolean shiftDown = false; //Shift down node if it has two child nodes at the same horizontal level
-                    for (Node node1 : childNodes)
-                        for (Node node2 : childNodes)
-                            if (nodeYMap.get(node1) == nodeYMap.get(node2))
-                                shiftDown = true;
-
+                    boolean shiftDown = false;
+                    //Shift down node if it has two child nodes at the same horizontal level
+                    if(childNodes.size() > 1) {
+                        for (Node node1 : childNodes)
+                            for (Node node2 : childNodes)
+                                if (Double.compare(nodeYMap.get(graph.getCyNode(node1)), (nodeYMap.get(graph.getCyNode(node2)))) == 0)
+                                    shiftDown = true;
+                    }
                     //The new Y coordinate of current node is the average of Y coordinates of its child Nodes.
                     if (level != levelCyNodeMap.lastKey()) {
                         double meanY = 0;

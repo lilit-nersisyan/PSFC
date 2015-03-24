@@ -362,7 +362,7 @@ public class PSF {
                 else {
                     double nodeScoreSum = 0;
                     for (Edge edge : edges)
-                        nodeScoreSum += edge.getSource().getSignal();
+                        nodeScoreSum += Math.abs(edge.getSource().getSignal());
                     if (nodeScoreSum == 0)
                         for (Edge edge : edges)
                             edge.setWeight(1.);
@@ -397,7 +397,7 @@ public class PSF {
                     else {
                         double nodeScoreSum = 0;
                         for (Edge edge : edges)
-                            nodeScoreSum += edge.getTarget().getSignal();
+                            nodeScoreSum += Math.abs(edge.getTarget().getSignal());
                         if (nodeScoreSum == 0)
                             for (Edge edge : edges)
                                 edge.setWeight(1.);
@@ -418,7 +418,7 @@ public class PSF {
                     .withVariable(TARGET, target)
                     .build();
             double result = calculable.calculate();
-//            System.out.println(rule + " " + source + ":" + target + " = " + result);
+            System.out.println(rule + " " + source + ":" + target + " = " + result);
             return result;
         }
 
