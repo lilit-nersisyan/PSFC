@@ -14,6 +14,7 @@ import java.util.*;
 public class Bootstrap {
     public static String NUMOFSAMPLINGSPROP = "numOfSamplings";
     public static String SAMPLINGTYPEPROP = "samplingType";
+    public static String EXPMATRIXFILE = "expMatrixFile";
 
     public static int SAMPLECENTRIC = 0;
     public static int GENECENTRIC = 1;
@@ -25,25 +26,28 @@ public class Bootstrap {
     private PSF psf;
     private int numOfSamplings = minNumOfSamplings;
     private int SAMPLINGTYPE = SAMPLECENTRIC;
-    private Graph graph;
+    protected Graph graph;
     private ArrayList<Node> targetNodes;
-    private HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
+    protected HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
     private int cycle = 0;
     private TaskMonitor taskMonitor = null;
 
 
-    public Bootstrap(int numOfSamplings, int SAMPLINGTYPE,
-                     PSF psf,
-                     Logger logger) {
-        if (numOfSamplings > minNumOfSamplings)
-            this.numOfSamplings = numOfSamplings;
-        if (SAMPLINGTYPE == SAMPLECENTRIC || SAMPLINGTYPE == GENECENTRIC)
-            this.SAMPLINGTYPE = SAMPLINGTYPE;
+    public Bootstrap(PSF psf, Logger logger){
+        this.psf = psf;
+        this.logger = logger;
+        this.graph = psf.getGraph();
+    }
+
+    public Bootstrap(PSF psf, int numOfSamplings, Logger logger){
         this.psf = psf;
         this.graph = psf.getGraph();
+        this.numOfSamplings = numOfSamplings;
+
         this.logger = logger;
     }
 
+    //for testing only
     public Bootstrap(int numOfSamplings) {
         this.numOfSamplings = numOfSamplings;
         this.logger = null;
@@ -53,10 +57,6 @@ public class Bootstrap {
         this.taskMonitor = taskMonitor;
     }
 
-    public void setNumOfSamplings(int numOfSamplings) {
-        if (numOfSamplings > minNumOfSamplings)
-            this.numOfSamplings = numOfSamplings;
-    }
 
     public HashMap<Node, Double> performBootstrap() throws Exception {
         logger.debug("Performing bootstrap significance test with parameters:\n");
@@ -179,34 +179,17 @@ public class Bootstrap {
             node.setValue(originalNodeValues.get(node));
     }
 
-
-    private void resample() {
-        ArrayList<Node> nodes = new ArrayList<Node>();
-        nodes.addAll(graph.getNodes());
-        if (SAMPLINGTYPE == SAMPLECENTRIC) {
-            int[][] one2oneCor = getOne2OneCorrespondence(graph.getOrder());
-            for (int i = 0; i < graph.getOrder(); i++) {
-                nodes.get(i).setValue(originalNodeValues.get(nodes.get(one2oneCor[i][1])));
-            }
-        } else {
-            System.out.println("Gene centric");
-
-        }
+    /**
+     * Resampling is intended to assign nodes in the graph another value
+     * - either taken from other nodes in the graph (sample-centric)
+     * or from gene expression matrix (gene-centric).
+     *
+     * This method is implemented in each of respective child classes correspondingly.
+     *
+     */
+    public void resample() {
     }
 
-    public static int[][] getOne2OneCorrespondence(int order) {
-        int[][] one2oneCor = new int[order][2];
-        LinkedList<Integer> sourceQueue = new LinkedList<Integer>();
-        for (int i = 0; i < order; i++)
-            sourceQueue.add(i);
-        for (int i = 0; i < order; i++) {
-            int j = (int) Math.floor(Math.random() * (sourceQueue.size()));
-            one2oneCor[i][0] = i;
-            one2oneCor[i][1] = sourceQueue.get(j);
-            sourceQueue.remove(sourceQueue.get(j));
-        }
-        return one2oneCor;
-    }
 
     public static void main(String[] args) {
         PriorityQueue<Integer> queue = new PriorityQueue<Integer>();
@@ -216,11 +199,6 @@ public class Bootstrap {
         System.out.println(queue);
         System.out.println(queue.peek());
         System.out.println(queue);
-    }
-
-
-    public int getCycle() {
-        return cycle;
     }
 
 }

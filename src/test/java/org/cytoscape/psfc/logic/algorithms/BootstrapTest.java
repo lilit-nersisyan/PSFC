@@ -16,7 +16,7 @@ public class BootstrapTest {
     public void testGetOne2OneCorrespondence() throws Exception {
         int order;
         for (order = 0; order < 5; order++) {
-            int[][] one2oneCor = Bootstrap.getOne2OneCorrespondence(order);
+            int[][] one2oneCor = BootstrapSampleCentric.getReshuffledOne2OneCorrespondence(order);
             assert one2oneCor.length == order;
             if (order != 0) {
                 assert one2oneCor[0].length == 2;

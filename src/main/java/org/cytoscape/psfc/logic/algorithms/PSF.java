@@ -32,6 +32,13 @@ public class PSF {
     HashMap<Integer, ArrayList<Node>> levelNodesMap = new HashMap<Integer, ArrayList<Node>>();
     boolean converged = false;
 
+    public HashMap<Node, Double> getTargetPValueMap() {
+        return targetPValueMap;
+    }
+
+    private HashMap<Node, Double> targetPValueMap;
+
+
 
     public PSF(Graph graph, HashMap<String, String> edgeTypeRuleMap, Logger logger) {
         this.graph = graph;
@@ -128,6 +135,14 @@ public class PSF {
 
     public Graph getGraph() {
         return graph;
+    }
+
+    public void setTargetPValueMap(HashMap<Node, Double> targetPValueMap) {
+        this.targetPValueMap = targetPValueMap;
+    }
+
+    public HashMap<Integer, ArrayList<Node>> getLevelNodesMap() {
+        return levelNodesMap;
     }
 
     /**

@@ -7,7 +7,7 @@ public enum EColumnNames {
     Level("psfc.level"),
     PSFC_NODE_SIGNAL("signal_"),
     PSFC_EDGE_SIGNAL("signal_"),
-    PSFC_PVAL("psfc_pVal"),
+    PSFC_PVAL("psfc_pval"),
     PSFC_FINAL("psf_final")
     ;
 

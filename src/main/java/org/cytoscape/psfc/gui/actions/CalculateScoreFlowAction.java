@@ -6,9 +6,7 @@ import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
-import org.cytoscape.psfc.logic.algorithms.Bootstrap;
-import org.cytoscape.psfc.logic.algorithms.GraphManager;
-import org.cytoscape.psfc.logic.algorithms.PSF;
+import org.cytoscape.psfc.logic.algorithms.*;
 import org.cytoscape.psfc.logic.parsers.RuleFilesParser;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
@@ -365,10 +363,16 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
             try {
                 PrintWriter writer = new PrintWriter(scoreBackupFile);
-                HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap = psf.getLevelNodeSignalMap(0);
-                String columnNames = "SUID\tName\tLevel\tValue";
-                for (int level : levelNodeSignalMap.keySet()) {
+                String columnNames = "SUID\tName\tLevel";
+                for (int level : psf.getLevelNodesMap().keySet()) {
                     columnNames += "\tsignal_" + level;
+                }
+
+                HashMap<Node, Double> targetPValueMap = null;
+
+                if (calculateSignificance) {
+                    columnNames += "\tpval";
+                    targetPValueMap = psf.getTargetPValueMap();
                 }
                 columnNames += "\n";
                 writer.append(columnNames);
@@ -377,18 +381,18 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                     CyNode cyNode = psf.getGraph().getCyNode(node);
                     String line = cyNode.getSUID().toString() + "\t"
                             + node.getName() + "\t"
-                            + node.getLevel() + "\t"
-                            + node.getValue();
+                            + node.getLevel();
 
-                    for (Integer level : levelNodeSignalMap.keySet()) {
-                        if(node.getLevel() == level)
-                            score = levelNodeSignalMap.get(level).get(node);
-                        else if (node.getLevel() < level)
-                            score = node.getValue();
-                        else
+                    for (Integer level : psf.getLevelNodesMap().keySet()) {
+                        if (level >= node.getLevel())
                             score = node.getSignal();
+                        else
+                            score = node.getValue();
                         line += "\t" + score;
                     }
+                    if (targetPValueMap != null && !targetPValueMap.isEmpty())
+                        if (targetPValueMap.containsKey(node))
+                            line += "\t" + targetPValueMap.get(node);
                     line += "\n";
                     writer.append(line);
                 }
@@ -423,6 +427,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             }
 
             int samplingType;
+            File expMatrixFile;
+            Bootstrap bootstrap;
             try {
                 prop = bootstrapProps
                         .getProperty(Bootstrap.SAMPLINGTYPEPROP);
@@ -430,12 +436,22 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             } catch (NumberFormatException e) {
                 throw new Exception("Unable to parse integer " + prop);
             }
+            if (samplingType == Bootstrap.SAMPLECENTRIC)
+                bootstrap = new BootstrapSampleCentric(psf, numOfSamplings, PSFCActivator.getLogger());
+            else {
+                prop = bootstrapProps.getProperty(Bootstrap.EXPMATRIXFILE);
+                expMatrixFile = new File(prop);
+                if (!expMatrixFile.exists()) {
+                    throw new Exception("Expression matrix file" + prop + "does not exist");
+                }
+                bootstrap = new BootstrapGeneCentric(psf, numOfSamplings, expMatrixFile, PSFCActivator.getLogger());
+            }
 
-            Bootstrap bootstrap = new Bootstrap(numOfSamplings, samplingType,
-                    psf, PSFCActivator.getLogger());
+
             bootstrap.setTaskMonitor(taskMonitor);
             try {
                 HashMap<Node, Double> targetPValueMap = bootstrap.performBootstrap();
+                psf.setTargetPValueMap(targetPValueMap);
                 Graph graph = psf.getGraph();
                 HashMap<CyNode, Double> cyNodePValueMap = new HashMap<CyNode, Double>();
                 for (Node node : targetPValueMap.keySet()) {
