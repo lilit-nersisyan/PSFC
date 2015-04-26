@@ -1,7 +1,9 @@
 package org.cytoscape.psfc.gui.actions;
 
 import org.cytoscape.application.swing.AbstractCyAction;
-import org.cytoscape.model.*;
+import org.cytoscape.model.CyColumn;
+import org.cytoscape.model.CyNetwork;
+import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
@@ -33,6 +35,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private final PSFCPanel psfcPanel;
     private CyNetwork network;
     private ArrayList<Integer> levels;
+    private Color borderPaint = Color.black;
     private Color minColor = Color.decode("#40E0D0");
     private Color maxColor = Color.decode("#000000");
 
@@ -104,9 +107,11 @@ public class VisualizeFlowAction extends AbstractCyAction {
                     for (CyNode cyNode : network.getNodeList()) {
                         View<CyNode> nodeView = networkView.getNodeView(cyNode);
                         nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
+                        nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
                     }
 
                     visualStyle.addVisualMappingFunction(nodeColorMapping);
+                    networkView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_PAINT, borderPaint);
                     visualStyle.apply(networkView);
                     networkView.updateView();
                     Thread.sleep(500);
