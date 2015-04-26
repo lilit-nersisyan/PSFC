@@ -2,10 +2,7 @@ package org.cytoscape.psfc.gui;
 
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
-import org.cytoscape.model.CyColumn;
-import org.cytoscape.model.CyNetwork;
-import org.cytoscape.model.CyNode;
-import org.cytoscape.model.CyRow;
+import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.actions.CalculateScoreFlowAction;
 import org.cytoscape.psfc.gui.actions.SortNetworkAction;
@@ -53,8 +50,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private String redFlagIconName = "red_flag.png";
     private String greenFlagIconName = "green_flag.png";
     private HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>> networkLevelNodeSignalMap = new HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>>();
+    private HashMap<CyNetwork, HashMap<Integer, HashMap<CyEdge, Double>>> networkLevelEdgeSignalMap = new HashMap<CyNetwork, HashMap<Integer, HashMap<CyEdge, Double>>>();
     private CalculateScoreFlowAction calculateFlowAction = null;
-
 
     public PSFCPanel() {
         this.setPreferredSize(new Dimension(380, getHeight()));
@@ -1676,9 +1673,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             return null;
         }
         double minSignal = Double.MAX_VALUE;
+        double minEdgeSignal = Double.MAX_VALUE;
         double maxSignal = Double.MIN_VALUE;
+        double maxEdgeSignal = Double.MIN_VALUE;
         for (int level = jsl_levels.getMinimum(); level <= jsl_levels.getMaximum(); level++) {
             HashMap<CyNode, Double> nodeSignalMap = networkLevelNodeSignalMap.get(network).get(level);
+            HashMap<CyEdge, Double> edgeSignalMap = networkLevelEdgeSignalMap.get(network).get(level);
             if (nodeSignalMap != null)
                 for (CyNode cyNode : nodeSignalMap.keySet()) {
                     double signal = nodeSignalMap.get(cyNode);
@@ -1687,9 +1687,17 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     else if (signal > maxSignal)
                         maxSignal = signal;
                 }
+            if (edgeSignalMap != null)
+                for (CyEdge cyEdge : edgeSignalMap.keySet()) {
+                    double signal = edgeSignalMap.get(cyEdge);
+                    if (signal < minEdgeSignal)
+                        minEdgeSignal = signal;
+                    else if (signal > maxEdgeSignal)
+                        maxEdgeSignal = signal;
+                }
         }
 
-        return new VisualizeFlowAction(network, minSignal, maxSignal, levels, this);
+        return new VisualizeFlowAction(network, minSignal, maxSignal, levels, minEdgeSignal, maxEdgeSignal,  this);
     }
 
     private void jb_playFlowActionPerformed() {
@@ -1701,8 +1709,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     public void setVisualizationComponents(CyNetwork network,
-                                           HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap) {
+                                           HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap,
+                                           HashMap<Integer, HashMap<CyEdge, Double>> levelCyEdgeScoreMap) {
         networkLevelNodeSignalMap.put(network, levelNodeSignalMap);
+        networkLevelEdgeSignalMap.put(network, levelCyEdgeScoreMap);
         activateFlowVisualizationPanel(network);
     }
 
