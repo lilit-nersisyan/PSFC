@@ -111,6 +111,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_refreshNodeDataAttrs;
     private javax.swing.JButton jb_refreshWeigths;
     private javax.swing.JButton jb_restoreDefaultOptions;
+    private javax.swing.JButton jb_rulePresetsGuide;
     private javax.swing.JButton jb_saveSettings;
     private javax.swing.JButton jb_showState;
     private javax.swing.JButton jb_sortNetwork;
@@ -160,9 +161,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JPanel jp_Options;
     private javax.swing.JPanel jp_Rules;
     private javax.swing.JPanel jp_algorithms;
+    private javax.swing.JPanel jp_edgeTypeConfigPanel;
     private javax.swing.JPanel jp_flowVisualization;
     private javax.swing.JPanel jp_multiInOutRulesPanel;
     private javax.swing.JPanel jp_network_attrs;
+    private javax.swing.JPanel jp_ruleConfigPanel;
     private javax.swing.JPanel jp_significance;
     private javax.swing.JPanel jp_simpleRules;
     private javax.swing.JRadioButton jrb_FC;
@@ -243,6 +246,17 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_sortNetwork = new javax.swing.JButton();
         jb_restoreDefaultOptions = new javax.swing.JButton();
         jp_Rules = new javax.swing.JPanel();
+        jp_simpleRules = new javax.swing.JPanel();
+        jl_simpleRules = new javax.swing.JLabel();
+        jp_edgeTypeConfigPanel = new javax.swing.JPanel();
+        jb_chooseEdgeTypeConfigFile = new javax.swing.JButton();
+        jl_edgeTypeConfigFile = new javax.swing.JLabel();
+        jl_edgeTypeConfigFileName = new javax.swing.JLabel();
+        jp_ruleConfigPanel = new javax.swing.JPanel();
+        jl_ruleConfigFile = new javax.swing.JLabel();
+        jb_chooseRuleNameRuleConfigFile = new javax.swing.JButton();
+        jl_ruleNameRuleConfigFileName = new javax.swing.JLabel();
+        jb_rulePresetsGuide = new javax.swing.JButton();
         jp_multiInOutRulesPanel = new javax.swing.JPanel();
         jl_multiInOutRules = new javax.swing.JLabel();
         jl_signalSplitRule = new javax.swing.JLabel();
@@ -264,14 +278,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_signalSplitOn = new javax.swing.JLabel();
         jrb_incomingEdges = new javax.swing.JRadioButton();
         jrb_outgoingEdges = new javax.swing.JRadioButton();
-        jp_simpleRules = new javax.swing.JPanel();
-        jl_simpleRules = new javax.swing.JLabel();
-        jl_edgeTypeConfigFile = new javax.swing.JLabel();
-        jb_chooseEdgeTypeConfigFile = new javax.swing.JButton();
-        jl_edgeTypeConfigFileName = new javax.swing.JLabel();
-        jb_chooseRuleNameRuleConfigFile = new javax.swing.JButton();
-        jl_ruleConfigFile = new javax.swing.JLabel();
-        jl_ruleNameRuleConfigFileName = new javax.swing.JLabel();
         jp_Data = new javax.swing.JPanel();
         jl_dataMappingRules = new javax.swing.JLabel();
         jl_dataType = new javax.swing.JLabel();
@@ -631,7 +637,117 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jtp_psfc.addTab("Options", jp_Options);
 
+        jp_simpleRules.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jp_simpleRules.setMaximumSize(new java.awt.Dimension(322, 94));
+
+        jl_simpleRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_simpleRules.setForeground(new java.awt.Color(51, 102, 0));
+        jl_simpleRules.setText("Simple rules");
+
+        jp_edgeTypeConfigPanel.setPreferredSize(new java.awt.Dimension(145, 69));
+
+        jb_chooseEdgeTypeConfigFile.setText("Choose file");
+
+        jl_edgeTypeConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_edgeTypeConfigFile.setForeground(new java.awt.Color(102, 102, 102));
+        jl_edgeTypeConfigFile.setText("EdgeTypes config file");
+
+        jl_edgeTypeConfigFileName.setText("n/a");
+        jl_edgeTypeConfigFileName.setMaximumSize(new java.awt.Dimension(135, 14));
+
+        javax.swing.GroupLayout jp_edgeTypeConfigPanelLayout = new javax.swing.GroupLayout(jp_edgeTypeConfigPanel);
+        jp_edgeTypeConfigPanel.setLayout(jp_edgeTypeConfigPanelLayout);
+        jp_edgeTypeConfigPanelLayout.setHorizontalGroup(
+                jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_edgeTypeConfigPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jb_chooseEdgeTypeConfigFile)
+                                        .addComponent(jl_edgeTypeConfigFile)
+                                        .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGap(24, 24, 24))
+        );
+        jp_edgeTypeConfigPanelLayout.setVerticalGroup(
+                jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_edgeTypeConfigPanelLayout.createSequentialGroup()
+                                .addComponent(jl_edgeTypeConfigFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jb_chooseEdgeTypeConfigFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 6, Short.MAX_VALUE))
+        );
+
+        jp_ruleConfigPanel.setAlignmentX(0.0F);
+        jp_ruleConfigPanel.setAlignmentY(0.0F);
+        jp_ruleConfigPanel.setPreferredSize(new java.awt.Dimension(145, 69));
+        jp_ruleConfigPanel.setRequestFocusEnabled(false);
+
+        jl_ruleConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_ruleConfigFile.setForeground(new java.awt.Color(102, 102, 102));
+        jl_ruleConfigFile.setText("Rule config file");
+
+        jb_chooseRuleNameRuleConfigFile.setText("Choose file");
+
+        jl_ruleNameRuleConfigFileName.setText("n/a");
+        jl_ruleNameRuleConfigFileName.setMaximumSize(new java.awt.Dimension(135, 14));
+
+        javax.swing.GroupLayout jp_ruleConfigPanelLayout = new javax.swing.GroupLayout(jp_ruleConfigPanel);
+        jp_ruleConfigPanel.setLayout(jp_ruleConfigPanelLayout);
+        jp_ruleConfigPanelLayout.setHorizontalGroup(
+                jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jl_ruleConfigFile)
+                                        .addComponent(jb_chooseRuleNameRuleConfigFile)
+                                        .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(50, Short.MAX_VALUE))
+        );
+        jp_ruleConfigPanelLayout.setVerticalGroup(
+                jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
+                                .addComponent(jl_ruleConfigFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jb_chooseRuleNameRuleConfigFile)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(325, 325, 325))
+        );
+
+        javax.swing.GroupLayout jp_simpleRulesLayout = new javax.swing.GroupLayout(jp_simpleRules);
+        jp_simpleRules.setLayout(jp_simpleRulesLayout);
+        jp_simpleRulesLayout.setHorizontalGroup(
+                jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
+                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jl_simpleRules))
+                                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
+                                                .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        jp_simpleRulesLayout.setVerticalGroup(
+                jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_simpleRulesLayout.createSequentialGroup()
+                                .addComponent(jl_simpleRules)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+        );
+
+        jb_rulePresetsGuide.setBackground(new java.awt.Color(255, 255, 255));
+        jb_rulePresetsGuide.setFont(new java.awt.Font("Tahoma", 1, 15)); // NOI18N
+        jb_rulePresetsGuide.setForeground(new java.awt.Color(51, 102, 0));
+        jb_rulePresetsGuide.setText("Open Rule Presets Guide");
+        jb_rulePresetsGuide.setAlignmentY(0.0F);
+
         jp_multiInOutRulesPanel.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jp_multiInOutRulesPanel.setMaximumSize(new java.awt.Dimension(322, 277));
 
         jl_multiInOutRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
         jl_multiInOutRules.setForeground(new java.awt.Color(51, 102, 0));
@@ -699,7 +815,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_multiInOutRules)
                                         .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
                                                 .addComponent(jrb_noRanks)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -708,12 +823,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jcb_edgeRanks, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_refreshEdgeRanks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
-                                                .addComponent(jrb_suppliedWeights)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jcb_edgeWeights, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_refreshWeigths, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addComponent(jl_signalSplitRule)
                                         .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
                                                 .addComponent(jrb_noSplitRule)
@@ -736,8 +845,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
                                                 .addComponent(jrb_incomingEdges)
                                                 .addGap(18, 18, 18)
-                                                .addComponent(jrb_outgoingEdges)))
-                                .addContainerGap(35, Short.MAX_VALUE))
+                                                .addComponent(jrb_outgoingEdges))
+                                        .addGroup(jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addComponent(jl_multiInOutRules, javax.swing.GroupLayout.Alignment.LEADING)
+                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jp_multiInOutRulesPanelLayout.createSequentialGroup()
+                                                        .addComponent(jrb_suppliedWeights)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                        .addComponent(jcb_edgeWeights, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                        .addComponent(jb_refreshWeigths, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jp_multiInOutRulesPanelLayout.setVerticalGroup(
                 jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -784,67 +901,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGap(14, 14, 14))
         );
 
-        jp_simpleRules.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jl_simpleRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_simpleRules.setForeground(new java.awt.Color(51, 102, 0));
-        jl_simpleRules.setText("Simple rules");
-
-        jl_edgeTypeConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_edgeTypeConfigFile.setForeground(new java.awt.Color(102, 102, 102));
-        jl_edgeTypeConfigFile.setText("EdgeTypes config file");
-
-        jb_chooseEdgeTypeConfigFile.setText("Choose file");
-
-        jl_edgeTypeConfigFileName.setText("n/a");
-
-        jb_chooseRuleNameRuleConfigFile.setText("Choose file");
-
-        jl_ruleConfigFile.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_ruleConfigFile.setForeground(new java.awt.Color(102, 102, 102));
-        jl_ruleConfigFile.setText("Rule config file");
-
-        jl_ruleNameRuleConfigFileName.setText("n/a");
-
-        javax.swing.GroupLayout jp_simpleRulesLayout = new javax.swing.GroupLayout(jp_simpleRules);
-        jp_simpleRules.setLayout(jp_simpleRulesLayout);
-        jp_simpleRulesLayout.setHorizontalGroup(
-                jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_simpleRules)
-                                        .addComponent(jl_edgeTypeConfigFile)
-                                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
-                                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jb_chooseEdgeTypeConfigFile)
-                                                        .addComponent(jb_chooseRuleNameRuleConfigFile)
-                                                        .addComponent(jl_ruleConfigFile))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jl_edgeTypeConfigFileName)
-                                                        .addComponent(jl_ruleNameRuleConfigFileName))))
-                                .addContainerGap(190, Short.MAX_VALUE))
-        );
-        jp_simpleRulesLayout.setVerticalGroup(
-                jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
-                                .addComponent(jl_simpleRules)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jl_edgeTypeConfigFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jb_chooseEdgeTypeConfigFile)
-                                        .addComponent(jl_edgeTypeConfigFileName))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jl_ruleConfigFile)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jb_chooseRuleNameRuleConfigFile)
-                                        .addComponent(jl_ruleNameRuleConfigFileName))
-                                .addGap(0, 4, Short.MAX_VALUE))
-        );
-
         javax.swing.GroupLayout jp_RulesLayout = new javax.swing.GroupLayout(jp_Rules);
         jp_Rules.setLayout(jp_RulesLayout);
         jp_RulesLayout.setHorizontalGroup(
@@ -852,18 +908,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_RulesLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_RulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addGroup(jp_RulesLayout.createSequentialGroup()
+                                                .addComponent(jb_rulePresetsGuide)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         jp_RulesLayout.setVerticalGroup(
                 jp_RulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_RulesLayout.createSequentialGroup()
-                                .addContainerGap()
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(jb_rulePresetsGuide)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jp_simpleRules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 270, Short.MAX_VALUE)
-                                .addGap(23, 23, 23))
+                                .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap())
         );
 
         jtp_psfc.addTab("Rules", jp_Rules);
@@ -1939,13 +2000,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         String noFile = "No file selected";
         String name;
         if (selectedFilePath != null) {
-            name = fileChooser.getSelectedFile().getName();
+            setRuleNameRuleConfigFile(new File(selectedFilePath));
+//            name = fileChooser.getSelectedFile().getName();
 //            int size = noFile.length();
-            int size = 40;
-            if (name.length() > size)
-                name = name.substring(0, size) + "...";
-            jl_ruleNameRuleConfigFileName.setText(name);
-            this.ruleNameRuleConfigFile = new File(selectedFilePath);
+//            int size = 15;
+//            if (name.length() > size)
+//                name = name.substring(0, size) + "...";
+//            jl_ruleNameRuleConfigFileName.setText(name);
+//            this.ruleNameRuleConfigFile = new File(selectedFilePath);
         }
         enableButtons();
     }
@@ -1953,7 +2015,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private boolean setRuleNameRuleConfigFile(File file) {
         if (file.exists()) {
             String name = file.getName();
-            int size = 40;
+//            int size = jl_ruleNameRuleConfigFileName.getMaximumSize().width-2;
+            int size = 15;
             if (name.length() > size)
                 name = name.substring(0, size) + "...";
             jl_ruleNameRuleConfigFileName.setText(name);
@@ -1994,7 +2057,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private boolean setEdgeTypeRuleNameConfigFile(File file) {
         if (file.exists()) {
             String name = file.getName();
-            int size = 40;
+//            int size = jl_edgeTypeConfigFileName.getMaximumSize().width-2;
+            int size = 15;
             if (name.length() > size)
                 name = name.substring(0, size) + "...";
             jl_edgeTypeConfigFileName.setText(name);
