@@ -123,11 +123,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JComboBox jcb_nodeDataAttribute;
     private javax.swing.JComboBox jcb_sortingAlgorithm;
     private javax.swing.JCheckBox jchb_CalculateSignificance;
+    private javax.swing.JCheckBox jchb_ignoreLoops;
+    private javax.swing.JCheckBox jchb_iterateUntilConvergence;
+    private javax.swing.JCheckBox jchb_precomputeLoops;
     private javax.swing.JLabel jl_algorithms;
     private javax.swing.JLabel jl_chooseNetwork;
-    private javax.swing.JLabel jl_dataMappingRules;
-    private javax.swing.JLabel jl_dataType;
-    private javax.swing.JLabel jl_defaultValue;
+    private javax.swing.JLabel jl_convergenceThreshold;
     private javax.swing.JLabel jl_edgeProcesssingSequence;
     private javax.swing.JLabel jl_edgeTypeConfigFile;
     private javax.swing.JLabel jl_edgeTypeConfigFileName;
@@ -137,9 +138,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_flagRules;
     private javax.swing.JLabel jl_flowVisualization;
     private javax.swing.JLabel jl_level;
+    private javax.swing.JLabel jl_maxNumOfIterations;
     private javax.swing.JLabel jl_multiInOutRules;
     private javax.swing.JLabel jl_multiSignalProcessing;
-    private javax.swing.JLabel jl_multipleDataRule;
     private javax.swing.JLabel jl_network_and_attrs;
     private javax.swing.JLabel jl_numOfSamplings;
     private javax.swing.JLabel jl_psfc;
@@ -155,32 +156,28 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_simpleRules;
     private javax.swing.JLabel jl_sortingAlgorithm;
     private javax.swing.JLabel jl_warnNumSamplings;
-    private javax.swing.JPanel jp_Data;
     private javax.swing.JPanel jp_General;
     private javax.swing.JPanel jp_Help;
+    private javax.swing.JPanel jp_Loops;
     private javax.swing.JPanel jp_Options;
     private javax.swing.JPanel jp_Rules;
     private javax.swing.JPanel jp_algorithms;
     private javax.swing.JPanel jp_edgeTypeConfigPanel;
     private javax.swing.JPanel jp_flowVisualization;
+    private javax.swing.JPanel jp_ignoreLoops;
+    private javax.swing.JPanel jp_iterateUntilConvergence;
     private javax.swing.JPanel jp_multiInOutRulesPanel;
     private javax.swing.JPanel jp_network_attrs;
+    private javax.swing.JPanel jp_procomputeLoops;
     private javax.swing.JPanel jp_ruleConfigPanel;
     private javax.swing.JPanel jp_significance;
     private javax.swing.JPanel jp_simpleRules;
-    private javax.swing.JRadioButton jrb_FC;
     private javax.swing.JRadioButton jrb_GeneCentric;
     private javax.swing.JRadioButton jrb_SampleCentric;
     private javax.swing.JRadioButton jrb_addition;
     private javax.swing.JRadioButton jrb_edgeRanks;
     private javax.swing.JRadioButton jrb_equal;
     private javax.swing.JRadioButton jrb_incomingEdges;
-    private javax.swing.JRadioButton jrb_linear;
-    private javax.swing.JRadioButton jrb_log;
-    private javax.swing.JRadioButton jrb_logFC;
-    private javax.swing.JRadioButton jrb_max;
-    private javax.swing.JRadioButton jrb_mean;
-    private javax.swing.JRadioButton jrb_min;
     private javax.swing.JRadioButton jrb_multiplication;
     private javax.swing.JRadioButton jrb_noRanks;
     private javax.swing.JRadioButton jrb_noSplitRule;
@@ -188,10 +185,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JRadioButton jrb_proportional;
     private javax.swing.JRadioButton jrb_suppliedWeights;
     private javax.swing.JRadioButton jrb_updatedNodeScores;
+    private javax.swing.JScrollPane jsl_iterateUntilConvergence;
     private javax.swing.JSlider jsl_levels;
+    private javax.swing.JScrollPane jsp_precomputeLoops;
     private javax.swing.JTextArea jta_about;
+    private javax.swing.JTextArea jta_iterateUntilConvergence;
+    private javax.swing.JTextArea jta_precomputeLoops;
+    private javax.swing.JTextField jtf_convergenceThreshold;
+    private javax.swing.JTextField jtf_maxNumOfIterations;
     private javax.swing.JTabbedPane jtp_psfc;
-    private javax.swing.JTextField jtxt_defaultValue;
     private javax.swing.JTextField jtxt_level;
     private javax.swing.JTextField jtxt_numOfSamplings;
     // End of variables declaration
@@ -202,10 +204,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private ButtonGroup jbg_signalSplitRule;
     private ButtonGroup jbg_multipleSignalProcessingRule;
     private ButtonGroup jbg_signalProcessingOrder;
+    private ButtonGroup jbg_loopHandling;
     private ButtonGroup jbg_bootstrapType;
 
 
-    private void initComponents() {
+    private void initComponents()  {
         jtp_psfc = new javax.swing.JTabbedPane();
         jp_General = new javax.swing.JPanel();
         jp_network_attrs = new javax.swing.JPanel();
@@ -278,19 +281,21 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_signalSplitOn = new javax.swing.JLabel();
         jrb_incomingEdges = new javax.swing.JRadioButton();
         jrb_outgoingEdges = new javax.swing.JRadioButton();
-        jp_Data = new javax.swing.JPanel();
-        jl_dataMappingRules = new javax.swing.JLabel();
-        jl_dataType = new javax.swing.JLabel();
-        jrb_linear = new javax.swing.JRadioButton();
-        jrb_log = new javax.swing.JRadioButton();
-        jrb_logFC = new javax.swing.JRadioButton();
-        jrb_FC = new javax.swing.JRadioButton();
-        jl_defaultValue = new javax.swing.JLabel();
-        jtxt_defaultValue = new javax.swing.JTextField();
-        jl_multipleDataRule = new javax.swing.JLabel();
-        jrb_min = new javax.swing.JRadioButton();
-        jrb_max = new javax.swing.JRadioButton();
-        jrb_mean = new javax.swing.JRadioButton();
+        jp_Loops = new javax.swing.JPanel();
+        jp_ignoreLoops = new javax.swing.JPanel();
+        jchb_ignoreLoops = new javax.swing.JCheckBox();
+        jp_procomputeLoops = new javax.swing.JPanel();
+        jchb_precomputeLoops = new javax.swing.JCheckBox();
+        jsp_precomputeLoops = new javax.swing.JScrollPane();
+        jta_precomputeLoops = new javax.swing.JTextArea();
+        jp_iterateUntilConvergence = new javax.swing.JPanel();
+        jchb_iterateUntilConvergence = new javax.swing.JCheckBox();
+        jl_convergenceThreshold = new javax.swing.JLabel();
+        jl_maxNumOfIterations = new javax.swing.JLabel();
+        jtf_maxNumOfIterations = new javax.swing.JTextField();
+        jtf_convergenceThreshold = new javax.swing.JTextField();
+        jsl_iterateUntilConvergence = new javax.swing.JScrollPane();
+        jta_iterateUntilConvergence = new javax.swing.JTextArea();
         jp_Help = new javax.swing.JPanel();
         jl_psfc = new javax.swing.JLabel();
         jb_projectWebPage = new javax.swing.JButton();
@@ -846,14 +851,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jrb_incomingEdges)
                                                 .addGap(18, 18, 18)
                                                 .addComponent(jrb_outgoingEdges))
-                                        .addGroup(jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                                .addComponent(jl_multiInOutRules, javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jp_multiInOutRulesPanelLayout.createSequentialGroup()
-                                                        .addComponent(jrb_suppliedWeights)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                        .addComponent(jcb_edgeWeights, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                        .addComponent(jb_refreshWeigths, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addComponent(jl_multiInOutRules)
+                                        .addGroup(jp_multiInOutRulesPanelLayout.createSequentialGroup()
+                                                .addComponent(jrb_suppliedWeights)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jcb_edgeWeights, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_refreshWeigths, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jp_multiInOutRulesPanelLayout.setVerticalGroup(
@@ -929,100 +933,179 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jtp_psfc.addTab("Rules", jp_Rules);
 
-        jp_Data.setForeground(new java.awt.Color(102, 102, 102));
+        jp_ignoreLoops.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jl_dataMappingRules.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_dataMappingRules.setForeground(new java.awt.Color(102, 102, 102));
-        jl_dataMappingRules.setText("Data mapping rules");
+        jchb_ignoreLoops.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jchb_ignoreLoops.setForeground(new java.awt.Color(51, 102, 0));
+        jchb_ignoreLoops.setText("Ignore feedback loops in the pathway");
 
-        jl_dataType.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_dataType.setForeground(new java.awt.Color(102, 102, 102));
-        jl_dataType.setText("Data type");
-
-        jrb_linear.setText("Linear");
-
-        jrb_log.setText("Log");
-
-        jrb_logFC.setText("LogFC");
-
-        jrb_FC.setText("FC");
-
-        jl_defaultValue.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_defaultValue.setForeground(new java.awt.Color(102, 102, 102));
-        jl_defaultValue.setText("Default value");
-
-        jtxt_defaultValue.setText("0");
-
-        jl_multipleDataRule.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_multipleDataRule.setForeground(new java.awt.Color(102, 102, 102));
-        jl_multipleDataRule.setText("Multiple data rule");
-
-        jrb_min.setText("Min");
-
-        jrb_max.setText("Max");
-
-        jrb_mean.setText("Mean");
-
-        javax.swing.GroupLayout jp_DataLayout = new javax.swing.GroupLayout(jp_Data);
-        jp_Data.setLayout(jp_DataLayout);
-        jp_DataLayout.setHorizontalGroup(
-                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_dataMappingRules)
-                                        .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addComponent(jl_defaultValue)
-                                                .addGap(31, 31, 31)
-                                                .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addComponent(jl_multipleDataRule)
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addComponent(jrb_min)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jrb_max)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jrb_mean))
-                                        .addGroup(jp_DataLayout.createSequentialGroup()
-                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jrb_linear, javax.swing.GroupLayout.PREFERRED_SIZE, 71, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jrb_log))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jrb_logFC, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jrb_FC))))
-                                .addContainerGap(169, Short.MAX_VALUE))
+        javax.swing.GroupLayout jp_ignoreLoopsLayout = new javax.swing.GroupLayout(jp_ignoreLoops);
+        jp_ignoreLoops.setLayout(jp_ignoreLoopsLayout);
+        jp_ignoreLoopsLayout.setHorizontalGroup(
+                jp_ignoreLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_ignoreLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_ignoreLoops)
+                                .addGap(0, 78, Short.MAX_VALUE))
         );
-        jp_DataLayout.setVerticalGroup(
-                jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_DataLayout.createSequentialGroup()
+        jp_ignoreLoopsLayout.setVerticalGroup(
+                jp_ignoreLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_ignoreLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_ignoreLoops)
+                                .addGap(0, 4, Short.MAX_VALUE))
+        );
+
+        jp_procomputeLoops.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jchb_precomputeLoops.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jchb_precomputeLoops.setForeground(new java.awt.Color(51, 102, 0));
+        jchb_precomputeLoops.setText("Precompute signals at loops");
+
+        jsp_precomputeLoops.setBackground(new java.awt.Color(204, 255, 204));
+        jsp_precomputeLoops.setBorder(null);
+
+        jta_precomputeLoops.setBackground(new java.awt.Color(240, 240, 240));
+        jta_precomputeLoops.setColumns(20);
+        jta_precomputeLoops.setEditable(false);
+        jta_precomputeLoops.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
+        jta_precomputeLoops.setForeground(new java.awt.Color(51, 102, 0));
+        jta_precomputeLoops.setLineWrap(true);
+        jta_precomputeLoops.setRows(5);
+        jta_precomputeLoops.setText("This approach is implented in PSF algorithm. The signal at \"Target\" nodes at feedback loops is precomputed and the rest of the algorithm proceeds as there were no loops in the pathway. See the manual for details.");
+        jta_precomputeLoops.setWrapStyleWord(true);
+        jta_precomputeLoops.setBorder(null);
+        jsp_precomputeLoops.setViewportView(jta_precomputeLoops);
+        jta_precomputeLoops.getAccessibleContext().setAccessibleParent(jta_precomputeLoops);
+
+        javax.swing.GroupLayout jp_procomputeLoopsLayout = new javax.swing.GroupLayout(jp_procomputeLoops);
+        jp_procomputeLoops.setLayout(jp_procomputeLoopsLayout);
+        jp_procomputeLoopsLayout.setHorizontalGroup(
+                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jl_dataMappingRules)
+                                .addComponent(jsp_precomputeLoops)
+                                .addContainerGap())
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_precomputeLoops)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jp_procomputeLoopsLayout.setVerticalGroup(
+                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_precomputeLoops)
+                                .addGap(14, 14, 14)
+                                .addComponent(jsp_precomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jp_iterateUntilConvergence.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jchb_iterateUntilConvergence.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jchb_iterateUntilConvergence.setForeground(new java.awt.Color(51, 102, 0));
+        jchb_iterateUntilConvergence.setText("Iterate until convergence");
+
+        jl_convergenceThreshold.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_convergenceThreshold.setForeground(new java.awt.Color(102, 102, 102));
+        jl_convergenceThreshold.setText("Convergence threshold");
+
+        jl_maxNumOfIterations.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_maxNumOfIterations.setForeground(new java.awt.Color(102, 102, 102));
+        jl_maxNumOfIterations.setText("Max number of iterations");
+
+        jtf_maxNumOfIterations.setText("10");
+
+        jtf_convergenceThreshold.setText("0.1");
+
+        jsl_iterateUntilConvergence.setBackground(new java.awt.Color(204, 255, 204));
+        jsl_iterateUntilConvergence.setBorder(null);
+
+        jta_iterateUntilConvergence.setBackground(new java.awt.Color(240, 240, 240));
+        jta_iterateUntilConvergence.setColumns(20);
+        jta_iterateUntilConvergence.setEditable(false);
+        jta_iterateUntilConvergence.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
+        jta_iterateUntilConvergence.setForeground(new java.awt.Color(51, 102, 0));
+        jta_iterateUntilConvergence.setLineWrap(true);
+        jta_iterateUntilConvergence.setRows(5);
+        jta_iterateUntilConvergence.setText("The algorithm will iterate until reaching the convergence threshold at each node, or iterating the max number of iterations. See the user manual for details.");
+        jta_iterateUntilConvergence.setWrapStyleWord(true);
+        jta_iterateUntilConvergence.setBorder(null);
+        jta_iterateUntilConvergence.setFocusable(false);
+        jta_iterateUntilConvergence.setHighlighter(null);
+        jsl_iterateUntilConvergence.setViewportView(jta_iterateUntilConvergence);
+
+        javax.swing.GroupLayout jp_iterateUntilConvergenceLayout = new javax.swing.GroupLayout(jp_iterateUntilConvergence);
+        jp_iterateUntilConvergence.setLayout(jp_iterateUntilConvergenceLayout);
+        jp_iterateUntilConvergenceLayout.setHorizontalGroup(
+                jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jsl_iterateUntilConvergence))
+                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jchb_iterateUntilConvergence)
+                                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                                .addGap(21, 21, 21)
+                                                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addComponent(jl_convergenceThreshold)
+                                                                        .addComponent(jl_maxNumOfIterations))
+                                                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                                                .addGap(19, 19, 19)
+                                                                                .addComponent(jtf_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                                                .addGap(18, 18, 18)
+                                                                                .addComponent(jtf_maxNumOfIterations, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
+        );
+        jp_iterateUntilConvergenceLayout.setVerticalGroup(
+                jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                .addGap(5, 5, 5)
+                                .addComponent(jchb_iterateUntilConvergence)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jl_dataType, javax.swing.GroupLayout.PREFERRED_SIZE, 21, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jl_convergenceThreshold)
+                                        .addComponent(jtf_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_linear)
-                                        .addComponent(jrb_FC))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_log)
-                                        .addComponent(jrb_logFC))
+                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jtf_maxNumOfIterations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jl_maxNumOfIterations))
                                 .addGap(18, 18, 18)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jl_defaultValue)
-                                        .addComponent(jtxt_defaultValue, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(30, 30, 30)
-                                .addComponent(jl_multipleDataRule)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jp_DataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jrb_min)
-                                        .addComponent(jrb_max)
-                                        .addComponent(jrb_mean))
-                                .addContainerGap(204, Short.MAX_VALUE))
+                                .addComponent(jsl_iterateUntilConvergence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jtp_psfc.addTab("Data", jp_Data);
+        javax.swing.GroupLayout jp_LoopsLayout = new javax.swing.GroupLayout(jp_Loops);
+        jp_Loops.setLayout(jp_LoopsLayout);
+        jp_LoopsLayout.setHorizontalGroup(
+                jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_LoopsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jp_LoopsLayout.createSequentialGroup()
+                                                .addGroup(jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jp_ignoreLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addGap(11, 11, 11))
+                                        .addGroup(jp_LoopsLayout.createSequentialGroup()
+                                                .addComponent(jp_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addContainerGap())))
+        );
+        jp_LoopsLayout.setVerticalGroup(
+                jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_LoopsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jp_ignoreLoops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jp_iterateUntilConvergence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
+        jtp_psfc.addTab("Loops", jp_Loops);
 
         jl_psfc.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
@@ -1134,7 +1217,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_saveSettings)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
     }
 
     private void setModels() {
@@ -1811,9 +1893,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         } catch (NullPointerException e) {
         }
 
-
-        //Node data type
-        Enumeration<AbstractButton> buttons = jbg_dataType.getElements();
+        Enumeration<AbstractButton> buttons;
+      /*  //Node data type
+        buttons = jbg_dataType.getElements();
         while (buttons.hasMoreElements()) {
             JRadioButton button = (JRadioButton) buttons.nextElement();
             if (button.isSelected())
@@ -1828,7 +1910,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             JRadioButton button = (JRadioButton) buttons.nextElement();
             if (button.isSelected())
                 psfcProps.setProperty(EpsfcProps.MultipleDataOption.getName(), button.getText());
-        }
+        }   */
 
         //edgeTypeRuleNameConfigFile
         if (edgeTypeRuleNameConfigFile != null)
@@ -2150,7 +2232,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
      * Actions: jp_Data
      * ****************
      */
-    private void jtxt_defaultValueActionPerformed(ActionEvent evt) {
+   /* private void jtxt_defaultValueActionPerformed(ActionEvent evt) {
         String text = jtxt_defaultValue.getText();
         try {
             Double.parseDouble(text);
@@ -2158,7 +2240,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jtxt_defaultValue.setText(Node.getDefaultValue());
         }
     }
-
+*/
     /**
      * ***************
      * Actions: jp_Help
@@ -2193,7 +2275,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         //Button groups
 
-        //jbg_dataType
+        /*//jbg_dataType
         jbg_dataType = new ButtonGroup();
         jbg_dataType.add(jrb_linear);
         jbg_dataType.add(jrb_log);
@@ -2237,7 +2319,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         //Temporarily disable data components until further implementation
         jrb_max.setEnabled(false);
         jrb_min.setEnabled(false);
-        jrb_mean.setEnabled(false);
+        jrb_mean.setEnabled(false); */
 
         //EdgeTypeRuleNameConfigFile
         String fileName = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName());
@@ -2320,6 +2402,24 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         while (buttons.hasMoreElements()) {
             JRadioButton button = (JRadioButton) buttons.nextElement();
             if (button.getText().equals(propValue))
+                button.setSelected(true);
+        }
+
+        //Loops
+        jbg_loopHandling = new ButtonGroup();
+        jbg_loopHandling.add(jchb_ignoreLoops);
+        jbg_loopHandling.add(jchb_precomputeLoops);
+        jbg_loopHandling.add(jchb_iterateUntilConvergence);
+
+        //default
+        jchb_ignoreLoops.setSelected(true);
+
+        //selection from properties
+        propValue = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.LoopHandling.getName());
+        buttons = jbg_loopHandling.getElements();
+        while(buttons.hasMoreElements()){
+            JCheckBox button = (JCheckBox) buttons.nextElement();
+            if(button.getText().equals(propValue))
                 button.setSelected(true);
         }
 
@@ -2580,7 +2680,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     private Properties getNodeDataProperties() {
         Properties properties = new Properties();
-        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), jtxt_defaultValue.getText());
+        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), Node.getDefaultValue());
         return properties;
     }
 

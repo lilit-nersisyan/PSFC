@@ -13,3 +13,4 @@ edgeWeightsAttribute=N/A
 signalProcessingOrder=N/A
 NodeDefaultValue=1.0
 sortingAlgorithm=
+loopHandling=Ignore feedback loops in the pathway
