@@ -5,7 +5,7 @@ import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
-import org.cytoscape.psfc.gui.enums.EMultiSignalProps;
+import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.logic.algorithms.*;
 import org.cytoscape.psfc.logic.parsers.RuleFilesParser;
 import org.cytoscape.psfc.logic.structures.Edge;

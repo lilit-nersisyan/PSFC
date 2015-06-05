@@ -5,7 +5,7 @@ import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
-import org.cytoscape.psfc.gui.enums.ESortingAlgorithms;
+import org.cytoscape.psfc.properties.ESortingAlgorithms;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
