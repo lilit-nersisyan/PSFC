@@ -1,4 +1,4 @@
-package org.cytoscape.psfc.gui.enums;
+package org.cytoscape.psfc.properties;
 
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 

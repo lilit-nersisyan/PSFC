@@ -1,4 +1,4 @@
-package org.cytoscape.psfc.gui.enums;
+package org.cytoscape.psfc.properties;
 
 /**
  * Created by User on 7/15/2014.
