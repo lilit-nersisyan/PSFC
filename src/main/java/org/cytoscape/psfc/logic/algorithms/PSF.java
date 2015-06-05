@@ -19,6 +19,8 @@ import java.util.*;
 public class PSF {
     private static final String SOURCE = "source";
     private static final String TARGET = "target";
+    public static final Double CONVERGENCE_THRESHOLD_DEFAULT = 1.; //percentage
+    public static final Integer MAX_NUM_OF_ITERATION_DEFAULT = 10;
 
     private final HashMap<String, String> edgeTypeRuleMap;
     private final Logger logger;

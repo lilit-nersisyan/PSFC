@@ -17,8 +17,13 @@ public enum EpsfcProps {
     EdgeWeigthsAttribute("edgeWeightsAttribute"),
     SignalProcessingOrder("signalProcessingOrder"),
     SortingAlgorithm("sortingAlgorithm"),
-    LoopHandling("loopHandling")
-    ;
+    LoopHandling("loopHandling"),
+    ConvergenceThreshold("convergenceThreshold"),
+    MaxNumOfIterations("maxNumOfIterations"),
+    CalculateSignificance("calculateSignificance"),
+    BootstrapMode("bootstrapMode"),
+    BootstrapExpMatrix("bootstrapExpMatrix"),
+    NumOfSamplings("NumOfSamplings");
 
     private boolean oldValue = true;
     private boolean newValue = true;
