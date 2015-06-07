@@ -390,6 +390,9 @@ public class GraphSort {
             for (Edge edge : edgeSourceDistanceMap.keySet()) {
                 System.out.println(edge.toString() + edgeSourceDistanceMap.get(edge));
             }
+
+            //Comparisons are done in many levels, in order to remove the same edge every time the graph is processed.
+            //10^6, and 10^4 might not be enough for big pathways, probably should be modified later.
             Collections.sort(loopEdges, new Comparator<Edge>() {
                 @Override
                 public int compare(Edge o1, Edge o2) {

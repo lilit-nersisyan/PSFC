@@ -3,12 +3,12 @@ package org.cytoscape.psfc.logic.algorithms;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
-import org.cytoscape.psfc.properties.ELoopHandlingProps;
-import org.cytoscape.psfc.properties.EMultiSignalProps;
-import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
+import org.cytoscape.psfc.properties.ELoopHandlingProps;
+import org.cytoscape.psfc.properties.EMultiSignalProps;
+import org.cytoscape.psfc.properties.ENodeDataProps;
 
 import java.util.*;
 
@@ -34,13 +34,16 @@ public class PSF {
     HashMap<Integer, ArrayList<Node>> levelNodesMap = new HashMap<Integer, ArrayList<Node>>();
     boolean converged = false;
     boolean loopMode = false;
+    double convergenceThreshold = ELoopHandlingProps.CONVERGENCE_THRESHOLD_DEFAULT;
+    int maxNumOfIterations = ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT;
+    private ArrayList<Node> loopTargetNodes = new ArrayList<Node>();
+    private HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
 
     public HashMap<Node, Double> getTargetPValueMap() {
         return targetPValueMap;
     }
 
     private HashMap<Node, Double> targetPValueMap;
-
 
 
     public PSF(Graph graph, HashMap<String, String> edgeTypeRuleMap, Logger logger) {
@@ -52,7 +55,6 @@ public class PSF {
         initNodeDataPropsByDefaults();
         initLoopHandlingPropsByDefaults();
     }
-
 
 
     private void setLevelNodesMap() {
@@ -98,18 +100,65 @@ public class PSF {
             logger.debug("Loop handling options:");
             logger.debug(loopHandlingProps.toString());
         }
+
+
+        if (!loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.IGNORE_LOOPS)) {
+            if (!GraphSort.cycleExists(graph)) {
+                logger.debug("\nThe graph contains no loops\n");
+            } else
+                loopTargetNodes = getLoopTargetNodes();
+        }
+
+        //Precompute loops ?
+
+        if (loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.PRECOMPUTE_LOOPS)) {
+            if (GraphSort.cycleExists(graph)) {
+                //find graph.getNode(0).getLevel() levels of nodes. find loop targets.
+                //create state. performPSF. update target values by signals.
+                //follow by single iteration
+                try {
+                    precomputeLoops();
+                } catch (Exception e) {
+                    throw new Exception("Error while precomputing loops. Cause: " + e.getCause() + ". Message: " + e.getMessage());
+                }
+            } else {
+                logger.debug("\nThe graph contains no loops\n");
+            }
+        }
+
+        //Iterate until convergence?
+
+        if (loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.ITERATE_UNTIL_CONVERGENCE)) {
+            if (GraphSort.cycleExists(graph)) {
+                try {
+                    convergenceThreshold = Double.parseDouble(loopHandlingProps.getProperty(ELoopHandlingProps.ConvergenceThreshold.getName()));
+                } catch (NumberFormatException e) {
+                    throw new Exception("Illegal convergence threshold format");
+                } catch (NullPointerException e) {
+                    throw new Exception("No convergence threshold supplied for iterations");
+                }
+                try {
+                    maxNumOfIterations = Integer.parseInt(loopHandlingProps.getProperty(ELoopHandlingProps.MaxNumOfIterations.getName()));
+                } catch (NumberFormatException e) {
+                    throw new Exception("Illegal number of iterations format");
+                } catch (NullPointerException e) {
+                    throw new Exception("No parameter for max number of iterations supplied");
+                }
+                loopMode = true;
+            } else {
+                logger.debug("\nThe graph contains no loops\n");
+            }
+        }
+
         converged = false;
         states = new HashMap<Integer, State>();
-        if(loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.PRECOMPUTE_LOOPS)){
-            //find graph.getNode(0).getLevel() levels of nodes. find loop targets.
-            //create state. performPSF. update target values by signals.
-            //follow by single iteration
 
-            precomputeLoops();
-        }
         while (!converged) {
-            if (!silentMode)
+            if (!silentMode) {
                 logger.debug("\nIteration: " + states.size());
+
+            }
+
             State state = new State(states.size());
             states.put(states.size(), state);
             try {
@@ -117,8 +166,10 @@ public class PSF {
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
-            checkForConversion(state);
+            converged = checkForConvergence(states.size()-1);
         }
+        loopMode = false;
+
         if (!silentMode) {
             logger.debug("\nSuccess: psf computation complete!");
             logger.debug("PostProcessed graph:");
@@ -126,30 +177,28 @@ public class PSF {
         }
     }
 
-    private void precomputeLoops() throws Exception {
-        if(!silentMode){
-            logger.debug("\nPrecomputing values of target nodes at feedback loops");
-            logger.debug("Preprocessed graph");
-        }
-        ArrayList<Node> loopTargetNodes = new ArrayList<Node>();
-        HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
-        for (Node node : graph.getNodes()){
+    private ArrayList<Node> getLoopTargetNodes() {
+        for (Node node : graph.getNodes()) {
             originalNodeValues.put(node, node.getValue());
-            for(Node parent: graph.getParentNodes(node)){
-                if(node.getLevel() <= parent.getLevel()) {
+            for (Node parent : graph.getParentNodes(node)) {
+                if (node.getLevel() <= parent.getLevel()) {
                     loopTargetNodes.add(node);
                     break;
                 }
             }
         }
-        if(loopTargetNodes.isEmpty()){
-            if(!silentMode){
-                logger.debug("No loops are present in the pathway.");
-            }
+        return loopTargetNodes;
+    }
+
+    private void precomputeLoops() throws Exception {
+        if (!silentMode) {
+            logger.debug("\nPrecomputing values of target nodes at feedback loops");
+            logger.debug("Preprocessed graph");
         }
-        if(!silentMode) {
+
+        if (!silentMode) {
             logger.debug("Loop target nodes to be updated:");
-            for (Node node : loopTargetNodes){
+            for (Node node : loopTargetNodes) {
                 logger.debug(node.toString());
             }
         }
@@ -165,11 +214,10 @@ public class PSF {
 
         //Override node loop target nodes' values with their signals
         //Restore original values of the rest of the nodes
-        for ( Node node : graph.getNodes()){
-            if(loopTargetNodes.contains(node)) {
+        for (Node node : graph.getNodes()) {
+            if (loopTargetNodes.contains(node)) {
                 node.setValue(node.getSignal());
-            }
-            else{
+            } else {
                 node.setValue(originalNodeValues.get(node));
 //                node.removeNodeSignals();
 //                node.setSignal(node.getValue(), 0);
@@ -177,18 +225,40 @@ public class PSF {
             node.removeNodeSignals();
         }
 
-        if(!silentMode){
+        if (!silentMode) {
             logger.debug("Precomputed signals at loops");
             logger.debug("Updated values of loop target nodes:");
-            for(Node tNode : loopTargetNodes){
+            for (Node tNode : loopTargetNodes) {
                 logger.debug(tNode.toString());
             }
         }
     }
 
 
-    private void checkForConversion(State state) {
-        converged = true; //temporary solution
+    private boolean checkForConvergence(int iteration) {
+        if (!loopMode || loopTargetNodes.isEmpty())
+            return true; //temporary solution
+        System.out.println("Convergence check: Iteration: " + states.size());
+        if (iteration > maxNumOfIterations) {
+            String message = "Reached max number of iterations without convergence!";
+            logger.debug(message);
+            System.out.println(message);
+            return true;
+        } else {
+            if (iteration > 1 ) {
+                //Iterate through all loop target nodes.
+                // Check if the signal difference between this and the previous state
+                // is less than the convergence threshold
+                for (Node node : loopTargetNodes) {
+                    if (node.getSignal() - node.getSignal(iteration - 1) > convergenceThreshold)
+                        return false;
+                }
+                return true;
+            } else {
+                return false;
+            }
+
+        }
     }
 
     public void setNodeDataProps(Properties nodeDataProps) {
@@ -532,12 +602,12 @@ public class PSF {
             return levelNodeSignalMap;
         }
 
-        public HashMap<Integer,HashMap<Edge,Double>> getLevelEdgeSignalMap() {
-            HashMap<Integer,HashMap<Edge,Double>> levelEdgeSignalMap = new HashMap<Integer, HashMap<Edge, Double>>();
+        public HashMap<Integer, HashMap<Edge, Double>> getLevelEdgeSignalMap() {
+            HashMap<Integer, HashMap<Edge, Double>> levelEdgeSignalMap = new HashMap<Integer, HashMap<Edge, Double>>();
             for (int level : levelNodesMap.keySet()) {
                 ArrayList<Edge> edgesAtLevel = GraphManager.getIncomingEdgesAtLevel(graph, level);
                 HashMap<Edge, Double> edgeSignalMap = new HashMap<Edge, Double>();
-                for (Edge edge : edgesAtLevel){
+                for (Edge edge : edgesAtLevel) {
                     edgeSignalMap.put(edge, edge.getSignal());
                 }
                 levelEdgeSignalMap.put(level, edgeSignalMap);
