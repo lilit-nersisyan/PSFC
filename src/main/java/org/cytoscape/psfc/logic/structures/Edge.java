@@ -28,6 +28,29 @@ public class Edge {
         this.source = source;
     }
 
+
+    /**
+     * Edge constructor with full set of fields.
+     * @param source
+     * @param target
+     * @param edgeType
+     * @param weight
+     * @param signal
+     * @param rank
+     * @param loopCount
+     * @param isBackward
+     */
+    private Edge(Node source, Node target, String edgeType, double weight, double signal, Integer rank, int loopCount, boolean isBackward) {
+        this.source = source;
+        this.target = target;
+        this.edgeType = edgeType;
+        this.weight = weight;
+        this.signal = signal;
+        this.rank = rank;
+        this.loopCount = loopCount;
+        this.isBackward = isBackward;
+    }
+
     public Node getSource() {
         return source;
     }
@@ -42,27 +65,6 @@ public class Edge {
 
     public void setEdgeType(String edgeType) {
         this.edgeType = edgeType;
-    }
-
-    @Override
-    public String toString() {
-        return "Edge{" +
-                "source: ID=" + source.getID() + "; SUID=" + source.getID() +
-                "target: ID=" + + target.getID() + "; name=" + target.getName() +
-                "type='" + edgeType + '\'' + "," +
-                "weight='" + weight + '\'' + "," +
-                "rank='" + rank + '\'' + "," +
-                "loopCount='"  + loopCount + '\'' +
-                "}\n";
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Edge) {
-            Edge that = (Edge) o;
-            return this.source == that.source && this.target == that.target;
-        }
-        return false;
     }
 
     public void setWeight(double weight) {
@@ -110,5 +112,30 @@ public class Edge {
 
     public boolean isBackward() {
         return isBackward;
+    }
+    @Override
+    public String toString() {
+        return "Edge{" +
+                "source: ID=" + source.getID() + "; name=" + source.getName() +
+                "; target: ID=" + + target.getID() + "; name=" + target.getName() +
+                "; type='" + edgeType + '\'' + "," +
+                "; weight='" + weight + '\'' + "," +
+                "; rank='" + rank + '\'' + "," +
+                "; loopCount='"  + loopCount + '\'' +
+                "}\n";
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Edge) {
+            Edge that = (Edge) o;
+            return this.source == that.source && this.target == that.target;
+        }
+        return false;
+    }
+
+    @Override
+    public Object clone(){
+        return new Edge(source, target, edgeType, weight, signal, rank, loopCount, isBackward);
     }
 }

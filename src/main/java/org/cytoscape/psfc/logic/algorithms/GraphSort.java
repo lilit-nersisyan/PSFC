@@ -349,7 +349,7 @@ public class GraphSort {
         return loops;
     }
 
-    private static ArrayList<Edge> removeLoopEdges(Graph graph){
+    private static ArrayList<Edge> removeLoopEdges(Graph graph) {
         boolean cycleExists = cycleExists(graph);
         int iteration = 0;
         ArrayList<Edge> removedEdges = new ArrayList<Edge>();
@@ -359,17 +359,50 @@ public class GraphSort {
 
             ArrayList<Edge> loopEdges = new ArrayList<Edge>();
             ArrayList<List<Edge>> loops = detectLoops(graph);
+            ArrayList<Node> inputNodes = graph.getInputNodes();
+            System.out.println("Loops:");
             for (List<Edge> edges : loops) {
-                for (Edge edge : edges)
-                    if (!loopEdges.contains(edge))
+                System.out.println("Edges:\n" + edges.toString());
+                for (Edge edge : edges) {
+                    if (!loopEdges.contains(edge)) {
                         loopEdges.add(edge);
+                    }
+                }
+            }
+
+
+            //Count distances of loop edges to the input
+            final HashMap<Edge, Double> edgeSourceDistanceMap = new HashMap<Edge, Double>();
+            for (List<Edge> edges : loops) {
+                for (Edge edge : edges) {
+                    double shortestPathLength = Double.MAX_VALUE;
+                    for (Node iNode : inputNodes) {
+                        DijkstraShortestPath<Node, Edge> dsp = new DijkstraShortestPath<Node, Edge>
+                                (graph.getJgraph(), iNode, edge.getSource());
+                        double pl = dsp.getPathLength();
+                        if (pl < shortestPathLength)
+                            shortestPathLength = pl;
+                    }
+                    edgeSourceDistanceMap.put(edge, shortestPathLength);
+                }
+            }
+            System.out.println("edgesourcedistancemap:");
+            for (Edge edge : edgeSourceDistanceMap.keySet()) {
+                System.out.println(edge.toString() + edgeSourceDistanceMap.get(edge));
             }
             Collections.sort(loopEdges, new Comparator<Edge>() {
                 @Override
                 public int compare(Edge o1, Edge o2) {
-                    return o2.getLoopCount() - o1.getLoopCount();
+                    int ldiff = o2.getLoopCount() - o1.getLoopCount();
+                    int ddiff = (int) (edgeSourceDistanceMap.get(o2)-edgeSourceDistanceMap.get(o1));
+                    int iddiff = o2.getSource().getID()-o1.getSource().getID();
+                    int diff = 10^6*ldiff + 10^4*ddiff + iddiff;
+                    if(diff == 0)
+                        diff = 1;
+                    return diff;
                 }
             });
+
 
             System.out.println(loopEdges);
             Edge maxLoopEdge = loopEdges.get(0);

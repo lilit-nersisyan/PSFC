@@ -8,13 +8,9 @@ import org.cytoscape.psfc.gui.actions.CalculateScoreFlowAction;
 import org.cytoscape.psfc.gui.actions.SortNetworkAction;
 import org.cytoscape.psfc.gui.actions.VisualizeFlowAction;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
-import org.cytoscape.psfc.properties.EMultiSignalProps;
-import org.cytoscape.psfc.properties.ENodeDataProps;
-import org.cytoscape.psfc.properties.ESortingAlgorithms;
 import org.cytoscape.psfc.logic.algorithms.Bootstrap;
-import org.cytoscape.psfc.logic.algorithms.PSF;
 import org.cytoscape.psfc.logic.structures.Node;
-import org.cytoscape.psfc.properties.EpsfcProps;
+import org.cytoscape.psfc.properties.*;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -1666,18 +1662,20 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         CyColumn nodeLevelColumn = getNodeLevelColumn();
         Properties nodeDataProperties = getNodeDataProperties();
         Properties multiSignalProps = getMultiSignalProperties();
+        Properties loopHandlingProps = getLoopHandlingProperties();
         if (multiSignalProps == null)
             return;
 
         calculateFlowAction = new CalculateScoreFlowAction(
                 network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn,
                 edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
-                multiSignalProps, jchb_CalculateSignificance.isSelected(), this);
+                multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
         if (jchb_CalculateSignificance.isSelected()) {
             calculateFlowAction.setBootstrapProps(getBootstrapProperties());
         }
         calculateFlowAction.actionPerformed(e);
     }
+
 
     /**
      * ***************
@@ -2284,9 +2282,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         try {
             convThreshold = Double.parseDouble(jtxt_convergenceThreshold.getText());
             if (convThreshold < 0 || convThreshold > 100)
-                convThreshold = PSF.CONVERGENCE_THRESHOLD_DEFAULT;
+                convThreshold = ELoopHandlingProps.CONVERGENCE_THRESHOLD_DEFAULT;
         } catch (NumberFormatException e) {
-            convThreshold = PSF.CONVERGENCE_THRESHOLD_DEFAULT;
+            convThreshold = ELoopHandlingProps.CONVERGENCE_THRESHOLD_DEFAULT;
         }
 
         jtxt_convergenceThreshold.setText(convThreshold + "");
@@ -2297,9 +2295,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         try {
             maxNumIt = Integer.parseInt(jtxt_maxNumOfIterations.getText());
             if (maxNumIt < 1)
-                maxNumIt = PSF.MAX_NUM_OF_ITERATION_DEFAULT;
+                maxNumIt = ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT;
         } catch (NumberFormatException e) {
-            maxNumIt = PSF.MAX_NUM_OF_ITERATION_DEFAULT;
+            maxNumIt = ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT;
         }
 
         jtxt_maxNumOfIterations.setText(maxNumIt + "");
@@ -2782,6 +2780,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return properties;
     }
 
+    private Properties getLoopHandlingProperties() {
+        Properties properties = new Properties();
+
+        if(jchb_iterateUntilConvergence.isSelected()) {
+            properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.ITERATE_UNTIL_CONVERGENCE);
+            properties.setProperty(ELoopHandlingProps.ConvergenceThreshold.getName(), Double.parseDouble(jtxt_convergenceThreshold.getText())+"");
+            properties.setProperty(ELoopHandlingProps.MaxNumOfIterations.getName(), Integer.parseInt(jtxt_maxNumOfIterations.getText()) + "");
+        } else{
+            if(jchb_precomputeLoops.isSelected())
+                properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.PRECOMPUTE_LOOPS);
+            else
+                properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.IGNORE_LOOPS); //default
+        }
+
+        return properties;
+    }
+
     private Properties getMultiSignalProperties() {
         Properties properties = new Properties();
         int splitRule;
@@ -2870,6 +2885,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return properties;
     }
 
+
     public Properties getBootstrapProperties() {
         Properties properties = new Properties();
         properties.setProperty(Bootstrap.NUMOFSAMPLINGSPROP, jtxt_numOfSamplings.getText());
@@ -2883,6 +2899,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         return properties;
     }
+
 
     private boolean checkSorted(CyNetwork network) {
         CyColumn nodeLevelColumn = getNodeLevelColumn();

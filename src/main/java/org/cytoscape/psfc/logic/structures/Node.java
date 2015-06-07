@@ -47,6 +47,23 @@ public class Node {
         setValue(value);
     }
 
+    /**
+     * Node constructor for complete set of fields.
+     *
+     * @param ID     non-negative integer: should be unique identifier for the node in a graph.
+     * @param value  may stand for expression, ratio, rank score, etc.
+     * @param name
+     * @param level
+     * @param signals
+     */
+    private Node(int ID, double value, String name, int level, TreeMap<Integer, Double> signals) {
+        this.ID = ID;
+        this.value = value;
+        this.name = name;
+        this.level = level;
+        this.signals = signals;
+    }
+
     public static String getDefaultValue() {
         return defaultValue;
     }
@@ -74,25 +91,6 @@ public class Node {
     }
 
 
-    @Override
-    public boolean equals(Object o) {
-        if (o instanceof Node) {
-            Node that = (Node) o;
-            return that.getID() == this.ID;
-        }
-        return false;
-    }
-
-    @Override
-    public String toString() {
-        return "Node{" +
-                "ID=" + ID + "," +
-                "name=" + name + "," +
-                "value=" + value + "," +
-                "level=" + level + "," +
-                "signals=" + signals.toString() +
-                "}\n";
-    }
 
     public int getLevel() {
         return level;
@@ -114,9 +112,43 @@ public class Node {
 
     /**
      * Returns the last signal value in the signals map.
-     * @return
+     * @return last signal value of the node or null if no signals are computed
      */
-    public double getSignal() {
+    public double getSignal(){
+        if(signals.isEmpty())
+            return Double.NaN;
         return signals.lastEntry().getValue();
+    }
+
+    /**
+     * Empty the set of signals associated with the node
+     */
+    public void removeNodeSignals(){
+        signals = new TreeMap<Integer, Double>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Node) {
+            Node that = (Node) o;
+            return that.getID() == this.ID;
+        }
+        return false;
+    }
+
+    @Override
+    public String toString() {
+        return "Node{" +
+                "ID=" + ID + "," +
+                "name=" + name + "," +
+                "value=" + value + "," +
+                "level=" + level + "," +
+                "signals=" + signals.toString() +
+                "}\n";
+    }
+
+    @Override
+    public Object clone() {
+        return new Node(ID, value, name, level, signals);
     }
 }

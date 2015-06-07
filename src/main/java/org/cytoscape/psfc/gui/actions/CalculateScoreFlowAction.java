@@ -39,6 +39,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private final Properties nodeDataProps;
     private final Properties multiSignalProps;
     private final PSFCPanel psfcPanel;
+    private final Properties loopHandlingProps;
     private CyNetwork network;
     private CyColumn edgeTypeColumn;
     private CyColumn nodeDataColumn;
@@ -63,6 +64,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     File ruleConfigFile,
                                     Properties nodeDataProperties,
                                     Properties multiSignalProps,
+                                    Properties loopHandlingProps,
                                     boolean calculateSignificance,
                                     PSFCPanel psfcPanel) {
         super("Calculate score flow");
@@ -75,6 +77,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.ruleConfigFile = ruleConfigFile;
         this.nodeDataProps = nodeDataProperties;
         this.multiSignalProps = multiSignalProps;
+        this.loopHandlingProps = loopHandlingProps;
         this.psfcPanel = psfcPanel;
         this.calculateSignificance = calculateSignificance;
 
@@ -197,6 +200,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                         PSFCActivator.getLogger());
                 psf.setNodeDataProps(nodeDataProps);
                 psf.setMultiSignalProps(multiSignalProps);
+                psf.setLoopHandlingProps(loopHandlingProps);
 
                 PSFCActivator.getLogger().info("\n################\n################");
                 PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));

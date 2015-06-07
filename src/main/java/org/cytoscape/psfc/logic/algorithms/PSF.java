@@ -3,6 +3,7 @@ package org.cytoscape.psfc.logic.algorithms;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
+import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.logic.structures.Edge;
@@ -19,8 +20,6 @@ import java.util.*;
 public class PSF {
     private static final String SOURCE = "source";
     private static final String TARGET = "target";
-    public static final Double CONVERGENCE_THRESHOLD_DEFAULT = 1.; //percentage
-    public static final Integer MAX_NUM_OF_ITERATION_DEFAULT = 10;
 
     private final HashMap<String, String> edgeTypeRuleMap;
     private final Logger logger;
@@ -30,9 +29,11 @@ public class PSF {
 
     Properties multiSignalProps = new Properties();
     Properties nodeDataProps = new Properties();
+    Properties loopHandlingProps = new Properties();
 
     HashMap<Integer, ArrayList<Node>> levelNodesMap = new HashMap<Integer, ArrayList<Node>>();
     boolean converged = false;
+    boolean loopMode = false;
 
     public HashMap<Node, Double> getTargetPValueMap() {
         return targetPValueMap;
@@ -49,7 +50,10 @@ public class PSF {
         setLevelNodesMap();
         initMultiSignalPropsByDefaults();
         initNodeDataPropsByDefaults();
+        initLoopHandlingPropsByDefaults();
     }
+
+
 
     private void setLevelNodesMap() {
         for (Node node : graph.getNodes()) {
@@ -74,6 +78,12 @@ public class PSF {
         multiSignalProps.put(EMultiSignalProps.SignalProcessingOrder.getName(), EMultiSignalProps.ORDER_NONE);
     }
 
+    private void initLoopHandlingPropsByDefaults() {
+        loopHandlingProps.put(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.IGNORE_LOOPS);
+        loopHandlingProps.put(ELoopHandlingProps.ConvergenceThreshold.getName(), ELoopHandlingProps.CONVERGENCE_THRESHOLD_DEFAULT);
+        loopHandlingProps.put(ELoopHandlingProps.MaxNumOfIterations.getName(), ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT);
+    }
+
     public void calculateFlow() throws Exception {
         if (!silentMode) {
             logger.debug("PSF calculation started");
@@ -85,10 +95,18 @@ public class PSF {
             logger.debug(nodeDataProps.toString());
             logger.debug("Multiple signal processing rules");
             logger.debug(multiSignalProps.toString());
+            logger.debug("Loop handling options:");
+            logger.debug(loopHandlingProps.toString());
         }
         converged = false;
         states = new HashMap<Integer, State>();
+        if(loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.PRECOMPUTE_LOOPS)){
+            //find graph.getNode(0).getLevel() levels of nodes. find loop targets.
+            //create state. performPSF. update target values by signals.
+            //follow by single iteration
 
+            precomputeLoops();
+        }
         while (!converged) {
             if (!silentMode)
                 logger.debug("\nIteration: " + states.size());
@@ -108,6 +126,66 @@ public class PSF {
         }
     }
 
+    private void precomputeLoops() throws Exception {
+        if(!silentMode){
+            logger.debug("\nPrecomputing values of target nodes at feedback loops");
+            logger.debug("Preprocessed graph");
+        }
+        ArrayList<Node> loopTargetNodes = new ArrayList<Node>();
+        HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
+        for (Node node : graph.getNodes()){
+            originalNodeValues.put(node, node.getValue());
+            for(Node parent: graph.getParentNodes(node)){
+                if(node.getLevel() <= parent.getLevel()) {
+                    loopTargetNodes.add(node);
+                    break;
+                }
+            }
+        }
+        if(loopTargetNodes.isEmpty()){
+            if(!silentMode){
+                logger.debug("No loops are present in the pathway.");
+            }
+        }
+        if(!silentMode) {
+            logger.debug("Loop target nodes to be updated:");
+            for (Node node : loopTargetNodes){
+                logger.debug(node.toString());
+            }
+        }
+        loopMode = true; //compute backward edges as well
+        State state = new State(0);
+        try {
+            state.performPSF();
+        } catch (Exception e) {
+            throw new Exception("Exception while precomputing loop PSF valus" + e.getMessage(), e);
+        }
+        loopMode = false;
+
+
+        //Override node loop target nodes' values with their signals
+        //Restore original values of the rest of the nodes
+        for ( Node node : graph.getNodes()){
+            if(loopTargetNodes.contains(node)) {
+                node.setValue(node.getSignal());
+            }
+            else{
+                node.setValue(originalNodeValues.get(node));
+//                node.removeNodeSignals();
+//                node.setSignal(node.getValue(), 0);
+            }
+            node.removeNodeSignals();
+        }
+
+        if(!silentMode){
+            logger.debug("Precomputed signals at loops");
+            logger.debug("Updated values of loop target nodes:");
+            for(Node tNode : loopTargetNodes){
+                logger.debug(tNode.toString());
+            }
+        }
+    }
+
 
     private void checkForConversion(State state) {
         converged = true; //temporary solution
@@ -121,6 +199,10 @@ public class PSF {
     public void setMultiSignalProps(Properties multiSignalProps) {
         for (Object key : multiSignalProps.keySet())
             this.multiSignalProps.put(key, multiSignalProps.get(key));
+    }
+
+    public void setLoopHandlingProps(Properties loopHandlingProps) {
+        this.loopHandlingProps = loopHandlingProps;
     }
 
     public HashMap<Integer, HashMap<Node, Double>> getLevelNodeSignalMap(int iteration) {
@@ -146,6 +228,7 @@ public class PSF {
     public HashMap<Integer, ArrayList<Node>> getLevelNodesMap() {
         return levelNodesMap;
     }
+
 
     /**
      * PRIVATE CLASS State
@@ -209,7 +292,7 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel())
+                    if (parentNode.getLevel() < node.getLevel() || loopMode)
                         edges.add(graph.getEdge(parentNode, node));
                 }
 
@@ -260,7 +343,7 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel())
+                    if (parentNode.getLevel() < node.getLevel() || loopMode)
                         edges.add(graph.getEdge(parentNode, node));
                 }
 
@@ -276,7 +359,7 @@ public class PSF {
                     for (Edge edge : edges) {
                         signal *= edge.getSignal();
                     }
-                    node.setSignal(signal, iteration);
+//                    node.setSignal(signal, iteration);
                 }
                 node.setSignal(signal, iteration);
             }
@@ -301,7 +384,7 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel())
+                    if (parentNode.getLevel() < node.getLevel() || loopMode)
                         edges.add(graph.getEdge(parentNode, node));
                 }
 
@@ -368,7 +451,7 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel())
+                    if (parentNode.getLevel() < node.getLevel() || loopMode)
                         edges.add(graph.getEdge(parentNode, node));
                 }
 

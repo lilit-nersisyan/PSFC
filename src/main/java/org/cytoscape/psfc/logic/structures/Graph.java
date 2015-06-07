@@ -38,6 +38,7 @@ public class Graph {
         nodeCyNodeMap = HashBiMap.create();
     }
 
+
     /**
      * Creates  a graph with specifiied number of vertices
      *
@@ -51,6 +52,24 @@ public class Graph {
         for (int i =0 ; i < order; i++){
             addNode();
         }
+    }
+
+    /**
+     * Graph constructor with full set of fields.
+     * @param nodes
+     * @param edges
+     * @param freeID
+     * @param jgraph
+     * @param network
+     * @param nodeCyNodeMap
+     */
+    private Graph(TreeMap<Integer, Node> nodes, ArrayList<Edge> edges, int freeID, DefaultDirectedWeightedGraph<Node, Edge> jgraph, CyNetwork network, BiMap<Node, CyNode> nodeCyNodeMap) {
+        this.nodes = nodes;
+        this.edges = edges;
+        this.freeID = freeID;
+        this.jgraph = jgraph;
+        this.network = network;
+        this.nodeCyNodeMap = nodeCyNodeMap;
     }
 
     /**
@@ -83,6 +102,7 @@ public class Graph {
         jgraph.addVertex(node);
         return node;
     }
+
 
     /**
      * Create and return a new <code>Node</code> and assign given <code>CyNode</code>
@@ -381,13 +401,6 @@ public class Graph {
         this.network = network;
     }
 
-    @Override
-    public String toString() {
-        return "Graph{" +
-                "\nnodes=" + nodes +
-                "\nedges=" + edges +
-                '}';
-    }
 
 
     public String getSummary() {
@@ -434,4 +447,32 @@ public class Graph {
         }
         return targetNodes;
     }
+
+    @Override
+    public String toString() {
+        return "Graph{" +
+                "\nnodes=" + nodes +
+                "\nedges=" + edges +
+                '}';
+    }
+
+ /*   @Override
+    public Object clone(){
+        Graph cGraph = new Graph(nodes.size());
+
+        TreeMap<Integer, Node> cNodes = new TreeMap<Integer, Node>();
+        for (Integer nodeID : nodes.keySet()){
+            Node cNode = (Node) nodes.get(nodeID).clone();
+            cNodes.put(nodeID, cNode);
+        }
+        ArrayList<Edge> cEdges = new ArrayList<Edge>();
+        for (Edge edge : edges){
+            Edge cEdge = (Edge) edge.clone();
+            cEdges.add(cEdge);
+        }
+
+        Graph cGraph = new Graph(cNodes, cEdges, freeID,
+                (DefaultDirectedWeightedGraph<Node, Edge>) jgraph.clone(),
+                network, nodeCyNodeMap);
+    }*/
 }
