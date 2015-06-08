@@ -166,7 +166,7 @@ public class PSF {
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
-            converged = checkForConvergence(states.size()-1);
+            converged = checkForConvergence(states.size() - 1);
         }
         loopMode = false;
 
@@ -238,21 +238,27 @@ public class PSF {
     private boolean checkForConvergence(int iteration) {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
-        System.out.println("Convergence check: Iteration: " + states.size());
-        if (iteration > maxNumOfIterations) {
+        System.out.println("Convergence check: Iteration: " + iteration);
+        if (iteration + 1 > maxNumOfIterations) {
             String message = "Reached max number of iterations without convergence!";
             logger.debug(message);
             System.out.println(message);
             return true;
         } else {
-            if (iteration > 1 ) {
+            if (iteration > 1) {
                 //Iterate through all loop target nodes.
                 // Check if the signal difference between this and the previous state
                 // is less than the convergence threshold
                 for (Node node : loopTargetNodes) {
-                    if (node.getSignal() - node.getSignal(iteration - 1) > convergenceThreshold)
-                        return false;
+                    double prevSignal = node.getSignal(iteration - 1);
+                    double thisSignal = node.getSignal();
+                    if (prevSignal != 0)
+                        if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
+                            return false;
                 }
+                String message = "Reached converged at iteration: " + iteration;
+                logger.debug(message);
+                System.out.println(message);
                 return true;
             } else {
                 return false;
@@ -275,10 +281,22 @@ public class PSF {
         this.loopHandlingProps = loopHandlingProps;
     }
 
+    public HashMap<Integer, HashMap<Node, Double>> getLevelNodeSignalMap() {
+        if (states.isEmpty())
+            return null;
+        return getLevelNodeSignalMap(states.size() - 1);
+    }
+
     public HashMap<Integer, HashMap<Node, Double>> getLevelNodeSignalMap(int iteration) {
         if (!states.containsKey(iteration))
             return null;
         return states.get(iteration).getLevelNodeSignalMap();
+    }
+
+    public HashMap<Integer, HashMap<Edge, Double>> getLevelEdgeSignalMap() {
+        if (states.isEmpty())
+            return null;
+        return getLevelEdgeSignalMap(states.size() - 1);
     }
 
     public HashMap<Integer, HashMap<Edge, Double>> getLevelEdgeSignalMap(int iteration) {
@@ -330,6 +348,7 @@ public class PSF {
             boolean firstLevel = true;
             for (int level : levelNodesMap.keySet()) {
                 if (firstLevel) {
+                    processFirstLevel();
                     firstLevel = false;
                 } else {
                     processLevel(level);
@@ -340,6 +359,15 @@ public class PSF {
         private void initNodeSignalsFromValues() {
             for (Node node : graph.getNodes())
                 node.setSignal(node.getValue(), iteration);
+        }
+
+        private void processFirstLevel() {
+            for (Node node : levelNodesMap.get(0)) {
+                if (iteration == 0)
+                    node.setSignal(node.getValue(), iteration);
+                else
+                    node.setSignal(node.getSignal(iteration - 1), iteration);
+            }
         }
 
 

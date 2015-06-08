@@ -12,7 +12,7 @@ public enum ELoopHandlingProps {
     public static final String PRECOMPUTE_LOOPS = "precompute_loops";
     public static final String ITERATE_UNTIL_CONVERGENCE = "iterate_until_convergence";
 
-    public static final Double CONVERGENCE_THRESHOLD_DEFAULT = 1.; //percentage
+    public static final Integer CONVERGENCE_THRESHOLD_DEFAULT = 1; //percentage
     public static final Integer MAX_NUM_OF_ITERATION_DEFAULT = 10;
 
 

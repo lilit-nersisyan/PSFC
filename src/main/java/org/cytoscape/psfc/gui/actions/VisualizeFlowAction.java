@@ -28,7 +28,6 @@ import java.util.ArrayList;
  * PUBLIC CLASS VisualizeFlowAction
  * Initializes an iterator of ColorNodesTask,
  * which performs node color visual mapping based on node signals.
- *
  */
 public class VisualizeFlowAction extends AbstractCyAction {
     private final double minSignal;
@@ -76,11 +75,11 @@ public class VisualizeFlowAction extends AbstractCyAction {
         private int level;
 
         private VisualizeFlowTask(int level) {
-           this.level = level;
+            this.level = level;
             String nodeColumnName = EColumnNames.PSFC_NODE_SIGNAL.getName() + level;
             nodeSignalColumn = network.getDefaultNodeTable().getColumn(nodeColumnName);
             String edgeColumnName = EColumnNames.PSFC_EDGE_SIGNAL.getName() + level;
-            edgeSignalColumn = network.getDefaultEdgeTable().getColumn(nodeColumnName);
+            edgeSignalColumn = network.getDefaultEdgeTable().getColumn(edgeColumnName);
             if (nodeSignalColumn == null) {
                 JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
                         "CyColumn " + nodeColumnName + " was not found for visualization.",

@@ -232,13 +232,13 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 for (Node node : psf.getGraph().getNodes()) {
                     prevNodeMap.put(psf.getGraph().getCyNode(node), node.getValue());
                 }
-                for (int level : psf.getLevelNodeSignalMap(0).keySet()) {
+                for (int level : psf.getLevelNodeSignalMap().keySet()) {
                     HashMap<CyNode, Double> currentLevelCyNodeScoreMap = new HashMap<CyNode, Double>();
                     levelCyNodeScoreMap.put(level, currentLevelCyNodeScoreMap);
                     currentLevelCyNodeScoreMap.putAll(prevNodeMap);
-                    for (Node node : psf.getLevelNodeSignalMap(0).get(level).keySet()) {
+                    for (Node node : psf.getLevelNodeSignalMap().get(level).keySet()) {
                         CyNode cyNode = psf.getGraph().getCyNode(node);
-                        double score = psf.getLevelNodeSignalMap(0).get(level).get(node);
+                        double score = psf.getLevelNodeSignalMap().get(level).get(node);
                         currentLevelCyNodeScoreMap.remove(cyNode);
                         currentLevelCyNodeScoreMap.put(cyNode, score);
                     }
@@ -247,7 +247,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
 
                 //Process edge signals
-                HashMap<Integer, HashMap<Edge, Double>> levelEdgeSignalMap = psf.getLevelEdgeSignalMap(0);
+                HashMap<Integer, HashMap<Edge, Double>> levelEdgeSignalMap = psf.getLevelEdgeSignalMap();
                 //A separate column of score attributes for each level will be kept in this map
                 HashMap<Integer, HashMap<CyEdge, Double>> levelCyEdgeScoreMap = new HashMap<Integer, HashMap<CyEdge, Double>>();
                 HashMap<CyEdge, Double> prevEdgeMap = new HashMap<CyEdge, Double>();

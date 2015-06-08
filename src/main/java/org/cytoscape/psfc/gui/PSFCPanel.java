@@ -139,6 +139,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_multiSignalProcessing;
     private javax.swing.JLabel jl_network_and_attrs;
     private javax.swing.JLabel jl_numOfSamplings;
+    private javax.swing.JLabel jl_percentLabel;
     private javax.swing.JLabel jl_psfc;
     private javax.swing.JLabel jl_ruleConfigFile;
     private javax.swing.JLabel jl_ruleNameRuleConfigFileName;
@@ -291,6 +292,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jtxt_convergenceThreshold = new javax.swing.JTextField();
         jsl_iterateUntilConvergence = new javax.swing.JScrollPane();
         jta_iterateUntilConvergence = new javax.swing.JTextArea();
+        jl_percentLabel = new javax.swing.JLabel();
         jp_Help = new javax.swing.JPanel();
         jl_psfc = new javax.swing.JLabel();
         jb_projectWebPage = new javax.swing.JButton();
@@ -1000,7 +1002,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jtxt_maxNumOfIterations.setText("10");
 
-        jtxt_convergenceThreshold.setText("0.1");
+        jtxt_convergenceThreshold.setText("100");
 
         jsl_iterateUntilConvergence.setBackground(new java.awt.Color(204, 255, 204));
         jsl_iterateUntilConvergence.setBorder(null);
@@ -1019,27 +1021,38 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jta_iterateUntilConvergence.setHighlighter(null);
         jsl_iterateUntilConvergence.setViewportView(jta_iterateUntilConvergence);
 
+        jl_percentLabel.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_percentLabel.setForeground(new java.awt.Color(102, 102, 102));
+        jl_percentLabel.setText("%");
+
         javax.swing.GroupLayout jp_iterateUntilConvergenceLayout = new javax.swing.GroupLayout(jp_iterateUntilConvergence);
         jp_iterateUntilConvergence.setLayout(jp_iterateUntilConvergenceLayout);
         jp_iterateUntilConvergenceLayout.setHorizontalGroup(
                 jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(jchb_iterateUntilConvergence)
                         .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jsl_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE)
-                                .addContainerGap())
+                                .addComponent(jchb_iterateUntilConvergence)
+                                .addGap(0, 0, Short.MAX_VALUE))
                         .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
-                                .addGap(21, 21, 21)
-                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_convergenceThreshold)
-                                        .addComponent(jl_maxNumOfIterations))
                                 .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jtxt_maxNumOfIterations, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_iterateUntilConvergenceLayout.createSequentialGroup()
-                                                .addGap(19, 19, 19)
-                                                .addComponent(jtxt_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addContainerGap()
+                                                .addComponent(jsl_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, 298, Short.MAX_VALUE))
+                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                .addGap(21, 21, 21)
+                                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jl_convergenceThreshold)
+                                                        .addComponent(jl_maxNumOfIterations))
+                                                .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                                .addGap(18, 18, 18)
+                                                                .addComponent(jtxt_maxNumOfIterations, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
+                                                                .addGap(19, 19, 19)
+                                                                .addComponent(jtxt_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(jl_percentLabel)))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         jp_iterateUntilConvergenceLayout.setVerticalGroup(
                 jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1049,7 +1062,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jl_convergenceThreshold)
-                                        .addComponent(jtxt_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addComponent(jtxt_convergenceThreshold, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(jl_percentLabel))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jtxt_maxNumOfIterations, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1145,6 +1159,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         jl_selectedNetwork.setFont(new java.awt.Font("Tahoma", 3, 11)); // NOI18N
         jl_selectedNetwork.setForeground(new java.awt.Color(153, 0, 0));
+        jl_selectedNetwork.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         jl_selectedNetwork.setText("No network chosen ");
 
         jb_saveSettings.setText("Save settings");
@@ -1163,10 +1178,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                         .addComponent(jb_openLogFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(jb_saveSettings, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 98, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jb_calculateFlow, javax.swing.GroupLayout.Alignment.TRAILING)
-                                                        .addComponent(jl_selectedNetwork, javax.swing.GroupLayout.Alignment.TRAILING))
+                                                        .addComponent(jl_selectedNetwork, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                 .addGap(23, 23, 23))))
                         .addGroup(layout.createSequentialGroup()
                                 .addGap(26, 26, 26)
@@ -1716,7 +1731,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         Long selectedNetworkSUID = getSelectedNetwork().getSUID();
         Long currentNetworkSUID = currentNetwork.getSUID();
 
-        jl_selectedNetwork.setText(getSelectedNetwork() + " ");
+        CyNetwork selectedNetwork = getSelectedNetwork();
+        jl_selectedNetwork.setText(selectedNetwork.getRow(selectedNetwork).get("Name", String.class) + suidSplit + selectedNetwork.getSUID());
         if (selectedNetworkSUID.equals(currentNetworkSUID)) {
             jl_selectedNetwork.setForeground(new java.awt.Color(51, 102, 0));
             jl_selectedNetwork.setToolTipText("");
@@ -2278,9 +2294,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
 
     private void jtxt_convergenceThresholdActionPerformed() {
-        double convThreshold;
+        int convThreshold;
         try {
-            convThreshold = Double.parseDouble(jtxt_convergenceThreshold.getText());
+            convThreshold = Integer.parseInt(jtxt_convergenceThreshold.getText());
             if (convThreshold < 0 || convThreshold > 100)
                 convThreshold = ELoopHandlingProps.CONVERGENCE_THRESHOLD_DEFAULT;
         } catch (NumberFormatException e) {
@@ -2562,6 +2578,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jl_ruleNameRuleConfigFileName.setToolTipText(ruleNameRuleConfigFile.getAbsolutePath());
         if (exprMatrixFile != null)
             jl_exprMatrixFile.setToolTipText(exprMatrixFile.getAbsolutePath());
+
+        jtxt_convergenceThreshold.setToolTipText("Percentage of signal change between two iterations");
     }
 
     private CyNetwork getSelectedNetwork() {
