@@ -114,7 +114,16 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     }
 
     private class CalculateScoreFlowTask extends AbstractTask {
-
+        Thread psfThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    psf.calculateFlow();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
             taskMonitor.setTitle("PSFC.CalculateFlowTask");
@@ -215,7 +224,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
 
                 try {
-                    psf.calculateFlow();
+//                    psf.calculateFlow();
+                    psfThread.run();
                 } catch (Exception e) {
                     PSFCActivator.getLogger().error("Error occurred while flow score calculation. Reason: "
                             + e.getMessage(), e);
@@ -314,6 +324,14 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 PSFCActivator.getLogger().debug("PSFC Score Flow calculation finished");
                 System.gc();
             }
+
+        }
+        @Override
+        public void cancel(){
+//            psfThread.interrupt();
+            psf.setCancelled(true);
+
+            System.gc();
         }
 
         private HashMap<CyNode, Integer> getCyNodeLevelMap() {

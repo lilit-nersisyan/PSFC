@@ -38,6 +38,7 @@ public class PSF {
     int maxNumOfIterations = ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT;
     private ArrayList<Node> loopTargetNodes = new ArrayList<Node>();
     private HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
+    private boolean finished = false;
 
     public HashMap<Node, Double> getTargetPValueMap() {
         return targetPValueMap;
@@ -45,6 +46,11 @@ public class PSF {
 
     private HashMap<Node, Double> targetPValueMap;
 
+    private boolean cancelled = false;
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
     public PSF(Graph graph, HashMap<String, String> edgeTypeRuleMap, Logger logger) {
         this.graph = graph;
@@ -153,12 +159,10 @@ public class PSF {
         converged = false;
         states = new HashMap<Integer, State>();
 
-        while (!converged) {
+        while (!converged && !cancelled) {
             if (!silentMode) {
                 logger.debug("\nIteration: " + states.size());
-
             }
-
             State state = new State(states.size());
             states.put(states.size(), state);
             try {
@@ -167,8 +171,11 @@ public class PSF {
                 throw new Exception(e.getMessage(), e);
             }
             converged = checkForConvergence(states.size() - 1);
+            if(cancelled)
+                System.out.println("Cancelled!");
         }
         loopMode = false;
+        finished = true;
 
         if (!silentMode) {
             logger.debug("\nSuccess: psf computation complete!");
@@ -317,6 +324,10 @@ public class PSF {
         return levelNodesMap;
     }
 
+    public boolean isFinished() {
+        return finished;
+    }
+
 
     /**
      * PRIVATE CLASS State
@@ -420,8 +431,11 @@ public class PSF {
                     try {
                         signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
                     } catch (Exception e) {
-                        throw new Exception("Exception at rule parsing for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage(), e);
+                        String message = "Exception at rule calculation for edge " + edge.toString()
+                                + ". Reason: " + e.getMessage();
+//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
+                        logger.debug(message);
+                        throw new Exception(message, e);
                     }
                     edge.setSignal(signal);
                     edge.getTarget().setSignal(signal, iteration);
@@ -493,8 +507,12 @@ public class PSF {
                     try {
                         signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
                     } catch (Exception e) {
-                        throw new Exception("Exception at rule parsing for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage(), e);
+                        String message = "Exception at rule calculation for edge " + edge.toString()
+                                + ". Reason: " + e.getMessage();
+//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
+                        logger.debug(message);
+                        throw new Exception(message, e);
+
                     }
                     edge.setSignal(signal);
                 }
@@ -525,8 +543,11 @@ public class PSF {
                     try {
                         signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
                     } catch (Exception e) {
-                        throw new Exception("Exception at rule parsing for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage(), e);
+                        String message = "Exception at rule calculation for edge " + edge.toString()
+                                + ". Reason: " + e.getMessage();
+//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
+                        logger.debug(message);
+                        throw new Exception(message, e);
                     }
                     edge.setSignal(signal);
                 }
@@ -615,7 +636,8 @@ public class PSF {
                     .withVariable(SOURCE, source)
                     .withVariable(TARGET, target)
                     .build();
-            double result = calculable.calculate();
+            double result = Double.NaN;
+            result = calculable.calculate();
             System.out.println(rule + " " + source + ":" + target + " = " + result);
             return result;
         }
