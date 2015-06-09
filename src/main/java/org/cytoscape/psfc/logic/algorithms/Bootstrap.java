@@ -57,6 +57,11 @@ public class Bootstrap {
         this.taskMonitor = taskMonitor;
     }
 
+    boolean cancelled = false;
+
+    public void setCancelled(boolean cancelled) {
+        this.cancelled = cancelled;
+    }
 
     public HashMap<Node, Double> performBootstrap() throws Exception {
         logger.debug("Performing bootstrap significance test with parameters:\n");
@@ -88,6 +93,11 @@ public class Bootstrap {
 
         logger.debug("Performing bootstrap for " + numOfSamplings + " cycles:\n");
         for (int sampling = 0; sampling < numOfSamplings; sampling++) {
+            if(cancelled) {
+                String message = "Bootstrap cancelled at sampling: " + sampling;
+                logger.debug(message);
+                break;
+            }
             //reassign node values according to the resampling type
             this.cycle = sampling;
             logger.debug("Bootstrap cycle " + sampling);
@@ -145,6 +155,7 @@ public class Bootstrap {
                 logger.debug("Empty queue!");
             return 1;
         }
+        int size = bootstrapValues.size();
         double mean = 0;
         for (Double bv : bootstrapValues) mean += bv;
         mean /= bootstrapValues.size();
@@ -157,18 +168,18 @@ public class Bootstrap {
         if (logger != null)
             logger.debug(String.format("#Test value: %f\t#Queue mean: %f",value,mean));
         if (value >= mean) {
-            int gteq = numOfSamplings - lessValues.size();
-            pValue = gteq / ((double) numOfSamplings);
+            int gteq = size - lessValues.size();
+            pValue = gteq / ((double) size);
             if (logger != null) {
-                logger.debug(String.format("#Number of extreme (gteq) values: %d out of %d", gteq, numOfSamplings));
-                logger.debug(String.format("#p value: " + "%d/%d = %f", gteq, numOfSamplings, pValue));
+                logger.debug(String.format("#Number of extreme (gteq) values: %d out of %d", gteq, size));
+                logger.debug(String.format("#p value: " + "%d/%d = %f", gteq, size, pValue));
             }
         } else {
             int lt = lessValues.size();
-            pValue = lt / ((double) numOfSamplings);
+            pValue = lt / ((double) size);
             if (logger != null) {
-                logger.debug(String.format("#Number of extreme (lt) values: %d out of %d",lt,numOfSamplings));
-                logger.debug(String.format("p value: " + "%d/%d = %f", lessValues.size(), numOfSamplings, pValue));
+                logger.debug(String.format("#Number of extreme (lt) values: %d out of %d",lt,size));
+                logger.debug(String.format("p value: " + "%d/%d = %f", lessValues.size(), size, pValue));
             }
         }
         return pValue;

@@ -135,6 +135,11 @@ public class SortNetworkAction extends AbstractCyAction {
                 System.gc();
             }
         }
+        @Override
+        public void cancel(){
+            GraphSort.cancelled = true;
+            System.gc();
+        }
 
         private void assignNodeCoordinates(TreeMap<Integer, ArrayList<CyNode>> levelCyNodeMap, CyNetworkView cyNetworkView)
                 throws Exception {

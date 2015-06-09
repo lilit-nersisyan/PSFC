@@ -245,11 +245,14 @@ public class PSF {
     private boolean checkForConvergence(int iteration) {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
-        System.out.println("Convergence check: Iteration: " + iteration);
+        if(!silentMode)
+            System.out.println("Convergence check: Iteration: " + iteration);
         if (iteration + 1 > maxNumOfIterations) {
-            String message = "Reached max number of iterations without convergence!";
-            logger.debug(message);
-            System.out.println(message);
+            if(!silentMode) {
+                String message = "Reached max number of iterations without convergence!";
+                logger.debug(message);
+                System.out.println(message);
+            }
             return true;
         } else {
             if (iteration > 1) {
@@ -263,9 +266,11 @@ public class PSF {
                         if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
                             return false;
                 }
-                String message = "Reached converged at iteration: " + iteration;
-                logger.debug(message);
-                System.out.println(message);
+                if(!silentMode) {
+                    String message = "Reached converged at iteration: " + iteration;
+                    logger.debug(message);
+                    System.out.println(message);
+                }
                 return true;
             } else {
                 return false;

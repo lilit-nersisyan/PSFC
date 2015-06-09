@@ -379,6 +379,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     }
 
     private class BackupResultsTask extends AbstractTask {
+        boolean cancelled = false;
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
@@ -400,6 +401,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 writer.append(columnNames);
                 double score;
                 for (Node node : psf.getGraph().getNodes()) {
+                    if(cancelled)
+                        break;
                     CyNode cyNode = psf.getGraph().getCyNode(node);
                     String line = cyNode.getSUID().toString() + "\t"
                             + node.getName() + "\t"
@@ -429,9 +432,15 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             }
 
         }
+        @Override
+        public void cancel(){
+            cancelled = true;
+            System.gc();
+        }
     }
 
     private class CalculateSignificanceTask extends AbstractTask {
+        Bootstrap bootstrap;
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
@@ -450,7 +459,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
             int samplingType;
             File expMatrixFile;
-            Bootstrap bootstrap;
+
             try {
                 prop = bootstrapProps
                         .getProperty(Bootstrap.SAMPLINGTYPEPROP);
@@ -486,6 +495,12 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             } catch (Exception e) {
                 throw new Exception("Problem performing bootstrap significance calculation " + e.getMessage());
             }
+        }
+        @Override
+        public void cancel(){
+            if(bootstrap != null)
+                bootstrap.setCancelled(true);
+            System.gc();
         }
     }
 

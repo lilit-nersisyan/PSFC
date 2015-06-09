@@ -32,6 +32,10 @@ public class GraphSort {
     private static ArrayList<Integer> algorithms = new ArrayList<Integer>(
             Arrays.asList(SHORTESTPATHSORT, CLOSESTFIRSTSORT, BFSSORT, DFSSORT, TOPOLOGICALSORT));
 
+    public static boolean cancelled = false;
+
+
+
     /**
      * Apply the chosen method for sorting the
      *
@@ -51,7 +55,7 @@ public class GraphSort {
                 ArrayList<Edge> removedEdges = removeLoopEdges(graph);
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = sortByLevelFromStart(graph, topologicalOrderIterator(graph));
                 for (Edge edge : removedEdges) {
-                    System.out.println("Edge removed for sorting: " + edge);
+                    System.out.println("PSFC::Sort:   Edge removed for sorting: " + edge);
                     edge.setIsBackward(true);
                     graph.addEdge(edge.getSource(), edge.getTarget());
                 }
@@ -235,7 +239,7 @@ public class GraphSort {
             levelsMap.put(level, levelSet);
         }
 
-        while (graphIterator.hasNext()) {
+        while (graphIterator.hasNext() && !cancelled) {
             if (nextLevel) {
                 levelSet = new ArrayList<Node>();
                 level++;

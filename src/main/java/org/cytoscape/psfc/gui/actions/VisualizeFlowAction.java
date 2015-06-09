@@ -151,6 +151,10 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 }
             }
         }
+        @Override
+        public void cancel(){
+            System.gc();
+        }
 
     }
 
