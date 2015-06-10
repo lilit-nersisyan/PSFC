@@ -10,7 +10,6 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.gui.PSFCPanel;
-import org.cytoscape.psfc.gui.actions.SortNetworkAction;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.properties.EpsfcProps;
@@ -51,7 +50,6 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyTableManager cyTableManager;
     public static CyNetworkTableManager cyNetworkTableManager;
 
-    public static SortNetworkAction sortNetworkAction;
     public static PSFCPanel psfcPanel;
     private static File PSFCDir;
 
@@ -64,6 +62,9 @@ public class PSFCActivator extends AbstractCyActivator {
     private static String psfcPropsFileName = "psfc.props";
     private static String aboutText;
     private static String aboutFileName = "about.txt";
+    private static String rulePresetsFileName = "rule_presets.pdf";
+    private static String userManualFileName = "PSFC_User_Manual.pdf";
+    private static String userManualURL = "https://www.dropbox.com/s/vmdflnhbkdm3x95/PSFC_User_Manual.pdf";
 
     public static String getAboutText() {
         if (aboutText == null) {
@@ -83,6 +84,14 @@ public class PSFCActivator extends AbstractCyActivator {
             aboutText = stringBuilder.toString();
         }
         return aboutText;
+    }
+
+    public static String getUserManualFileName() {
+        return userManualFileName;
+    }
+
+    public static String getUserManualURL() {
+        return userManualURL;
     }
 
 
@@ -333,4 +342,9 @@ public class PSFCActivator extends AbstractCyActivator {
             return logFile;
         return null;
     }
+
+    public static String getRulePresetsFileName() {
+        return rulePresetsFileName;
+    }
+
 }

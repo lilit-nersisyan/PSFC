@@ -4,9 +4,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
-import org.cytoscape.psfc.gui.actions.CalculateScoreFlowAction;
-import org.cytoscape.psfc.gui.actions.SortNetworkAction;
-import org.cytoscape.psfc.gui.actions.VisualizeFlowAction;
+import org.cytoscape.psfc.gui.actions.*;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.logic.algorithms.Bootstrap;
 import org.cytoscape.psfc.logic.structures.Node;
@@ -280,10 +278,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jp_Loops = new javax.swing.JPanel();
         jp_ignoreLoops = new javax.swing.JPanel();
         jchb_ignoreLoops = new javax.swing.JCheckBox();
-        jp_procomputeLoops = new javax.swing.JPanel();
-        jchb_precomputeLoops = new javax.swing.JCheckBox();
-        jsp_precomputeLoops = new javax.swing.JScrollPane();
-        jta_precomputeLoops = new javax.swing.JTextArea();
         jp_iterateUntilConvergence = new javax.swing.JPanel();
         jchb_iterateUntilConvergence = new javax.swing.JCheckBox();
         jl_convergenceThreshold = new javax.swing.JLabel();
@@ -293,6 +287,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jsl_iterateUntilConvergence = new javax.swing.JScrollPane();
         jta_iterateUntilConvergence = new javax.swing.JTextArea();
         jl_percentLabel = new javax.swing.JLabel();
+        jp_procomputeLoops = new javax.swing.JPanel();
+        jchb_precomputeLoops = new javax.swing.JCheckBox();
+        jsp_precomputeLoops = new javax.swing.JScrollPane();
+        jta_precomputeLoops = new javax.swing.JTextArea();
         jp_Help = new javax.swing.JPanel();
         jl_psfc = new javax.swing.JLabel();
         jb_projectWebPage = new javax.swing.JButton();
@@ -945,48 +943,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGap(0, 4, Short.MAX_VALUE))
         );
 
-        jp_procomputeLoops.setBorder(javax.swing.BorderFactory.createEtchedBorder());
-
-        jchb_precomputeLoops.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jchb_precomputeLoops.setText("Precompute signals at loops");
-
-        jsp_precomputeLoops.setBackground(new java.awt.Color(204, 255, 204));
-        jsp_precomputeLoops.setBorder(null);
-
-        jta_precomputeLoops.setBackground(new java.awt.Color(240, 240, 240));
-        jta_precomputeLoops.setColumns(20);
-        jta_precomputeLoops.setEditable(false);
-        jta_precomputeLoops.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
-        jta_precomputeLoops.setForeground(new java.awt.Color(51, 102, 0));
-        jta_precomputeLoops.setLineWrap(true);
-        jta_precomputeLoops.setRows(5);
-        jta_precomputeLoops.setText("This approach is implented in PSF algorithm. The signal at \"Target\" nodes at feedback loops is precomputed and the rest of the algorithm proceeds as there were no loops in the pathway. See the manual for details.");
-        jta_precomputeLoops.setWrapStyleWord(true);
-        jta_precomputeLoops.setBorder(null);
-        jsp_precomputeLoops.setViewportView(jta_precomputeLoops);
-        jta_precomputeLoops.getAccessibleContext().setAccessibleParent(jta_precomputeLoops);
-
-        javax.swing.GroupLayout jp_procomputeLoopsLayout = new javax.swing.GroupLayout(jp_procomputeLoops);
-        jp_procomputeLoops.setLayout(jp_procomputeLoopsLayout);
-        jp_procomputeLoopsLayout.setHorizontalGroup(
-                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jsp_precomputeLoops)
-                                .addContainerGap())
-                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
-                                .addComponent(jchb_precomputeLoops)
-                                .addGap(0, 0, Short.MAX_VALUE))
-        );
-        jp_procomputeLoopsLayout.setVerticalGroup(
-                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
-                                .addComponent(jchb_precomputeLoops)
-                                .addGap(14, 14, 14)
-                                .addComponent(jsp_precomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
-
         jp_iterateUntilConvergence.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
         jchb_iterateUntilConvergence.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
@@ -1073,6 +1029,48 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jp_procomputeLoops.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jchb_precomputeLoops.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jchb_precomputeLoops.setText("Precompute signals at loops");
+
+        jsp_precomputeLoops.setBackground(new java.awt.Color(204, 255, 204));
+        jsp_precomputeLoops.setBorder(null);
+
+        jta_precomputeLoops.setBackground(new java.awt.Color(240, 240, 240));
+        jta_precomputeLoops.setColumns(20);
+        jta_precomputeLoops.setEditable(false);
+        jta_precomputeLoops.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
+        jta_precomputeLoops.setForeground(new java.awt.Color(51, 102, 0));
+        jta_precomputeLoops.setLineWrap(true);
+        jta_precomputeLoops.setRows(5);
+        jta_precomputeLoops.setText("The signal at \"Target\" nodes at feedback loops is precomputed and the rest of the algorithm proceeds as there were no loops in the pathway. See the manual for details.");
+        jta_precomputeLoops.setWrapStyleWord(true);
+        jta_precomputeLoops.setBorder(null);
+        jsp_precomputeLoops.setViewportView(jta_precomputeLoops);
+        jta_precomputeLoops.getAccessibleContext().setAccessibleParent(jta_precomputeLoops);
+
+        javax.swing.GroupLayout jp_procomputeLoopsLayout = new javax.swing.GroupLayout(jp_procomputeLoops);
+        jp_procomputeLoops.setLayout(jp_procomputeLoopsLayout);
+        jp_procomputeLoopsLayout.setHorizontalGroup(
+                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jsp_precomputeLoops)
+                                .addContainerGap())
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_precomputeLoops)
+                                .addGap(0, 0, Short.MAX_VALUE))
+        );
+        jp_procomputeLoopsLayout.setVerticalGroup(
+                jp_procomputeLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_procomputeLoopsLayout.createSequentialGroup()
+                                .addComponent(jchb_precomputeLoops)
+                                .addGap(14, 14, 14)
+                                .addComponent(jsp_precomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jp_LoopsLayout = new javax.swing.GroupLayout(jp_Loops);
         jp_Loops.setLayout(jp_LoopsLayout);
         jp_LoopsLayout.setHorizontalGroup(
@@ -1081,12 +1079,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap()
                                 .addGroup(jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_LoopsLayout.createSequentialGroup()
-                                                .addGroup(jp_LoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(jp_ignoreLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(jp_ignoreLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addGap(11, 11, 11))
                                         .addGroup(jp_LoopsLayout.createSequentialGroup()
                                                 .addComponent(jp_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addContainerGap())
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_LoopsLayout.createSequentialGroup()
+                                                .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                 .addContainerGap())))
         );
         jp_LoopsLayout.setVerticalGroup(
@@ -1094,11 +1093,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_LoopsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jp_ignoreLoops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(jp_iterateUntilConvergence, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGap(13, 13, 13)
+                                .addComponent(jp_procomputeLoops, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         jtp_psfc.addTab("Loops", jp_Loops);
@@ -1214,6 +1213,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_saveSettings)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
     }
 
     private void setModels() {
@@ -1398,6 +1398,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void addActionListeners_jp_Rules() {
+        jb_rulePresetsGuide.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_rulePresetsGuideActionPerformed(e);
+            }
+        });
         // Simple rules
         jb_chooseEdgeTypeConfigFile.addActionListener(new ActionListener() {
             @Override
@@ -1552,7 +1558,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_userManual.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jb_userManualActionPerformed();
+                jb_userManualActionPerformed(e);
             }
         });
     }
@@ -2102,6 +2108,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     /******************
      Actions: jp_Rules
      ******************/
+    private void jb_rulePresetsGuideActionPerformed(ActionEvent e) {
+        (new OpenFileAction(PSFCActivator.getRulePresetsFileName())).actionPerformed(e);
+    }
+
+
     /**
      * *Simple rules***
      */
@@ -2328,7 +2339,17 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private void jb_projectWebPageActionPerformed() {
     }
 
-    private void jb_userManualActionPerformed() {
+    private void jb_userManualActionPerformed(ActionEvent e) {
+        String[] buttons = new String[]{"As local PDF", "In Web browser"};
+        int rc = JOptionPane.showOptionDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
+                "Open PSFC User Manual:", "Open PSFC User Manual",
+                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+                buttons,buttons[1]);
+        if(rc == 0)
+            new OpenFileAction(PSFCActivator.getUserManualFileName()).actionPerformed(e);
+        else
+            new WebLoadAction(PSFCActivator.getUserManualURL()).actionPerformed(e);
+
     }
 
     /**
