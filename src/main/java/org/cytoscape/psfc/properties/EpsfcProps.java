@@ -23,7 +23,8 @@ public enum EpsfcProps {
     CalculateSignificance("calculateSignificance"),
     BootstrapMode("bootstrapMode"),
     BootstrapExpMatrix("bootstrapExpMatrix"),
-    NumOfSamplings("NumOfSamplings");
+    NumOfSamplings("NumOfSamplings"),
+    ChangeNetworkLayout("changeNetworkLayout");
 
     private boolean oldValue = true;
     private boolean newValue = true;

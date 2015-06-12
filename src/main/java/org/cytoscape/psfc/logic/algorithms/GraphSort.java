@@ -55,7 +55,7 @@ public class GraphSort {
                 ArrayList<Edge> removedEdges = removeLoopEdges(graph);
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = sortByLevelFromStart(graph, topologicalOrderIterator(graph));
                 for (Edge edge : removedEdges) {
-                    System.out.println("PSFC::Sort:   Edge removed for sorting: " + edge);
+//                    System.out.println("PSFC::Sort:   Edge removed for sorting: " + edge);
                     edge.setIsBackward(true);
                     graph.addEdge(edge.getSource(), edge.getTarget());
                 }
@@ -148,7 +148,6 @@ public class GraphSort {
                     levelSet.add(nextNode);
             }
             nextNode = closestFirstIterator.next();
-            System.out.println(nextNode);
             nextLevel = false;
             if (levelSet.isEmpty())
                 levelSet.add(nextNode);
@@ -176,7 +175,7 @@ public class GraphSort {
                 if (nextNode != null)
                     levelSet.add(nextNode);
             }
-        System.out.println(levelsMap);
+//        System.out.println(levelsMap);
     }
 
     public static void bsfIterate(Graph graph) {
@@ -195,7 +194,7 @@ public class GraphSort {
                     levelSet.add(nextNode);
             }
             nextNode = bsfIterator.next();
-            System.out.println(nextNode);
+//            System.out.println(nextNode);
             nextLevel = false;
             if (levelSet.isEmpty())
                 levelSet.add(nextNode);
@@ -222,7 +221,7 @@ public class GraphSort {
                     levelSet.add(nextNode);
             }
 
-        System.out.println(levelsMap);
+//        System.out.println(levelsMap);
     }
 
     public static TreeMap<Integer, ArrayList<Node>> sortByLevelFromStart(Graph graph,
@@ -359,14 +358,12 @@ public class GraphSort {
         ArrayList<Edge> removedEdges = new ArrayList<Edge>();
 
         while (cycleExists) {
-            System.out.println("Iteration " + iteration);
+//            System.out.println("Iteration " + iteration);
 
             ArrayList<Edge> loopEdges = new ArrayList<Edge>();
             ArrayList<List<Edge>> loops = detectLoops(graph);
             ArrayList<Node> inputNodes = graph.getInputNodes();
-            System.out.println("Loops:");
             for (List<Edge> edges : loops) {
-                System.out.println("Edges:\n" + edges.toString());
                 for (Edge edge : edges) {
                     if (!loopEdges.contains(edge)) {
                         loopEdges.add(edge);
@@ -390,10 +387,6 @@ public class GraphSort {
                     edgeSourceDistanceMap.put(edge, shortestPathLength);
                 }
             }
-            System.out.println("edgesourcedistancemap:");
-            for (Edge edge : edgeSourceDistanceMap.keySet()) {
-                System.out.println(edge.toString() + edgeSourceDistanceMap.get(edge));
-            }
 
             //Comparisons are done in many levels, in order to remove the same edge every time the graph is processed.
             //10^6, and 10^4 might not be enough for big pathways, probably should be modified later.
@@ -411,11 +404,10 @@ public class GraphSort {
             });
 
 
-            System.out.println(loopEdges);
             Edge maxLoopEdge = loopEdges.get(0);
             graph.removeEdge(maxLoopEdge);
             removedEdges.add(maxLoopEdge);
-            System.out.println("Removed edge: " + maxLoopEdge);
+            System.out.println("PSFC:: Sort: Backward edge" + iteration + " : " + maxLoopEdge);
             cycleExists = cycleExists(graph);
             iteration++;
             graph.resetLoopCounts();

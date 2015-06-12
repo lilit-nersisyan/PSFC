@@ -20,3 +20,4 @@ calculateSignificance=false
 bootstrapMode=Sample centric
 bootstrapExpMatrix=
 NumOfSamplings=200
+changeNetworkLayout=true

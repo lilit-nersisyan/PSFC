@@ -26,6 +26,9 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -56,7 +59,7 @@ public class PSFCActivator extends AbstractCyActivator {
     private static Logger PSFCLogger;
     private static File logFile;
     private static String logName = "PSFC.log";
-    
+
     private static Properties psfcProps = null;
     private static File psfcPropsFile = null;
     private static String psfcPropsFileName = "psfc.props";
@@ -65,6 +68,7 @@ public class PSFCActivator extends AbstractCyActivator {
     private static String rulePresetsFileName = "rule_presets.pdf";
     private static String userManualFileName = "PSFC_User_Manual.pdf";
     private static String userManualURL = "https://www.dropbox.com/s/vmdflnhbkdm3x95/PSFC_User_Manual.pdf";
+    private static String projectWebpageUrl = "http://apps.cytoscape.org/apps/psfc";
 
     public static String getAboutText() {
         if (aboutText == null) {
@@ -75,7 +79,7 @@ public class PSFCActivator extends AbstractCyActivator {
             StringBuilder stringBuilder = new StringBuilder();
             char[] chars = new char[1024];
             try {
-                while ((reader.read(chars) > 0)){
+                while ((reader.read(chars) > 0)) {
                     stringBuilder.append(chars);
                 }
             } catch (IOException e) {
@@ -163,7 +167,18 @@ public class PSFCActivator extends AbstractCyActivator {
             else {
                 if (logFile.length() > (1024 * 1024))
                     try {
-                        logFile.createNewFile();
+                        DateFormat dateFormat = new SimpleDateFormat("HH_mm_dd_MM_yy");
+
+
+                        boolean success = logFile.renameTo(new File(loggingDir, logFile.getName() +dateFormat.format(new Date())));
+
+                        if (success) {
+                            if (!logFile.createNewFile())
+                                LoggerFactory.getLogger(PSFCActivator.class).error("Could not create new PSFC log file");
+                        } else
+                            LoggerFactory.getLogger(PSFCActivator.class).error("Could not rename log file");
+
+
                     } catch (IOException e) {
                         LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
                     }
@@ -171,7 +186,7 @@ public class PSFCActivator extends AbstractCyActivator {
         }
         PSFCLogger = Logger.getLogger(PSFCActivator.class);
         try {
-            PSFCLogger.addAppender(new FileAppender(new PatternLayout(), logFile.getAbsolutePath(),true));
+            PSFCLogger.addAppender(new FileAppender(new PatternLayout(), logFile.getAbsolutePath(), true));
         } catch (IOException e) {
             LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
         }
@@ -252,7 +267,6 @@ public class PSFCActivator extends AbstractCyActivator {
                         break;
                     }
                 }
-
 
 
         } else
@@ -337,7 +351,7 @@ public class PSFCActivator extends AbstractCyActivator {
         return psfcPropsFile;
     }
 
-    public static File getPsfcLogFile(){
+    public static File getPsfcLogFile() {
         if (getLogger() != null)
             return logFile;
         return null;
@@ -347,4 +361,7 @@ public class PSFCActivator extends AbstractCyActivator {
         return rulePresetsFileName;
     }
 
+    public static String getProjectWebpageUrl() {
+        return projectWebpageUrl;
+    }
 }

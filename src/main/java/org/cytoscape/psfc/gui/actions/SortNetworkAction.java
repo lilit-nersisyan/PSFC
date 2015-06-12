@@ -34,16 +34,18 @@ public class SortNetworkAction extends AbstractCyAction {
     private int sortingAlgorithm;
     private boolean success = false;
     private boolean performed = false;
+    private boolean changeNetworkLayout;
 
-    public SortNetworkAction(CyNetwork network, int sortingAlgorithm) {
+    public SortNetworkAction(CyNetwork network, int sortingAlgorithm,  boolean changeNetworkLayout) {
         super("Sort current network");
         this.network = network;
         this.sortingAlgorithm = sortingAlgorithm;
+        this.changeNetworkLayout = changeNetworkLayout;
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        final SortNetworkTask task = new SortNetworkTask(network, sortingAlgorithm);
+        final SortNetworkTask task = new SortNetworkTask(network, sortingAlgorithm, changeNetworkLayout);
         PSFCActivator.taskManager.execute(new TaskIterator(task));
     }
 
@@ -64,13 +66,15 @@ public class SortNetworkAction extends AbstractCyAction {
         private Collection<CyNetworkView> networkViews;
         private double xGap = 40;
         private double yGap = 20;
+        private boolean changeNetworkLayout = true;
 
-        public SortNetworkTask(CyNetwork network, int sortingAlgorithm) {
+        public SortNetworkTask(CyNetwork network, int sortingAlgorithm, boolean changeNetworkLayout) {
             this.network = network;
             this.sortingAlgorithm = sortingAlgorithm;
             this.graph = NetworkGraphMapper.graphFromNetwork(network);
             this.networkView = NetworkCyManager.getNetworkView(network);
             this.networkViews = NetworkCyManager.getNetworkViews(network);
+            this.changeNetworkLayout = changeNetworkLayout;
         }
 
         @Override
@@ -116,10 +120,11 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Applying level-based layout");
 
                 //Peforming Layout
-                for (CyNetworkView cyNetworkView : networkViews) {
-                    assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph), cyNetworkView);
-                    cyNetworkView.updateView();
-                }
+                if(changeNetworkLayout)
+                    for (CyNetworkView cyNetworkView : networkViews) {
+                        assignNodeCoordinates(GraphManager.intNodesMap2IntCyNodeMap(levelNodeMap, graph), cyNetworkView);
+                        cyNetworkView.updateView();
+                    }
 
 
                 //Debugging
@@ -138,6 +143,7 @@ public class SortNetworkAction extends AbstractCyAction {
         @Override
         public void cancel(){
             GraphSort.cancelled = true;
+            super.cancel();
             System.gc();
         }
 

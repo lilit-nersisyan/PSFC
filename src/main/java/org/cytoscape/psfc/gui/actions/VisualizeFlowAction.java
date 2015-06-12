@@ -40,7 +40,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private Color borderPaint = Color.black;
     private Color minColor = Color.decode("#40E0D0");
     private Color maxColor = Color.decode("#000000");
-    private double minWidth = 2.;
+    private double minWidth = 1.;
     private double maxWidth = 7.;
 
 
@@ -98,9 +98,9 @@ public class VisualizeFlowAction extends AbstractCyAction {
             psfcPanel.getJsl_levels().setValue(level);
             psfcPanel.updateUI();
             if (nodeSignalColumn == null)
-                System.out.println(("NodeSignalColumn not found."));
+                System.out.println(("PSFC:: NodeSignalColumn not found."));
             else if (edgeSignalColumn == null)
-                System.out.println(("EdgeSignalColumn not found."));
+                System.out.println(("PSFC:: EdgeSignalColumn not found."));
             else {
                 ContinuousMapping<Double, Paint> nodeColorMapping;
                 ContinuousMapping<Double, Double> edgeWidthMapping;
@@ -151,8 +151,9 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 }
             }
         }
+
         @Override
-        public void cancel(){
+        public void cancel() {
             System.gc();
         }
 

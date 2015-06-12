@@ -172,7 +172,7 @@ public class PSF {
             }
             converged = checkForConvergence(states.size() - 1);
             if(cancelled)
-                System.out.println("Cancelled!");
+                System.out.println("PSFC:: PSF computation cancelled at iteration " + (states.size()-1));
         }
         loopMode = false;
         finished = true;
@@ -642,8 +642,18 @@ public class PSF {
                     .withVariable(TARGET, target)
                     .build();
             double result = Double.NaN;
-            result = calculable.calculate();
-            System.out.println(rule + " " + source + ":" + target + " = " + result);
+            try {
+                result = calculable.calculate();
+            } catch (ArithmeticException e) {
+                if(e.getMessage().equals("Division by zero!")) {
+                    result = Double.POSITIVE_INFINITY;
+                    logger.debug(e.getMessage() + Double.POSITIVE_INFINITY + " assigned");
+                } else {
+                    result = Double.NaN;
+                    logger.debug(e.getMessage());
+                }
+            }
+//            System.out.println(rule + " " + source + ":" + target + " = " + result);
             return result;
         }
 

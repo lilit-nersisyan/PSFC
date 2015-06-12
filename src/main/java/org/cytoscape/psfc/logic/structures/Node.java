@@ -2,6 +2,9 @@ package org.cytoscape.psfc.logic.structures;
 
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.util.Arrays;
 import java.util.TreeMap;
 
 /**
@@ -50,8 +53,8 @@ public class Node {
     /**
      * Node constructor for complete set of fields.
      *
-     * @param ID     non-negative integer: should be unique identifier for the node in a graph.
-     * @param value  may stand for expression, ratio, rank score, etc.
+     * @param ID      non-negative integer: should be unique identifier for the node in a graph.
+     * @param value   may stand for expression, ratio, rank score, etc.
      * @param name
      * @param level
      * @param signals
@@ -91,7 +94,6 @@ public class Node {
     }
 
 
-
     public int getLevel() {
         return level;
     }
@@ -102,8 +104,9 @@ public class Node {
     }
 
     public void setSignal(double signal, int iteration) {
-        if(!Double.isNaN(signal))
+        if (!Double.isNaN(signal)) {
             signals.put(iteration, signal);
+        }
     }
 
     public double getSignal(int iteration) {
@@ -112,10 +115,11 @@ public class Node {
 
     /**
      * Returns the last signal value in the signals map.
+     *
      * @return last signal value of the node or null if no signals are computed
      */
-    public double getSignal(){
-        if(signals.isEmpty())
+    public double getSignal() {
+        if (signals.isEmpty())
             return Double.NaN;
         return signals.lastEntry().getValue();
     }
@@ -123,7 +127,7 @@ public class Node {
     /**
      * Empty the set of signals associated with the node
      */
-    public void removeNodeSignals(){
+    public void removeNodeSignals() {
         signals = new TreeMap<Integer, Double>();
     }
 
@@ -136,6 +140,25 @@ public class Node {
         return false;
     }
 
+    private String[] signalsToString() {
+        if (signals.isEmpty())
+            return new String[0];
+
+        String[] signalsString = new String[signals.size()];
+        NumberFormat bigformatter = new DecimalFormat("####E0");
+        NumberFormat smallformatter = new DecimalFormat("0.###");
+        int i = 0;
+        for (double signal : signals.values()) {
+            if (Double.isInfinite(signal))
+                signalsString[i++] = "Inf" ;
+            else if (signal >= 10000 || signal <= -10000)
+                signalsString[i++] = bigformatter.format(signal) ;
+            else
+                signalsString[i++] = smallformatter.format(signal) ;
+        }
+        return  signalsString;
+    }
+
     @Override
     public String toString() {
         return "Node{" +
@@ -143,8 +166,8 @@ public class Node {
                 "name=" + name + "," +
                 "value=" + value + "," +
                 "level=" + level + "," +
-                "signals=" + signals.toString() +
-                "}\n";
+                "signals=" + Arrays.toString(signalsToString()) +
+                "\n";
     }
 
     @Override

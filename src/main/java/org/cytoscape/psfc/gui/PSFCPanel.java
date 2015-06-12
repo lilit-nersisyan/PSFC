@@ -117,6 +117,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JComboBox jcb_nodeDataAttribute;
     private javax.swing.JComboBox jcb_sortingAlgorithm;
     private javax.swing.JCheckBox jchb_CalculateSignificance;
+    private javax.swing.JCheckBox jchb_changeNetworkLayout;
     private javax.swing.JCheckBox jchb_ignoreLoops;
     private javax.swing.JCheckBox jchb_iterateUntilConvergence;
     private javax.swing.JCheckBox jchb_precomputeLoops;
@@ -242,6 +243,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_sortingAlgorithm = new javax.swing.JLabel();
         jcb_sortingAlgorithm = new javax.swing.JComboBox();
         jb_sortNetwork = new javax.swing.JButton();
+        jchb_changeNetworkLayout = new javax.swing.JCheckBox();
         jp_Rules = new javax.swing.JPanel();
         jp_simpleRules = new javax.swing.JPanel();
         jl_simpleRules = new javax.swing.JLabel();
@@ -427,6 +429,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jp_flowVisualizationLayout.setHorizontalGroup(
                 jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
+                                .addComponent(jl_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
@@ -439,16 +444,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                         .addComponent(jsl_levels, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                                 .addComponent(jb_showState)))
-                                .addContainerGap())
-                        .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
-                                .addComponent(jl_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                .addContainerGap(29, Short.MAX_VALUE))
         );
         jp_flowVisualizationLayout.setVerticalGroup(
                 jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_flowVisualizationLayout.createSequentialGroup()
                                 .addComponent(jl_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 41, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addGroup(jp_flowVisualizationLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jl_level)
                                         .addComponent(jtxt_level, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -458,7 +460,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addComponent(jsl_levels, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jb_playFlow)
-                                .addContainerGap())
+                                .addContainerGap(29, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jp_GeneralLayout = new javax.swing.GroupLayout(jp_General);
@@ -479,7 +481,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addComponent(jp_network_attrs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
                                 .addComponent(jp_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(37, 37, 37))
+                                .addGap(42, 42, 42))
         );
 
         jtp_psfc.addTab("General", jp_General);
@@ -526,21 +528,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap()
                                 .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_significanceLayout.createSequentialGroup()
-                                                .addComponent(jrb_GeneCentric)
+                                                .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                        .addComponent(jrb_GeneCentric, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                        .addComponent(jl_numOfSamplings, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                                 .addGap(18, 18, 18)
-                                                .addComponent(jb_GeneMatrixFile)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jl_exprMatrixFile, javax.swing.GroupLayout.PREFERRED_SIZE, 79, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGroup(jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                                                .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jl_warnNumSamplings))
+                                                        .addGroup(jp_significanceLayout.createSequentialGroup()
+                                                                .addComponent(jb_GeneMatrixFile)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                .addComponent(jl_exprMatrixFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                                         .addComponent(jchb_CalculateSignificance)
-                                        .addGroup(jp_significanceLayout.createSequentialGroup()
-                                                .addComponent(jl_numOfSamplings)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jtxt_numOfSamplings, javax.swing.GroupLayout.PREFERRED_SIZE, 46, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                                .addComponent(jl_warnNumSamplings))
                                         .addComponent(jl_samplingType)
                                         .addComponent(jrb_SampleCentric))
-                                .addContainerGap(19, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         jp_significanceLayout.setVerticalGroup(
                 jp_significanceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -580,6 +584,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_sortNetwork.setText("Sort");
         jb_sortNetwork.setPreferredSize(new java.awt.Dimension(59, 20));
 
+        jchb_changeNetworkLayout.setText("Change network layout after sorting");
+
         javax.swing.GroupLayout jp_algorithmsLayout = new javax.swing.GroupLayout(jp_algorithms);
         jp_algorithms.setLayout(jp_algorithmsLayout);
         jp_algorithmsLayout.setHorizontalGroup(
@@ -590,11 +596,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addGroup(jp_algorithmsLayout.createSequentialGroup()
                                                 .addContainerGap()
                                                 .addGroup(jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                        .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                        .addComponent(jl_sortingAlgorithm))
-                                                .addGap(17, 17, 17)
-                                                .addComponent(jb_sortNetwork, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 10, Short.MAX_VALUE))
+                                                        .addComponent(jl_sortingAlgorithm)
+                                                        .addComponent(jchb_changeNetworkLayout)
+                                                        .addGroup(jp_algorithmsLayout.createSequentialGroup()
+                                                                .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                                .addComponent(jb_sortNetwork, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addGap(0, 33, Short.MAX_VALUE))
         );
         jp_algorithmsLayout.setVerticalGroup(
                 jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -606,7 +614,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGroup(jp_algorithmsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                                         .addComponent(jcb_sortingAlgorithm, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_sortNetwork, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(0, 17, Short.MAX_VALUE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jchb_changeNetworkLayout)
+                                .addContainerGap(15, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jp_OptionsLayout = new javax.swing.GroupLayout(jp_Options);
@@ -614,18 +624,18 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jp_OptionsLayout.setHorizontalGroup(
                 jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_OptionsLayout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap()
                                 .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                         .addComponent(jp_algorithms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jp_significance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(20, 20, 20))
+                                .addContainerGap(18, Short.MAX_VALUE))
         );
         jp_OptionsLayout.setVerticalGroup(
                 jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_OptionsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jp_algorithms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(57, 57, 57)
+                                .addGap(29, 29, 29)
                                 .addComponent(jp_significance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addContainerGap(100, Short.MAX_VALUE))
         );
@@ -1111,9 +1121,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jta_about.setBackground(new java.awt.Color(240, 240, 240));
         jta_about.setColumns(20);
         jta_about.setEditable(false);
+        jta_about.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
         jta_about.setRows(5);
-        jta_about.setAutoscrolls(false);
+        jta_about.setText("PSFC version 1.0.0\nCytoscape app for calculation of pathway\nsignal flow based on gene expression data \nand pathway topology.\n\nCopyright(C) 2015\nLilit Nersisyan, IMB NAS RA\nArsen Arakelyan, IMB NAS RA\nGraham Johnson, UCSF\nMegan Riel-Mehan, UCSF\nAlexander Pico, UCSF\n\nDistributed under\nGNU General Public License version 3");
+        jta_about.setAlignmentX(10.0F);
         jta_about.setBorder(null);
+        jta_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        jta_about.setOpaque(false);
 
         javax.swing.GroupLayout jp_HelpLayout = new javax.swing.GroupLayout(jp_Help);
         jp_Help.setLayout(jp_HelpLayout);
@@ -1122,30 +1136,33 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_HelpLayout.createSequentialGroup()
                                 .addGroup(jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_HelpLayout.createSequentialGroup()
-                                                .addGap(64, 64, 64)
-                                                .addGroup(jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                                        .addComponent(jb_userManual, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(jb_projectWebPage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                                .addContainerGap()
+                                                .addComponent(jta_about))
                                         .addGroup(jp_HelpLayout.createSequentialGroup()
-                                                .addGap(32, 32, 32)
-                                                .addComponent(jta_about, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jp_HelpLayout.createSequentialGroup()
-                                                .addGap(47, 47, 47)
-                                                .addComponent(jl_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 250, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(45, Short.MAX_VALUE))
+                                                .addGroup(jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addGroup(jp_HelpLayout.createSequentialGroup()
+                                                                .addGap(28, 28, 28)
+                                                                .addComponent(jl_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 285, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                        .addGroup(jp_HelpLayout.createSequentialGroup()
+                                                                .addGap(69, 69, 69)
+                                                                .addGroup(jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                                        .addComponent(jb_userManual, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                        .addComponent(jb_projectWebPage, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                                .addGap(0, 19, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         jp_HelpLayout.setVerticalGroup(
                 jp_HelpLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_HelpLayout.createSequentialGroup()
-                                .addGap(22, 22, 22)
-                                .addComponent(jl_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap()
+                                .addComponent(jl_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(jta_about, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(jta_about, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(13, 13, 13)
                                 .addComponent(jb_projectWebPage)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jb_userManual)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
         jtp_psfc.addTab("Help", jp_Help);
@@ -1213,7 +1230,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_saveSettings)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-
     }
 
     private void setModels() {
@@ -1336,6 +1352,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jb_playFlowActionPerformed();
             }
         });
+        jchb_changeNetworkLayout.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jchb_changeNetworkLayoutActionPerformed();
+            }
+        });
 
         //Save settings
         jb_saveSettings.addActionListener(new ActionListener() {
@@ -1344,7 +1366,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jb_saveSettingsActionPerformed();
             }
         });
+
     }
+
+
 
     private void addActionListeners_jp_Options() {
         //Algorithms
@@ -1551,7 +1576,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_projectWebPage.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                jb_projectWebPageActionPerformed();
+                jb_projectWebPageActionPerformed(e);
             }
         });
 
@@ -1587,7 +1612,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         Desktop.getDesktop().edit(logFile);
                     }
                 } catch (IllegalArgumentException iae) {
-                    System.out.println("File Not Found");
+                    System.out.println("PSFC:: Log file Not Found");
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -1659,12 +1684,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         SortNetworkAction sortNetworkAction;
         PSFCActivator.getLogger().debug("PSFC flow calculation calling network sorting action.");
         if (!sorted) {
-            sortNetworkAction = new SortNetworkAction(network, getSortingAlgorithm());
+            sortNetworkAction = new SortNetworkAction(network, getSortingAlgorithm(), jchb_changeNetworkLayout.isSelected());
             sortNetworkAction.actionPerformed(e);
             while (!sortNetworkAction.isPerformed()) {
                 try {
                     Thread.sleep(50);
-                    System.out.println("Pathway flow calculation waiting for network sorting");
+//                    System.out.println("Pathway flow calculation waiting for network sorting");
                 } catch (InterruptedException e1) {
                     PSFCActivator.getLogger().error("Error while sorting the network: " + e1.getMessage(), e1);
                 }
@@ -1886,6 +1911,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         visualizeFlowAction.actionPerformed(null);
     }
 
+    private void jchb_changeNetworkLayoutActionPerformed() {
+
+    }
+
     public void setVisualizationComponents(CyNetwork network,
                                            HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap,
                                            HashMap<Integer, HashMap<CyEdge, Double>> levelCyEdgeScoreMap) {
@@ -1932,6 +1961,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
             psfcProps.setProperty(EpsfcProps.SortingAlgorithm.getName(),
                     jcb_sortingAlgorithm.getSelectedItem().toString());
+            psfcProps.setProperty(EpsfcProps.ChangeNetworkLayout.getName(),
+                    jchb_changeNetworkLayout.isSelected() ? "true" : "false");
 
             psfcProps.setProperty(EpsfcProps.CalculateSignificance.getName(),
                     jchb_CalculateSignificance.isSelected() ? "true" : "false");
@@ -1999,7 +2030,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             String message = "Couldn't save the settings. Error: "
                     + e.getMessage() + " Cause: " + e.getCause();
             PSFCActivator.getLogger().warn(message);
-            System.out.println(message);
+            System.out.println("PSFC:: " + message);
         }
 
         FileOutputStream outputStream = null;
@@ -2033,7 +2064,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private void jb_sortNetworkActionPerformed(ActionEvent e) {
         CyNetwork selectedNetwork = getSelectedNetwork();
         if (selectedNetwork != null) {
-            SortNetworkAction sortNetworkAction = new SortNetworkAction(selectedNetwork, getSortingAlgorithm());
+            SortNetworkAction sortNetworkAction = new SortNetworkAction(selectedNetwork, getSortingAlgorithm(),jchb_changeNetworkLayout.isSelected());
             sortNetworkAction.actionPerformed(e);
         }
     }
@@ -2336,7 +2367,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
      * ****************
      */
 
-    private void jb_projectWebPageActionPerformed() {
+    private void jb_projectWebPageActionPerformed(ActionEvent e) {
+        new WebLoadAction(PSFCActivator.getProjectWebpageUrl()).actionPerformed(e);
     }
 
     private void jb_userManualActionPerformed(ActionEvent e) {
@@ -2371,6 +2403,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_calculateFlow.setBackground(new Color(51, 102, 0));
         jb_calculateFlow.setOpaque(true);
         jb_calculateFlow.setBorderPainted(false);
+
+
 
         //Button groups
 
@@ -2436,6 +2470,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         } catch (NumberFormatException e) {
         }
 
+        propValue = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.ChangeNetworkLayout.getName());
+        if(propValue != null)
+        jchb_changeNetworkLayout.setSelected(propValue.equals("false")? false : true);
 
         //EdgeTypeRuleNameConfigFile
         String fileName = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName());
@@ -2572,6 +2609,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_selectNodeDataAttribute.setToolTipText("Numeric attribute where the node values are present");
 
         jb_sortNetwork.setToolTipText("See how the network will look like after sorting");
+        jchb_changeNetworkLayout.setToolTipText("Does not preserve original layout!");
         jrb_SampleCentric.setToolTipText("Bootstrap resampling will be performed by randomly redistributing node values among all the nodes in the network.");
         jrb_GeneCentric.setToolTipText("Bootstrap resampling will be performed by randomly assigning each gene a value from a set of values provided with the Gene Matrix File");
         jb_GeneMatrixFile.setToolTipText("Tab delimited file where each row contains gene name and a series of its values (usually from sample-series)");

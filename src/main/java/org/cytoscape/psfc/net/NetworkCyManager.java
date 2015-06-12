@@ -315,7 +315,7 @@ public class NetworkCyManager {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            System.out.println("Visualization level " + level);
+//            System.out.println("Visualization level " + level);
         }
     }
 

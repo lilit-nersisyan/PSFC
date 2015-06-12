@@ -96,6 +96,7 @@ public class Bootstrap {
             if(cancelled) {
                 String message = "Bootstrap cancelled at sampling: " + sampling;
                 logger.debug(message);
+                System.out.println("PSFC:: " + message);
                 break;
             }
             //reassign node values according to the resampling type
@@ -129,7 +130,7 @@ public class Bootstrap {
             logger.debug("Bootstrap summary for target node: " + target.getName());
             targetPvalueMap.put(target, getBootstrapPValue(signal, bootstrapValues));
         }
-        System.out.println(targetPvalueMap);
+//        System.out.println(targetPvalueMap);
         logger.debug("Bootstrap computation complete\n");
 
         resetGraphOriginalValues();
