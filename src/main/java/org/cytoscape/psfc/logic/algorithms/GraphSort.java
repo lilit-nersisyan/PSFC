@@ -407,7 +407,7 @@ public class GraphSort {
             Edge maxLoopEdge = loopEdges.get(0);
             graph.removeEdge(maxLoopEdge);
             removedEdges.add(maxLoopEdge);
-            System.out.println("PSFC:: Sort: Backward edge" + iteration + " : " + maxLoopEdge);
+            System.out.print("PSFC:: Sort: Backward edge" + iteration + " : " + maxLoopEdge);
             cycleExists = cycleExists(graph);
             iteration++;
             graph.resetLoopCounts();

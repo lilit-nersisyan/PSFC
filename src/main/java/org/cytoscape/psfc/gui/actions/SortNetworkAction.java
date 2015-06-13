@@ -85,9 +85,14 @@ public class SortNetworkAction extends AbstractCyAction {
                 //Debugging
                 taskMonitor.setTitle("PSFC.SortNetworkTask");
                 PSFCActivator.getLogger().info("\n################\n################");
-                PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
+                System.out.println("\nPSFC:: Graph sorting\n");
+                String date = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date());
+                System.out.println("PSFC:: Date: " + date + "\n");
+                String networkTitle = "Network: " + network.getRow(network).get(CyNetwork.NAME, String.class);
+                System.out.println("PSFC:: Network: " + networkTitle + "\n");
+                PSFCActivator.getLogger().info(date);
                 PSFCActivator.getLogger().info("Action: sorting with algorithm " + ESortingAlgorithms.getName(sortingAlgorithm));
-                PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
+                PSFCActivator.getLogger().info(networkTitle);
                 PSFCActivator.getLogger().info("Graph summary:\n" + graph.getSummary());
                 taskMonitor.setStatusMessage("Sorting the graph with algorithm " + sortingAlgorithm);
 
