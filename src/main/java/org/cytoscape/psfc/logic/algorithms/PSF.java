@@ -246,7 +246,7 @@ public class PSF {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
         if(!silentMode)
-            System.out.println("Convergence check: Iteration: " + iteration);
+            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
         if (iteration + 1 > maxNumOfIterations) {
             if(!silentMode) {
                 String message = "Reached max number of iterations without convergence!";

@@ -1,6 +1,7 @@
 package org.cytoscape.psfc.net;
 
 import org.cytoscape.model.*;
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
@@ -53,6 +54,7 @@ public class NetworkCyManager {
         table.createColumn(attrName, attrType, false);
         return table.getColumn(attrName);
     }
+
     /**
      * Deletes the CyColumn from the given CyTable with the given name.
      * If such a column does not exist, the method does nothing.
@@ -62,7 +64,7 @@ public class NetworkCyManager {
      * @return int 0, if the column is found and deleted; 1, if no such column existed
      */
     public static int deleteAttributeColumn(CyTable table,
-                                                      String attrName) throws Exception {
+                                            String attrName) throws Exception {
         Iterator<CyColumn> iterator = table.getColumns().iterator();
 
         while (iterator.hasNext()) {
@@ -80,12 +82,12 @@ public class NetworkCyManager {
      * The pattern is the substring with which the column name begins.
      * If such a column does not exist, the method does nothing.
      *
-     * @param table    CyTable where the CyColumn should be
+     * @param table  CyTable where the CyColumn should be
      * @param prefix name of the attribute column
      * @return int 0, if the column is found and deleted; 1, if no such column existed
      */
     public static int deleteAttributeColumnByPrefix(CyTable table,
-                                            String prefix) throws Exception {
+                                                    String prefix) throws Exception {
 
         Iterator<CyColumn> iterator = table.getColumns().iterator();
 
@@ -132,10 +134,22 @@ public class NetworkCyManager {
                 throw new Exception(ExceptionMessages.NotCyNodeKeyType.getMessage());
         }
         CyNode cyNode;
-        for (Object obj : cyNodeAttributeMap.keySet()) {
-            cyNode = (CyNode) obj;
-            CyRow row = nodeTable.getRow(cyNode.getSUID());
-            row.set(attrName, cyNodeAttributeMap.get(cyNode));
+
+        if (attrType.equals(Double.class) || attrType.equals(double.class)) {
+            for (Object obj : cyNodeAttributeMap.keySet()) {
+                cyNode = (CyNode) obj;
+                double value = (Double) cyNodeAttributeMap.get(cyNode);
+                value = DoubleFormatter.formatDouble(value);
+                CyRow row = nodeTable.getRow(cyNode.getSUID());
+                row.set(attrName, value);
+            }
+
+        } else {
+            for (Object obj : cyNodeAttributeMap.keySet()) {
+                cyNode = (CyNode) obj;
+                CyRow row = nodeTable.getRow(cyNode.getSUID());
+                row.set(attrName, cyNodeAttributeMap.get(cyNode));
+            }
         }
     }
 
@@ -173,10 +187,21 @@ public class NetworkCyManager {
                 throw new Exception(ExceptionMessages.NotCyEdgeKeyType.getMessage());
         }
         CyEdge cyEdge;
-        for (Object obj : cyEdgeAttributeMap.keySet()) {
-            cyEdge = (CyEdge) obj;
-            CyRow row = edgeTable.getRow(cyEdge.getSUID());
-            row.set(attrName, cyEdgeAttributeMap.get(cyEdge));
+        if (attrType.equals(Double.class) || attrType.equals(double.class)) {
+            for (Object obj : cyEdgeAttributeMap.keySet()) {
+                cyEdge = (CyEdge) obj;
+                double value = (Double) cyEdgeAttributeMap.get(cyEdge);
+                value = DoubleFormatter.formatDouble(value);
+                CyRow row = edgeTable.getRow(cyEdge.getSUID());
+                row.set(attrName, value);
+            }
+
+        } else {
+            for (Object obj : cyEdgeAttributeMap.keySet()) {
+                cyEdge = (CyEdge) obj;
+                CyRow row = edgeTable.getRow(cyEdge.getSUID());
+                row.set(attrName, cyEdgeAttributeMap.get(cyEdge));
+            }
         }
     }
 

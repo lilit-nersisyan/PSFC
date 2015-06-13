@@ -1,5 +1,6 @@
 package org.cytoscape.psfc.logic.structures;
 
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
 import java.text.DecimalFormat;
@@ -140,23 +141,17 @@ public class Node {
         return false;
     }
 
-    private String[] signalsToString() {
-        if (signals.isEmpty())
-            return new String[0];
 
-        String[] signalsString = new String[signals.size()];
-        NumberFormat bigformatter = new DecimalFormat("####E0");
-        NumberFormat smallformatter = new DecimalFormat("0.###");
+    private double[] fSignals() {
+        if (signals.isEmpty())
+            return new double[0];
+
+        double[] fSignals = new double[signals.size()];
         int i = 0;
         for (double signal : signals.values()) {
-            if (Double.isInfinite(signal))
-                signalsString[i++] = "Inf" ;
-            else if (signal >= 10000 || signal <= -10000)
-                signalsString[i++] = bigformatter.format(signal) ;
-            else
-                signalsString[i++] = smallformatter.format(signal) ;
+            fSignals[i++] = DoubleFormatter.formatDouble(signal);
         }
-        return  signalsString;
+        return  fSignals;
     }
 
     @Override
@@ -166,12 +161,20 @@ public class Node {
                 "name=" + name + "," +
                 "value=" + value + "," +
                 "level=" + level + "," +
-                "signals=" + Arrays.toString(signalsToString()) +
+                "signals=" + Arrays.toString(fSignals()) +
                 "\n";
     }
 
     @Override
     public Object clone() {
         return new Node(ID, value, name, level, signals);
+    }
+
+    public static void main(String[] args) {
+        NumberFormat bigformatter = new DecimalFormat("####E0");
+        double value = 1.2112026993103345E30;
+        double fValue = Double.parseDouble(bigformatter.format(value));
+        System.out.println(value);
+        System.out.println(fValue);
     }
 }

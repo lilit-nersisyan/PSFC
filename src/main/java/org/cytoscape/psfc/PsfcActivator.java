@@ -165,12 +165,12 @@ public class PSFCActivator extends AbstractCyActivator {
                     LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
                 }
             else {
-                if (logFile.length() > (1024 * 1024))
+                if (logFile.length() > (1024 * 1024)) {
                     try {
                         DateFormat dateFormat = new SimpleDateFormat("HH_mm_dd_MM_yy");
 
 
-                        boolean success = logFile.renameTo(new File(loggingDir, logFile.getName() +dateFormat.format(new Date())));
+                        boolean success = logFile.renameTo(new File(loggingDir, logFile.getName() + dateFormat.format(new Date())));
 
                         if (success) {
                             if (!logFile.createNewFile())
@@ -182,6 +182,7 @@ public class PSFCActivator extends AbstractCyActivator {
                     } catch (IOException e) {
                         LoggerFactory.getLogger(PSFCActivator.class).error(e.getMessage());
                     }
+                }
             }
         }
         PSFCLogger = Logger.getLogger(PSFCActivator.class);

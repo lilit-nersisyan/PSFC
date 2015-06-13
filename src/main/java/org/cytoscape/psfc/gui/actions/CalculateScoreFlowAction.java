@@ -212,9 +212,14 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 psf.setLoopHandlingProps(loopHandlingProps);
 
                 PSFCActivator.getLogger().info("\n################\n################");
-                PSFCActivator.getLogger().info((new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date()));
+                System.out.println("\nPSFC:: Flow calculation");
+                String date = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date());
+                PSFCActivator.getLogger().info(date);
+                System.out.println("PSFC:: Date: " + date);
                 PSFCActivator.getLogger().info("Action: score flow calculation");
-                PSFCActivator.getLogger().info("Network: " + network.getRow(network).get(CyNetwork.NAME, String.class));
+                String networkTitle = "Network: " + network.getRow(network).get(CyNetwork.NAME, String.class);
+                PSFCActivator.getLogger().info(networkTitle);
+                System.out.println("PSFC:: Network: " + networkTitle);
                 PSFCActivator.getLogger().info("Graph summary: " + graph.getSummary());
                 PSFCActivator.getLogger().info("Score file: " + scoreBackupFile.getAbsolutePath());
                 PSFCActivator.getLogger().info("edgeTypeRuleNameConfigFile: " + edgeTypeRuleNameConfigFile.toString());

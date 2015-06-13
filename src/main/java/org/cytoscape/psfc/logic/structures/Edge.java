@@ -1,5 +1,6 @@
 package org.cytoscape.psfc.logic.structures;
 
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 
 /**
@@ -113,13 +114,14 @@ public class Edge {
     public boolean isBackward() {
         return isBackward;
     }
+
     @Override
     public String toString() {
         return "Edge{" +
                 "source: ID=" + source.getID() + "; name=" + source.getName() +
                 "; target: ID=" + + target.getID() + "; name=" + target.getName() +
                 "; type='" + edgeType + '\'' + "," +
-                "; weight='" + weight + '\'' + "," +
+                "; weight='" + DoubleFormatter.formatDouble(weight) + '\'' + "," +
                 "; rank='" + rank + '\'' + "," +
                 "; loopCount='"  + loopCount + '\'' +
                 "}\n";
