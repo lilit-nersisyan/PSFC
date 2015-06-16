@@ -82,10 +82,10 @@ public class Edge {
 
     public void setSignal(double signal) {
         if (!Double.isNaN(signal)) {
-            if (isBackward()) {
-                this.signal = belatedSignal;
-                belatedSignal = signal;
-            } else
+//            if (isBackward()) {
+//                this.signal = belatedSignal;
+//                belatedSignal = signal;
+//            } else
                 this.signal = signal;
         }
     }

@@ -81,7 +81,7 @@ public class SortNetworkAction extends AbstractCyAction {
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
             if (network == null)
-                throw new Exception("Given network was null");
+                throw new Exception("PSFC::Exception " + "Given network was null");
             try {
                 //Debugging
                 taskMonitor.setTitle("PSFC.SortNetworkTask");
@@ -143,7 +143,7 @@ public class SortNetworkAction extends AbstractCyAction {
                 taskMonitor.setProgress(1);
                 success = true;
             } catch (Exception e1) {
-                throw new Exception(e1.getMessage());
+                throw new Exception("PSFC::Exception " + e1.getMessage());
             } finally {
                 performed = true;
                 System.gc();

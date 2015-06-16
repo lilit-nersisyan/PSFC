@@ -39,6 +39,7 @@ public class PSF {
     private ArrayList<Node> loopTargetNodes = new ArrayList<Node>();
     private HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
     private boolean finished = false;
+    private boolean precomputeMode = false;
 
     public HashMap<Node, Double> getTargetPValueMap() {
         return targetPValueMap;
@@ -168,7 +169,8 @@ public class PSF {
             states.put(states.size(), state);
             try {
                 state.performPSF();
-                updateNodeValues();
+                if (multiSignalProps.get(EMultiSignalProps.MultipleSignalProcessingRule.getName()).equals(EMultiSignalProps.UPDATE_NODE_SCORES))
+                    updateNodeValues();
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
@@ -185,7 +187,6 @@ public class PSF {
             logger.debug(graph.toString());
         }
     }
-
 
 
     /*
@@ -208,8 +209,8 @@ public class PSF {
 //                }
 //            }
         }
-        for(Edge edge : graph.getEdges()){
-            if(edge.isBackward())
+        for (Edge edge : graph.getEdges()) {
+            if (edge.isBackward())
                 loopTargetNodes.add(edge.getTarget());
         }
         return loopTargetNodes;
@@ -227,14 +228,16 @@ public class PSF {
                 logger.debug(node.toString());
             }
         }
-        loopMode = true; //compute backward edges as well
+//        loopMode = true;
+        precomputeMode = true; //compute only backward edges
         State state = new State(0);
         try {
             state.performPSF();
         } catch (Exception e) {
             throw new Exception("Exception while precomputing loop PSF valus" + e.getMessage(), e);
         }
-        loopMode = false;
+        precomputeMode = false;
+//        loopMode = false;
 
 
         //Override node loop target nodes' values with their signals
@@ -268,32 +271,33 @@ public class PSF {
             if (!silentMode) {
                 String message = "Reached max number of iterations without convergence!";
                 logger.debug(message);
-                System.out.println(message);
+                System.out.println("PSFC::" + message);
             }
             return true;
         }
-        if (!silentMode)
-            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
-        if (iteration > 1) {
-            //Iterate through all loop target nodes.
-            // Check if the signal difference between this and the previous state
-            // is less than the convergence threshold
-            for (Node node : loopTargetNodes) {
-                double prevSignal = node.getSignal(iteration - 1);
-                double thisSignal = node.getSignal();
-                if (prevSignal != 0)
-                    if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
-                        return false;
-            }
-            if (!silentMode) {
-                String message = "Reached converged at iteration: " + iteration;
-                logger.debug(message);
-                System.out.println(message);
-            }
-            return true;
-        } else {
-            return false;
-        }
+//        if (!silentMode)
+//            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
+//        if (iteration > 1) {
+//            //Iterate through all loop target nodes.
+//            // Check if the signal difference between this and the previous state
+//            // is less than the convergence threshold
+//            for (Node node : loopTargetNodes) {
+//                double prevSignal = node.getSignal(iteration - 1);
+//                double thisSignal = node.getSignal();
+//                if (prevSignal != 0)
+//                    if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
+//                        return false;
+//            }
+//            if (!silentMode) {
+//                String message = "Reached converged at iteration: " + iteration;
+//                logger.debug(message);
+//                System.out.println(message);
+//            }
+//            return true;
+//        } else {
+//            return false;
+//        }
+        return false;
 
 
     }
@@ -425,8 +429,16 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(parentNode, node));
+                    Edge edge = graph.getEdge(parentNode, node);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
 
                 if (orderRule == EMultiSignalProps.ORDER_RANKS) {
@@ -462,6 +474,9 @@ public class PSF {
                         throw new Exception(message, e);
                     }
                     edge.setSignal(signal);
+//                    if (edge.isBackward() && iteration != 0) {
+//                        edge.getTarget().setSignal(edge.getSignal(), iteration);
+//                    } else
                     edge.getTarget().setSignal(signal, iteration);
                 }
             }
@@ -479,10 +494,17 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(parentNode, node));
+                    Edge edge = graph.getEdge(parentNode, node);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
-
                 double signal;
                 if (multiRule == EMultiSignalProps.ADDITION) {
                     signal = 0;
@@ -520,8 +542,16 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(parentNode, node));
+                    Edge edge = graph.getEdge(parentNode, node);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
 
                 for (Edge edge : edges) {
@@ -556,8 +586,16 @@ public class PSF {
                 ArrayList<Node> childNodes = graph.getChildNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node childNode : childNodes) {
-                    if (childNode.getLevel() > node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(node, childNode));
+                    Edge edge = graph.getEdge(node, childNode);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
                 for (Edge edge : edges) {
                     double source = edge.getWeight() * edge.getSource().getSignal();
@@ -593,8 +631,16 @@ public class PSF {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node parentNode : parentNodes) {
-                    if (parentNode.getLevel() < node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(parentNode, node));
+                    Edge edge = graph.getEdge(parentNode, node);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
 
                 if (splitRule == EMultiSignalProps.SPLIT_EQUAL)
@@ -628,9 +674,18 @@ public class PSF {
                 ArrayList<Node> childNodes = graph.getChildNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node childNode : childNodes) {
-                    if (childNode.getLevel() > node.getLevel() || loopMode)
-                        edges.add(graph.getEdge(node, childNode));
+                    Edge edge = graph.getEdge(node, childNode);
+                    if(precomputeMode) {
+                        if (edge.isBackward())
+                            edges.add(edge);
+                    } else if(loopMode){
+                        edges.add(edge);
+                    } else{
+                        if(!edge.isBackward())
+                            edges.add(edge);
+                    }
                 }
+
                 if (!edges.isEmpty())
                     if (splitRule == EMultiSignalProps.SPLIT_EQUAL)
                         for (Edge edge : edges) {

@@ -137,7 +137,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             try {
                 graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
             } catch (Exception e) {
-                throw new Exception("Could not convert network to graph. Reason: " + e.getMessage(), e);
+                throw new Exception("PSFC::Exception " + "Could not convert network to graph. Reason: " + e.getMessage(), e);
             }
             taskMonitor.setProgress(0.1);
 
@@ -147,12 +147,12 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             try {
                 cyNodeLevelMap = getCyNodeLevelMap();
             } catch (Exception e) {
-                throw new Exception("Node levels could not be retrieved from the column " + nodeLevelColumn.getName());
+                throw new Exception("PSFC::Exception " + "Node levels could not be retrieved from the column " + nodeLevelColumn.getName());
             }
             try {
                 GraphManager.assignNodeLevels(graph, cyNodeLevelMap);
             } catch (Exception e) {
-                throw new Exception(e.getMessage(), e);
+                throw new Exception("PSFC::Exception " + e.getMessage(), e);
             }
 
             //Retrieving edge isBackward values CyTable and keeping them in graph edges
@@ -161,7 +161,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             try {
                 cyEdgeIsBackwardMap = getCyEdgeIsBackwardMap();
             } catch (Exception e) {
-                throw new Exception("Edge isBackward values could not be retrieved from the column " + edgeIsBackwardColumn.getName());
+                throw new Exception("PSFC::Exception " + "Edge isBackward values could not be retrieved from the column " + edgeIsBackwardColumn.getName());
             }
             try {
                 GraphManager.assignEdgeIsBackwards(graph, cyEdgeIsBackwardMap);
@@ -175,12 +175,12 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             try {
                 cyNodeDataMap = getCyNodeDataMap();
             } catch (Exception e) {
-                throw new Exception("Node scores could not be retrieved from the column " + nodeDataColumn.getName());
+                throw new Exception("PSFC::Exception " + "Node scores could not be retrieved from the column " + nodeDataColumn.getName());
             }
             try {
                 GraphManager.assignNodeValues(graph, cyNodeDataMap);
             } catch (Exception e) {
-                throw new Exception(e.getMessage(), e);
+                throw new Exception("PSFC::Exception " + e.getMessage(), e);
             }
             taskMonitor.setProgress(0.2);
 
@@ -188,13 +188,13 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             if (multiSignalProps.get(EMultiSignalProps.SplitSignalRule.getName()) == EMultiSignalProps.SPLIT_WEIGHTS) {
                 Object obj = multiSignalProps.get(EMultiSignalProps.EdgeWeightsAttribute.getName());
                 if (obj == null)
-                    throw new Exception("Could not find " + EMultiSignalProps.EdgeWeightsAttribute.getName() + " property");
+                    throw new Exception("PSFC::Exception " + "Could not find " + EMultiSignalProps.EdgeWeightsAttribute.getName() + " property");
                 CyColumn cyEdgeWeightColumn = (CyColumn) obj;
                 HashMap<CyEdge, Double> cyEdgeWeightMap = getCyEdgeWeightMap(cyEdgeWeightColumn);
                 try {
                     GraphManager.assignEdgeWeights(graph, cyEdgeWeightMap);
                 } catch (Exception e) {
-                    throw new Exception(e.getMessage(), e);
+                    throw new Exception("PSFC::Exception " + e.getMessage(), e);
                 }
             }
 
@@ -202,13 +202,13 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             if (multiSignalProps.get(EMultiSignalProps.SignalProcessingOrder.getName()) == EMultiSignalProps.ORDER_RANKS) {
                 Object obj = multiSignalProps.get(EMultiSignalProps.EdgeRankAttribute.getName());
                 if (obj == null)
-                    throw new Exception("Could not find " + EMultiSignalProps.EdgeRankAttribute.getName() + " property");
+                    throw new Exception("PSFC::Exception " + "Could not find " + EMultiSignalProps.EdgeRankAttribute.getName() + " property");
                 CyColumn cyEdgeRankColumn = (CyColumn) obj;
                 HashMap<CyEdge, Integer> cyEdgeRankMap = getCyEdgeRankMap(cyEdgeRankColumn);
                 try {
                     GraphManager.assignEdgeRanks(graph, cyEdgeRankMap);
                 } catch (Exception e) {
-                    throw new Exception(e.getMessage(), e);
+                    throw new Exception("PSFC::Exception " + e.getMessage(), e);
                 }
             }
 
@@ -251,7 +251,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 } catch (Exception e) {
                     PSFCActivator.getLogger().error("Error occurred while flow score calculation. Reason: "
                             + e.getMessage(), e);
-                    throw new Exception(e.getMessage(), e);
+                    throw new Exception("PSFC::Exception " + e.getMessage(), e);
                 }
                 taskMonitor.setProgress(0.7);
                 PSFCActivator.getLogger().debug("Pathway flow signals successfully updated");
@@ -317,7 +317,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                             levelCyNodeScoreMap.get(levelCyNodeScoreMap.size() - 1), EColumnNames.PSFC_FINAL.getName(), Double.class);
                     PSFCActivator.getLogger().debug("Mapped CyNode score values to Cytoscape attributes");
                 } catch (Exception e) {
-                    throw new Exception("Error occurred while mapping CyNode scores " +
+                    throw new Exception("PSFC::Exception " + "Error occurred while mapping CyNode scores " +
                             "to Cytoscape attributes. Reason : "
                             + e.getMessage(), e);
                 }
@@ -330,7 +330,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                     }
                     PSFCActivator.getLogger().debug("Mapped CyEdge signal values to Cytoscape attributes");
                 } catch (Exception e) {
-                    throw new Exception("Error occurred while mapping CyEdge scores " +
+                    throw new Exception("PSFC::Exception " + "Error occurred while mapping CyEdge scores " +
                             "to Cytoscape attributes. Reason : "
                             + e.getMessage(), e);
                 }
@@ -341,7 +341,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Flow calculation task complete");
                 taskMonitor.setProgress(1);
             } catch (Exception e) {
-                throw new Exception(e.getMessage());
+                throw new Exception("PSFC::Exception " + "PSFC::Exception " + e.getMessage());
             } finally {
                 PSFCActivator.getLogger().debug("PSFC Score Flow calculation finished");
                 System.gc();
@@ -460,7 +460,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                         + scoreBackupFile.getAbsolutePath());
 
             } catch (FileNotFoundException e) {
-                throw new Exception("Problem writing node scores to file "
+                throw new Exception("PSFC::Exception " + "Problem writing node scores to file "
                         + scoreBackupFile.getAbsolutePath()
                         + ". Reason: " + e.getMessage(), e);
             }
@@ -488,7 +488,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                         .getProperty(Bootstrap.NUMOFSAMPLINGSPROP);
                 numOfSamplings = Integer.parseInt(prop);
             } catch (NumberFormatException e) {
-                throw new Exception("Unable to parse integer " + prop);
+                throw new Exception("PSFC::Exception " + "Unable to parse integer " + prop);
             }
 
             int samplingType;
@@ -499,7 +499,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                         .getProperty(Bootstrap.SAMPLINGTYPEPROP);
                 samplingType = Integer.parseInt(prop);
             } catch (NumberFormatException e) {
-                throw new Exception("Unable to parse integer " + prop);
+                throw new Exception("PSFC::Exception " + "Unable to parse integer " + prop);
             }
             if (samplingType == Bootstrap.SAMPLECENTRIC)
                 bootstrap = new BootstrapSampleCentric(psf, numOfSamplings, PSFCActivator.getLogger());
@@ -507,7 +507,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 prop = bootstrapProps.getProperty(Bootstrap.EXPMATRIXFILE);
                 expMatrixFile = new File(prop);
                 if (!expMatrixFile.exists()) {
-                    throw new Exception("Expression matrix file" + prop + "does not exist");
+                    throw new Exception("PSFC::Exception " + "Expression matrix file" + prop + "does not exist");
                 }
                 bootstrap = new BootstrapGeneCentric(psf, numOfSamplings, expMatrixFile, PSFCActivator.getLogger());
             }
@@ -527,7 +527,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Bootstrap significance calculation complete");
                 taskMonitor.setProgress(1);
             } catch (Exception e) {
-                throw new Exception("Problem performing bootstrap significance calculation " + e.getMessage());
+                throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
             }
         }
         @Override

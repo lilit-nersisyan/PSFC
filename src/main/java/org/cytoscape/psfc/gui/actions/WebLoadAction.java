@@ -36,7 +36,7 @@ public class WebLoadAction extends AbstractCyAction{
                 java.awt.Desktop.getDesktop().browse(java.net.URI.create(url));
             }
             catch (java.io.IOException e) {
-                throw new Exception("Problems loading " + url +
+                throw new Exception("PSFC::Exception " + "Problems loading " + url +
                         "\n" + e.getMessage()+
                         "\n Try opening it manually.");
             } finally {

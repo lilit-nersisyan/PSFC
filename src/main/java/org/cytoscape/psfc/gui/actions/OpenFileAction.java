@@ -46,7 +46,7 @@ public class OpenFileAction extends AbstractCyAction {
                     ClassLoader cl = this.getClass().getClassLoader();
                     java.io.InputStream in = cl.getResourceAsStream(fileName);
                     if (in == null) {
-                        throw  new Exception("Null InputStream: " + fileName + "could not be loaded from the plugin jar file.");
+                        throw  new Exception("PSFC::Exception " + "Null InputStream: " + fileName + "could not be loaded from the plugin jar file.");
                     }
 
                     FileOutputStream out = new FileOutputStream(file);
@@ -63,10 +63,10 @@ public class OpenFileAction extends AbstractCyAction {
                 if (Desktop.isDesktopSupported())
                     Desktop.getDesktop().open(file);
                 else{
-                    throw new Exception("Desktop is not supported!");
+                    throw new Exception("PSFC::Exception " + "Desktop is not supported!");
                 }
             } catch (Exception e) {
-                throw new Exception("Problems opening " + file.getAbsolutePath() +
+                throw new Exception("PSFC::Exception " + "Problems opening " + file.getAbsolutePath() +
                         "\n" + e.getMessage()+
                         "\n Try opening it manually.");
             } finally {

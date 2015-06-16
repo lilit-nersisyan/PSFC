@@ -23,6 +23,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * PUBLIC CLASS VisualizeFlowAction
@@ -38,8 +39,8 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private CyNetwork network;
     private ArrayList<Integer> levels;
     private Color borderPaint = Color.black;
-    private Color minColor = Color.decode("#40E0D0");
-    private Color maxColor = Color.decode("#000000");
+    private Color minColor = Color.decode("#CCE5CC");
+    private Color maxColor = Color.decode("#1F761F");
     private double minWidth = 1.;
     private double maxWidth = 7.;
 
@@ -108,7 +109,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
                     nodeColorMapping = (ContinuousMapping<Double, Paint>) PSFCActivator.vmfFactoryC.createVisualMappingFunction
                             (nodeSignalColumn.getName(), Double.class, BasicVisualLexicon.NODE_FILL_COLOR);
                 } catch (Exception e) {
-                    throw new Exception(nodeSignalColumn.getName() + " should be of type " + Double.class.getName());
+                    throw new Exception("PSFC::Exception " + nodeSignalColumn.getName() + " should be of type " + Double.class.getName());
                 }
                 BoundaryRangeValues<Paint> brvMin = new BoundaryRangeValues<Paint>(Color.WHITE, minColor, minColor);
                 nodeColorMapping.addPoint(minSignal, brvMin);
@@ -119,7 +120,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
                     edgeWidthMapping = (ContinuousMapping<Double, Double>) PSFCActivator.vmfFactoryC.createVisualMappingFunction
                             (edgeSignalColumn.getName(), Double.class, BasicVisualLexicon.EDGE_WIDTH);
                 } catch (Exception e) {
-                    throw new Exception(edgeSignalColumn.getName() + " should be of type " + Double.class.getName());
+                    throw new Exception("PSFC::Exception " + edgeSignalColumn.getName() + " should be of type " + Double.class.getName());
                 }
                 BoundaryRangeValues<Double> brvWidthMin = new BoundaryRangeValues<Double>(1., minWidth, minWidth);
                 edgeWidthMapping.addPoint(minEdgeSignal, brvWidthMin);
@@ -129,25 +130,31 @@ public class VisualizeFlowAction extends AbstractCyAction {
 
                 VisualStyle visualStyle = PSFCActivator.visualMappingManager.getVisualStyle(NetworkCyManager.getNetworkView(network));
 
-                ArrayList<CyNetworkView> networkViews = new ArrayList<CyNetworkView>();
-                networkViews.addAll(NetworkCyManager.getNetworkViews(network));
-                for (CyNetworkView networkView : networkViews) {
-                    for (CyNode cyNode : network.getNodeList()) {
-                        View<CyNode> nodeView = networkView.getNodeView(cyNode);
-                        nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
-                        nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
-                    }
-                    for (CyEdge cyEdge : network.getEdgeList()) {
-                        View<CyEdge> edgeView = networkView.getEdgeView(cyEdge);
-                        edgeView.clearValueLock(BasicVisualLexicon.EDGE_WIDTH);
-                    }
+                try {
+                    ArrayList<CyNetworkView> networkViews = new ArrayList<CyNetworkView>();
+                    networkViews.addAll(NetworkCyManager.getNetworkViews(network));
+                    for (CyNetworkView networkView : networkViews) {
+                        for (CyNode cyNode : network.getNodeList()) {
+                            View<CyNode> nodeView = networkView.getNodeView(cyNode);
+                            nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
+                            nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
+                        }
+                        for (CyEdge cyEdge : network.getEdgeList()) {
+                            View<CyEdge> edgeView = networkView.getEdgeView(cyEdge);
+                            edgeView.clearValueLock(BasicVisualLexicon.EDGE_WIDTH);
+                        }
 
-                    visualStyle.addVisualMappingFunction(nodeColorMapping);
-                    visualStyle.addVisualMappingFunction(edgeWidthMapping);
-                    networkView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_PAINT, borderPaint);
-                    visualStyle.apply(networkView);
-                    networkView.updateView();
-                    Thread.sleep(500);
+                        visualStyle.addVisualMappingFunction(nodeColorMapping);
+                        visualStyle.addVisualMappingFunction(edgeWidthMapping);
+                        networkView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_PAINT, borderPaint);
+                        visualStyle.apply(networkView);
+                        networkView.updateView();
+                        Thread.sleep(500);
+                    }
+                } catch (InterruptedException e) {
+                    throw new Exception("PSFC::Exception " + "problem while updating network view. Reason: " + e.getCause() + "\n" + Arrays.toString(e.getStackTrace()));
+                } finally {
+                    System.gc();
                 }
             }
         }
