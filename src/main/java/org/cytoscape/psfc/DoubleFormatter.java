@@ -10,7 +10,7 @@ public class DoubleFormatter {
     static int precision = 10000;
 
     static NumberFormat bigformatter = new DecimalFormat("##E0");
-    static NumberFormat smallformatter = new DecimalFormat("0.###");
+    static NumberFormat smallformatter = new DecimalFormat("0.##");
 
     public static double formatDouble(Double value){
         if (Double.isInfinite(value))

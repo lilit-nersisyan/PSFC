@@ -167,12 +167,13 @@ public class PSF {
             states.put(states.size(), state);
             try {
                 state.performPSF();
+                updateNodeValues();
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
             converged = checkForConvergence(states.size() - 1);
-            if(cancelled)
-                System.out.println("PSFC:: PSF computation cancelled at iteration " + (states.size()-1));
+            if (cancelled)
+                System.out.println("PSFC:: PSF computation cancelled at iteration " + (states.size() - 1));
         }
         loopMode = false;
         finished = true;
@@ -181,6 +182,15 @@ public class PSF {
             logger.debug("\nSuccess: psf computation complete!");
             logger.debug("PostProcessed graph:");
             logger.debug(graph.toString());
+        }
+    }
+
+    /*
+    Update node values as node signals of the last iteration for proceeding to the next one.
+     */
+    private void updateNodeValues() {
+        for (Node node : graph.getNodes()) {
+            node.setValue(node.getSignal());
         }
     }
 
@@ -245,10 +255,10 @@ public class PSF {
     private boolean checkForConvergence(int iteration) {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
-        if(!silentMode)
+        if (!silentMode)
             System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
         if (iteration + 1 > maxNumOfIterations) {
-            if(!silentMode) {
+            if (!silentMode) {
                 String message = "Reached max number of iterations without convergence!";
                 logger.debug(message);
                 System.out.println(message);
@@ -266,7 +276,7 @@ public class PSF {
                         if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
                             return false;
                 }
-                if(!silentMode) {
+                if (!silentMode) {
                     String message = "Reached converged at iteration: " + iteration;
                     logger.debug(message);
                     System.out.println(message);
@@ -645,7 +655,7 @@ public class PSF {
             try {
                 result = calculable.calculate();
             } catch (ArithmeticException e) {
-                if(e.getMessage().equals("Division by zero!")) {
+                if (e.getMessage().equals("Division by zero!")) {
                     result = Double.POSITIVE_INFINITY;
                     logger.debug(e.getMessage() + Double.POSITIVE_INFINITY + " assigned");
                 } else {

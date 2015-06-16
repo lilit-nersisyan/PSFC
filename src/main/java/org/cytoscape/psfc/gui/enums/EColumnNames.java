@@ -5,8 +5,8 @@ package org.cytoscape.psfc.gui.enums;
  */
 public enum EColumnNames {
     Level("psfc.level"),
-    PSFC_NODE_SIGNAL("signal_"),
-    PSFC_EDGE_SIGNAL("signal_"),
+    PSFC_NODE_SIGNAL("psf_l"),
+    PSFC_EDGE_SIGNAL("psf_l"),
     PSFC_PVAL("psfc_pval"),
     PSFC_FINAL("psf_final")
     ;
