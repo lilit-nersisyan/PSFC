@@ -56,8 +56,8 @@ public class GraphSort {
                 TreeMap<Integer, ArrayList<Node>> levelNodeMap = sortByLevelFromStart(graph, topologicalOrderIterator(graph));
                 for (Edge edge : removedEdges) {
 //                    System.out.println("PSFC::Sort:   Edge removed for sorting: " + edge);
+                    edge = graph.addEdge(edge.getSource(), edge.getTarget());
                     edge.setIsBackward(true);
-                    graph.addEdge(edge.getSource(), edge.getTarget());
                 }
 
                 return levelNodeMap;

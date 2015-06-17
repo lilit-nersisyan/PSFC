@@ -5,7 +5,6 @@ import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
-import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.logic.algorithms.*;
 import org.cytoscape.psfc.logic.parsers.RuleFilesParser;
 import org.cytoscape.psfc.logic.structures.Edge;
@@ -13,6 +12,7 @@ import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.psfc.net.NetworkGraphMapper;
+import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
@@ -44,6 +44,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private CyColumn edgeTypeColumn;
     private CyColumn nodeDataColumn;
     private CyColumn nodeLevelColumn;
+    private CyColumn edgeIsBackwardColumn;
     private File edgeTypeRuleNameConfigFile;
     private File ruleConfigFile;
     private File scoreBackupFile;
@@ -60,7 +61,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     CyColumn edgeTypeColumn,
                                     CyColumn nodeDataColumn,
                                     CyColumn nodeLevelColumn,
-                                    File edgeTypeRuleNameConfigFile,
+                                    CyColumn edgeIsBackwardColumn, File edgeTypeRuleNameConfigFile,
                                     File ruleConfigFile,
                                     Properties nodeDataProperties,
                                     Properties multiSignalProps,
@@ -73,6 +74,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.edgeTypeColumn = edgeTypeColumn;
         this.nodeDataColumn = nodeDataColumn;
         this.nodeLevelColumn = nodeLevelColumn;
+        this.edgeIsBackwardColumn = edgeIsBackwardColumn;
+        this.edgeIsBackwardColumn = edgeIsBackwardColumn;
         this.edgeTypeRuleNameConfigFile = edgeTypeRuleNameConfigFile;
         this.ruleConfigFile = ruleConfigFile;
         this.nodeDataProps = nodeDataProperties;
@@ -148,6 +151,20 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             }
             try {
                 GraphManager.assignNodeLevels(graph, cyNodeLevelMap);
+            } catch (Exception e) {
+                throw new Exception(e.getMessage(), e);
+            }
+
+            //Retrieving edge isBackward values CyTable and keeping them in graph edges
+            taskMonitor.setStatusMessage("Retrieving edge isBackward values");
+            HashMap<CyEdge, Boolean> cyEdgeIsBackwardMap;
+            try {
+                cyEdgeIsBackwardMap = getCyEdgeIsBackwardMap();
+            } catch (Exception e) {
+                throw new Exception("Edge isBackward values could not be retrieved from the column " + edgeIsBackwardColumn.getName());
+            }
+            try {
+                GraphManager.assignEdgeIsBackwards(graph, cyEdgeIsBackwardMap);
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
@@ -349,6 +366,18 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 cyNodeLevelMap.put(cyNode, level);
             }
             return cyNodeLevelMap;
+        }
+
+        private HashMap<CyEdge, Boolean> getCyEdgeIsBackwardMap() {
+            HashMap<CyEdge, Boolean> cyEdgeIsBackwardMap = new HashMap<CyEdge, Boolean>();
+
+            for (Object cyEdgeObj : network.getEdgeList()) {
+                CyEdge cyEdge = (CyEdge) cyEdgeObj;
+                CyRow row = network.getDefaultEdgeTable().getRow(cyEdge.getSUID());
+                boolean isBackward = row.get(edgeIsBackwardColumn.getName(), Boolean.class);
+                cyEdgeIsBackwardMap.put(cyEdge, isBackward);
+            }
+            return cyEdgeIsBackwardMap;
         }
 
         private HashMap<CyNode, Double> getCyNodeDataMap() throws Exception {

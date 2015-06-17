@@ -21,6 +21,7 @@ public class Edge {
     private Integer rank = 0;
     private int loopCount = 0;
     private boolean isBackward = false;
+    private double belatedSignal = 0;
 
     Edge(Node source, Node target) {
         if (target == null || source == null)
@@ -32,6 +33,7 @@ public class Edge {
 
     /**
      * Edge constructor with full set of fields.
+     *
      * @param source
      * @param target
      * @param edgeType
@@ -79,13 +81,21 @@ public class Edge {
     }
 
     public void setSignal(double signal) {
-        if (!Double.isNaN(signal))
-            this.signal = signal;
+        if (!Double.isNaN(signal)) {
+            if (isBackward()) {
+                this.signal = belatedSignal;
+                belatedSignal = signal;
+            } else
+                this.signal = signal;
+        }
     }
+
 
     public double getSignal() {
         return signal;
     }
+
+
 
     public void setRank(Integer rank) {
         this.rank = rank;
@@ -119,11 +129,11 @@ public class Edge {
     public String toString() {
         return "Edge{" +
                 "source: ID=" + source.getID() + "; name=" + source.getName() +
-                "; target: ID=" + + target.getID() + "; name=" + target.getName() +
+                "; target: ID=" + +target.getID() + "; name=" + target.getName() +
                 "; type='" + edgeType + '\'' + "," +
                 "; weight='" + DoubleFormatter.formatDouble(weight) + '\'' + "," +
                 "; rank='" + rank + '\'' + "," +
-                "; loopCount='"  + loopCount + '\'' +
+                "; loopCount='" + loopCount + '\'' +
                 "}\n";
     }
 
@@ -137,7 +147,19 @@ public class Edge {
     }
 
     @Override
-    public Object clone(){
+    public Object clone() {
         return new Edge(source, target, edgeType, weight, signal, rank, loopCount, isBackward);
+    }
+
+    /**
+     * For implementation of HashBiMap, whose containsKey sometimes returns false for existing objects.
+     * Returning the same hashCode for all the objects will force the containsKey() method to call the
+     * equals() method for comparing two Edges.
+     *
+     * @return
+     */
+    @Override
+    public int hashCode(){
+        return 0;
     }
 }

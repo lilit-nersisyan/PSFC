@@ -1,17 +1,18 @@
 package org.cytoscape.psfc.gui.actions;
 
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
-import org.cytoscape.psfc.properties.ESortingAlgorithms;
 import org.cytoscape.psfc.logic.algorithms.GraphManager;
 import org.cytoscape.psfc.logic.algorithms.GraphSort;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.psfc.net.NetworkGraphMapper;
+import org.cytoscape.psfc.properties.ESortingAlgorithms;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
@@ -118,6 +119,9 @@ public class SortNetworkAction extends AbstractCyAction {
                 Map<CyNode, Integer> cyNodeLevelMap = GraphManager.intNodesMapToCyNodeIntMap(graph, levelNodeMap);
                 NetworkCyManager.setNodeAttributesFromMap(network, cyNodeLevelMap,
                         EColumnNames.Level.getName(), Integer.class);
+                Map<CyEdge, Boolean> cyEdgeIsBackwardMap = GraphManager.getCyEdgeIsBackwardMap(graph);
+                NetworkCyManager.setEdgeAttributesFromMap(network, cyEdgeIsBackwardMap, EColumnNames.PSFC_IS_BACKWARD.getName(), Boolean.class);
+
 
                 //Debugging
                 taskMonitor.setStatusMessage(EColumnNames.Level + " attribute values set");

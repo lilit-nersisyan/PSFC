@@ -51,8 +51,10 @@ public class NetworkGraphMapper {
             CyEdge cyEdge = (CyEdge) edgeObj;
             Node psfSource = cyNodePsfNodeMap.get(cyEdge.getSource());
             Node psfTarget = cyNodePsfNodeMap.get(cyEdge.getTarget());
-            graph.addEdge(psfSource, psfTarget);
+            Edge edge = graph.addEdge(psfSource, psfTarget);
+            graph.setCyEdge(edge, cyEdge);
         }
+
         graph.setNetwork(network);
 
         return graph;
@@ -106,7 +108,7 @@ public class NetworkGraphMapper {
             Node psfSource = cyNodePsfNodeMap.get(cyEdge.getSource());
             Node psfTarget = cyNodePsfNodeMap.get(cyEdge.getTarget());
             Edge edge = graph.addEdge(psfSource, psfTarget);
-
+            graph.setCyEdge(edge, cyEdge);
             String edgeType = (String) network.getDefaultEdgeTable().getRow(cyEdge.getSUID())
                     .get(edgeTypeColumn.getName(), edgeTypeColumn.getType());
             graph.setEdgeType(edge, edgeType);

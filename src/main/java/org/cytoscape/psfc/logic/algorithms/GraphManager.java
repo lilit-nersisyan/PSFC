@@ -90,6 +90,24 @@ public class GraphManager {
     }
 
     /**
+     * Takes isBackward values from given <code>CyEdge</code> : <code>Boolean</code> map and keeps them in
+     * respective <code>Edge</code>s in the graph.
+     * @param graph Graph containing the Nodes to be mapped
+     * @param cyEdgeIsBackwardMap map containing <code>CyEdge</code> : isBackward mapping
+     * @throws Exception if a <code>Edge</code> does not exist for any <code>CyEdge</code>
+     */
+    public static void assignEdgeIsBackwards(Graph graph, HashMap<CyEdge, Boolean> cyEdgeIsBackwardMap) throws Exception {
+        for (CyEdge cyEdge : cyEdgeIsBackwardMap.keySet()) {
+            Edge edge = graph.getEdge(cyEdge);
+            if (edge == null)
+                throw new Exception("No edge exists for CyEdge " + cyEdge.getSUID());
+            graph.getEdge(cyEdge).setIsBackward(cyEdgeIsBackwardMap.get(cyEdge));
+        }
+
+    }
+
+
+    /**
      * Takes values from given <code>CyNode</code> : <code>Double</code> map and keeps them in
      * respective <code>Node</code>s in the graph.
      * @param graph Graph containing the Nodes to be mapped
@@ -179,13 +197,23 @@ public class GraphManager {
         for (Node node : nodes){
             ArrayList<Node> parentNodes = graph.getParentNodes(node);
             for (Node parentNode : parentNodes){
-                if (parentNode.getLevel() < level){
+//                if (parentNode.getLevel() < level){
                     Edge edge = graph.getEdge(parentNode, node);
                     if (!edges.contains(edge))
                         edges.add(edge);
-                }
+//                }
             }
         }
         return edges;
+    }
+
+    public static Map<CyEdge, Boolean> getCyEdgeIsBackwardMap(Graph graph) {
+        Map<CyEdge,Boolean> cyEdgeIsBackwardMap = new HashMap<CyEdge, Boolean>();
+        for(Edge edge : graph.getEdges()){
+            CyEdge cyEdge = graph.getCyEdge(edge);
+            if(cyEdge != null)
+                cyEdgeIsBackwardMap.put(cyEdge, edge.isBackward());
+        }
+        return cyEdgeIsBackwardMap;
     }
 }

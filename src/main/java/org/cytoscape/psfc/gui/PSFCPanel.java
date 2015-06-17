@@ -1706,6 +1706,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
 
         CyColumn nodeLevelColumn = getNodeLevelColumn();
+        CyColumn edgeIsBackwardColumn = getEdgeIsBackwardColumn();
         Properties nodeDataProperties = getNodeDataProperties();
         Properties multiSignalProps = getMultiSignalProperties();
         Properties loopHandlingProps = getLoopHandlingProperties();
@@ -1713,7 +1714,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             return;
 
         calculateFlowAction = new CalculateScoreFlowAction(
-                network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn,
+                network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn, edgeIsBackwardColumn,
                 edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
                 multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
         if (jchb_CalculateSignificance.isSelected()) {
@@ -3010,6 +3011,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         try {
             CyNetwork network = getSelectedNetwork();
             return network.getDefaultNodeTable().getColumn(levelAttr);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private CyColumn getEdgeIsBackwardColumn(){
+        try {
+            CyNetwork network = getSelectedNetwork();
+            return network.getDefaultEdgeTable().getColumn(EColumnNames.PSFC_IS_BACKWARD.getName());
         } catch (Exception e) {
             return null;
         }

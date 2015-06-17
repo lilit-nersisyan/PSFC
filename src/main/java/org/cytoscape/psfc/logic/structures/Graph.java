@@ -9,6 +9,7 @@ package org.cytoscape.psfc.logic.structures;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
+import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
@@ -28,6 +29,7 @@ public class Graph {
     //Cytoscape-related fields
     private CyNetwork network;
     private BiMap<Node, CyNode> nodeCyNodeMap;
+    private BiMap<Edge, CyEdge> edgeCyEdgeMap;
 
 
     /**
@@ -36,6 +38,7 @@ public class Graph {
     public Graph() {
         jgraph = new DefaultDirectedWeightedGraph<Node, Edge>(Edge.class);
         nodeCyNodeMap = HashBiMap.create();
+        edgeCyEdgeMap = HashBiMap.create();
     }
 
 
@@ -44,18 +47,20 @@ public class Graph {
      *
      * @param order number of vertices
      */
-    public Graph(int order){
-        if (order < 0 )
+    public Graph(int order) {
+        if (order < 0)
             throw new IllegalArgumentException();
         jgraph = new DefaultDirectedWeightedGraph<Node, Edge>(Edge.class);
         nodeCyNodeMap = HashBiMap.create();
-        for (int i =0 ; i < order; i++){
+        edgeCyEdgeMap = HashBiMap.create();
+        for (int i = 0; i < order; i++) {
             addNode();
         }
     }
 
     /**
      * Graph constructor with full set of fields.
+     *
      * @param nodes
      * @param edges
      * @param freeID
@@ -63,13 +68,14 @@ public class Graph {
      * @param network
      * @param nodeCyNodeMap
      */
-    private Graph(TreeMap<Integer, Node> nodes, ArrayList<Edge> edges, int freeID, DefaultDirectedWeightedGraph<Node, Edge> jgraph, CyNetwork network, BiMap<Node, CyNode> nodeCyNodeMap) {
+    private Graph(TreeMap<Integer, Node> nodes, ArrayList<Edge> edges, int freeID, DefaultDirectedWeightedGraph<Node, Edge> jgraph, CyNetwork network, BiMap<Node, CyNode> nodeCyNodeMap, BiMap<Edge, CyEdge> edgeCyEdgeBiMap) {
         this.nodes = nodes;
         this.edges = edges;
         this.freeID = freeID;
         this.jgraph = jgraph;
         this.network = network;
         this.nodeCyNodeMap = nodeCyNodeMap;
+        this.edgeCyEdgeMap = edgeCyEdgeMap;
     }
 
     /**
@@ -111,9 +117,9 @@ public class Graph {
      * @param cyNode the CyNode reference of the Node
      * @return created Node.
      */
-    public Node addNode(CyNode cyNode){
+    public Node addNode(CyNode cyNode) {
         if (cyNode == null)
-            throw  new NullPointerException(ExceptionMessages.NullCyNode.getMessage());
+            throw new NullPointerException(ExceptionMessages.NullCyNode.getMessage());
         Node node = addNode();
         setCyNode(node, cyNode);
         return node;
@@ -121,6 +127,7 @@ public class Graph {
 
     /**
      * Checks if there the graph contains the specified node.
+     *
      * @param node the node to search for
      * @return <code>true</code> if the node is present; <code>false</code> otherwise
      */
@@ -159,8 +166,18 @@ public class Graph {
      * @param cyNode the <code>CyNode</code>reference
      * @return the node with the CyNode reference; null if no such node exists
      */
-    public Node getNode(CyNode cyNode){
-            return nodeCyNodeMap.inverse().get(cyNode);
+    public Node getNode(CyNode cyNode) {
+        return nodeCyNodeMap.inverse().get(cyNode);
+    }
+
+    /**
+     * Returns <code>Edge</code> with given CyEdge reference, or null if no such edge exists.
+     *
+     * @param cyEdge the <code>CyEdge</code>reference
+     * @return the edge with the CyEdge reference; null if no such edge exists
+     */
+    public Edge getEdge(CyEdge cyEdge) {
+        return edgeCyEdgeMap.inverse().get(cyEdge);
     }
 
     /**
@@ -170,9 +187,31 @@ public class Graph {
      * @param node Node containing the CyNode reference
      * @return CyNode referenced by the node; or null if no reference exists
      */
-    public CyNode getCyNode(Node node){
-            return nodeCyNodeMap.get(node);
+    public CyNode getCyNode(Node node) {
+        return nodeCyNodeMap.get(node);
     }
+
+    /**
+     * Returns <code>CyEdge</code> which is references by the given <code>Edge</code>
+     * or null if no such reference exists or if the given edge does not exist in the graph.
+     *
+     * @param edge
+     * @return CyEdge referenced by the edge; or null if no reference exists
+     */
+    public CyEdge getCyEdge(Edge edge) {
+        Node source = edge.getSource();
+        Node target = edge.getTarget();
+        if (!containsEdge(source, target))
+            return null;
+        if (!edgeCyEdgeMap.containsKey(edge)) {
+            System.out.println(edgeCyEdgeMap);
+            System.out.println("does not contain key");
+            System.out.println(edge.toString());
+            return null;
+        }
+        return edgeCyEdgeMap.get(edge);
+    }
+
 
     /**
      * Return the Node with given ID.
@@ -192,7 +231,7 @@ public class Graph {
      * If Node does not exist or either of the input parameters is null,
      * a value of <code>false</code> is returned, otherwise <code>true</code> is returned.
      *
-     * @param node node for which the CyNode reference should be set
+     * @param node   node for which the CyNode reference should be set
      * @param cyNode the actual reference of the node
      * @return boolean success
      */
@@ -202,6 +241,25 @@ public class Graph {
         if (nodeCyNodeMap.containsKey(node))
             nodeCyNodeMap.remove(node);
         nodeCyNodeMap.put(node, cyNode);
+        return true;
+    }
+
+
+    /**
+     * Sets <code>CyEdge</code> reference to the given <code>Edge</code>.
+     * If Edge does not exist or either of the input parameters is null,
+     * a value of <code>false</code> is returned, otherwise <code>true</code> is returned.
+     *
+     * @param edge   edge for which the CyEdge reference should be set
+     * @param cyEdge the actual reference of the edge
+     * @return boolean success
+     */
+    public boolean setCyEdge(Edge edge, CyEdge cyEdge) {
+        if (!containsEdge(edge.getSource(), edge.getTarget()))
+            return false;
+        if (edgeCyEdgeMap.containsKey(edge))
+            edgeCyEdgeMap.remove(edge);
+        edgeCyEdgeMap.put(edge, cyEdge);
         return true;
     }
 
@@ -253,7 +311,7 @@ public class Graph {
         if (!containsNode(parentNode))
             return null;
         ArrayList<Node> childNodes = new ArrayList<Node>();
-        for (Node node : nodes.values()){
+        for (Node node : nodes.values()) {
             if (containsEdge(parentNode, node))
                 childNodes.add(node);
         }
@@ -271,7 +329,7 @@ public class Graph {
         if (!containsNode(childNode))
             return null;
         ArrayList<Node> parentNodes = new ArrayList<Node>();
-        for (Node node : nodes.values()){
+        for (Node node : nodes.values()) {
             if (containsEdge(node, childNode))
                 parentNodes.add(node);
         }
@@ -368,6 +426,7 @@ public class Graph {
 
     /**
      * Return the list of edges in the graph.
+     *
      * @return Edge list
      */
     public ArrayList<Edge> getEdges() {
@@ -402,7 +461,6 @@ public class Graph {
     }
 
 
-
     public String getSummary() {
         String summary = "";
         summary += "Number of nodes (order): " + getOrder() + "\n";
@@ -413,7 +471,7 @@ public class Graph {
     /**
      * Sets loopCount field of all the edges to 0.
      */
-    public void resetLoopCounts(){
+    public void resetLoopCounts() {
         for (Edge edge : edges)
             edge.setLoopCount(0);
     }
@@ -421,6 +479,14 @@ public class Graph {
     public void removeEdge(Edge maxLoopEdge) {
         edges.remove(maxLoopEdge);
         jgraph.removeEdge(maxLoopEdge);
+    }
+
+    public ArrayList<Edge> getBackwardEdges() {
+        ArrayList<Edge> backwardEdges = new ArrayList<Edge>();
+        for (Edge edge : edges)
+            if (edge.isBackward())
+                backwardEdges.add(edge);
+        return backwardEdges;
     }
 
     /**
@@ -455,6 +521,8 @@ public class Graph {
                 "\nedges=" + edges +
                 '}';
     }
+
+
 
  /*   @Override
     public Object clone(){

@@ -160,6 +160,7 @@ public class PSF {
         states = new HashMap<Integer, State>();
 
         while (!converged && !cancelled) {
+
             if (!silentMode) {
                 logger.debug("\nIteration: " + states.size());
             }
@@ -171,7 +172,7 @@ public class PSF {
             } catch (Exception e) {
                 throw new Exception(e.getMessage(), e);
             }
-            converged = checkForConvergence(states.size() - 1);
+            converged = checkForConvergence(states.size());
             if (cancelled)
                 System.out.println("PSFC:: PSF computation cancelled at iteration " + (states.size() - 1));
         }
@@ -185,6 +186,8 @@ public class PSF {
         }
     }
 
+
+
     /*
     Update node values as node signals of the last iteration for proceeding to the next one.
      */
@@ -195,14 +198,19 @@ public class PSF {
     }
 
     private ArrayList<Node> getLoopTargetNodes() {
+
         for (Node node : graph.getNodes()) {
             originalNodeValues.put(node, node.getValue());
-            for (Node parent : graph.getParentNodes(node)) {
-                if (node.getLevel() <= parent.getLevel()) {
-                    loopTargetNodes.add(node);
-                    break;
-                }
-            }
+//            for (Node parent : graph.getParentNodes(node)) {
+//                if (node.getLevel() <= parent.getLevel()) {
+//                    loopTargetNodes.add(node);
+//                    break;
+//                }
+//            }
+        }
+        for(Edge edge : graph.getEdges()){
+            if(edge.isBackward())
+                loopTargetNodes.add(edge.getTarget());
         }
         return loopTargetNodes;
     }
@@ -255,8 +263,7 @@ public class PSF {
     private boolean checkForConvergence(int iteration) {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
-        if (!silentMode)
-            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
+
         if (iteration + 1 > maxNumOfIterations) {
             if (!silentMode) {
                 String message = "Reached max number of iterations without convergence!";
@@ -264,29 +271,31 @@ public class PSF {
                 System.out.println(message);
             }
             return true;
-        } else {
-            if (iteration > 1) {
-                //Iterate through all loop target nodes.
-                // Check if the signal difference between this and the previous state
-                // is less than the convergence threshold
-                for (Node node : loopTargetNodes) {
-                    double prevSignal = node.getSignal(iteration - 1);
-                    double thisSignal = node.getSignal();
-                    if (prevSignal != 0)
-                        if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
-                            return false;
-                }
-                if (!silentMode) {
-                    String message = "Reached converged at iteration: " + iteration;
-                    logger.debug(message);
-                    System.out.println(message);
-                }
-                return true;
-            } else {
-                return false;
-            }
-
         }
+        if (!silentMode)
+            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
+        if (iteration > 1) {
+            //Iterate through all loop target nodes.
+            // Check if the signal difference between this and the previous state
+            // is less than the convergence threshold
+            for (Node node : loopTargetNodes) {
+                double prevSignal = node.getSignal(iteration - 1);
+                double thisSignal = node.getSignal();
+                if (prevSignal != 0)
+                    if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
+                        return false;
+            }
+            if (!silentMode) {
+                String message = "Reached converged at iteration: " + iteration;
+                logger.debug(message);
+                System.out.println(message);
+            }
+            return true;
+        } else {
+            return false;
+        }
+
+
     }
 
     public void setNodeDataProps(Properties nodeDataProps) {
@@ -527,7 +536,6 @@ public class PSF {
 //                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
                         logger.debug(message);
                         throw new Exception(message, e);
-
                     }
                     edge.setSignal(signal);
                 }
@@ -548,7 +556,7 @@ public class PSF {
                 ArrayList<Node> childNodes = graph.getChildNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node childNode : childNodes) {
-                    if (childNode.getLevel() > node.getLevel())
+                    if (childNode.getLevel() > node.getLevel() || loopMode)
                         edges.add(graph.getEdge(node, childNode));
                 }
                 for (Edge edge : edges) {
@@ -620,7 +628,7 @@ public class PSF {
                 ArrayList<Node> childNodes = graph.getChildNodes(node);
                 ArrayList<Edge> edges = new ArrayList<Edge>();
                 for (Node childNode : childNodes) {
-                    if (childNode.getLevel() > node.getLevel())
+                    if (childNode.getLevel() > node.getLevel() || loopMode)
                         edges.add(graph.getEdge(node, childNode));
                 }
                 if (!edges.isEmpty())
@@ -651,7 +659,7 @@ public class PSF {
                     .withVariable(SOURCE, source)
                     .withVariable(TARGET, target)
                     .build();
-            double result = Double.NaN;
+            double result;
             try {
                 result = calculable.calculate();
             } catch (ArithmeticException e) {
