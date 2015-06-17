@@ -234,8 +234,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 PSFCActivator.getLogger().info(date);
                 System.out.println("PSFC:: Date: " + date + "\n");
                 PSFCActivator.getLogger().info("Action: score flow calculation");
-                String networkTitle = "Network: " + network.getRow(network).get(CyNetwork.NAME, String.class);
-                PSFCActivator.getLogger().info(networkTitle);
+                String networkTitle = network.getRow(network).get(CyNetwork.NAME, String.class);
+                PSFCActivator.getLogger().info("Network: " + networkTitle);
                 System.out.println("PSFC:: Network: " + networkTitle + "\n");
                 PSFCActivator.getLogger().info("Graph summary: " + graph.getSummary());
                 PSFCActivator.getLogger().info("Score file: " + scoreBackupFile.getAbsolutePath());

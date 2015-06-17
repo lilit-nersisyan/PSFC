@@ -117,11 +117,11 @@ public class Node {
     /**
      * Returns the last signal value in the signals map.
      *
-     * @return last signal value of the node or null if no signals are computed
+     * @return last signal value of the node or node value if no signals are computed
      */
     public double getSignal() {
         if (signals.isEmpty())
-            return Double.NaN;
+            return value;
         return signals.lastEntry().getValue();
     }
 
