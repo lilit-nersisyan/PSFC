@@ -10,6 +10,7 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.gui.PSFCPanel;
+import org.cytoscape.psfc.logic.algorithms.EpiNetSimulator;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.properties.EpsfcProps;
@@ -67,7 +68,7 @@ public class PSFCActivator extends AbstractCyActivator {
     private static String aboutFileName = "about.txt";
     private static String rulePresetsFileName = "rule_presets.pdf";
     private static String userManualFileName = "PSFC_User_Manual.pdf";
-    private static String userManualURL = "https://www.dropbox.com/s/vmdflnhbkdm3x95/PSFC_User_Manual.pdf";
+    private static String userManualURL = "http://big.sci.am/apps/psfc/PSFC_User_Manual.pdf";
     private static String projectWebpageUrl = "http://apps.cytoscape.org/apps/psfc";
 
     public static String getAboutText() {
@@ -146,6 +147,10 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyNetworkTableManager, CyNetworkTableManager.class, new Properties());
 
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
+
+//        EpiNetSimulator epiNetSimulator = new EpiNetSimulator();
+//        epiNetSimulator.setBC(bc);
+
     }
 
 
@@ -362,4 +367,6 @@ public class PSFCActivator extends AbstractCyActivator {
     public static String getProjectWebpageUrl() {
         return projectWebpageUrl;
     }
+
+
 }

@@ -25,7 +25,7 @@ public class Node {
     private String name = "";
     private int level = 1;
     private static String defaultValue = "1";
-    private TreeMap<Integer, Double> signals = new TreeMap<Integer, Double>();
+    private TreeMap<Integer, Double> signals = new TreeMap<>();
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
@@ -108,6 +108,10 @@ public class Node {
         if (!Double.isNaN(signal)) {
             signals.put(iteration, signal);
         }
+    }
+
+    public TreeMap<Integer, Double> getSignals() {
+        return signals;
     }
 
     public double getSignal(int iteration) {

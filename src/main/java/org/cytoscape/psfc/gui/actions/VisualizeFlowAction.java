@@ -41,7 +41,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private Color borderPaint = Color.black;
     private Color minColor = Color.decode("#CCE5CC");
     private Color maxColor = Color.decode("#1F761F");
-    private double minWidth = 1.;
+    private double minWidth = 0.5;
     private double maxWidth = 7.;
 
 

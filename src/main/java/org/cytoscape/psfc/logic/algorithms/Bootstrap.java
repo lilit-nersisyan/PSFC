@@ -73,7 +73,9 @@ public class Bootstrap {
             originalNodeValues.put(node, node.getValue());
         }
         // get target nodes from the graph
-        targetNodes = graph.getTargetNodes();
+//        targetNodes = graph.getTargetNodes();
+        targetNodes = new ArrayList<Node>();
+        targetNodes.addAll(graph.getNodes());
 
         // keep target node signals from the PSF computation on the original graph
         // initiate the map of p values for the target nodes with 0s

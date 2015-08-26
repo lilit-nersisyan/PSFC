@@ -5,8 +5,8 @@ package org.cytoscape.psfc.properties;
  */
 public enum EpsfcProps {
     EdgeTypeAttribute("edgeTypeAttribute"),
-    NodeDataType("nodeDataType"),
-    MultipleDataOption("multipleDataOption"),
+//    NodeDataType("nodeDataType"),
+//    MultipleDataOption("multipleDataOption"),
     EdgeTypeRuleNameConfigFile("edgeTypeRuleNameConfigFile"),
     RuleNameRuleConfigFile("ruleNameRuleConfigFile"),
     NodeDataAttribute("nodeDataAttribute"),

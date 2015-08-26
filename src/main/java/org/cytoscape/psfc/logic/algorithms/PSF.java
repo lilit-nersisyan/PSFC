@@ -5,6 +5,7 @@ import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.GraphTestCases;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
@@ -267,7 +268,7 @@ public class PSF {
         if (!loopMode || loopTargetNodes.isEmpty())
             return true; //temporary solution
 
-        if (iteration + 1 > maxNumOfIterations) {
+        if (iteration >= maxNumOfIterations) {
             if (!silentMode) {
                 String message = "Reached max number of iterations without convergence!";
                 logger.debug(message);
@@ -275,31 +276,28 @@ public class PSF {
             }
             return true;
         }
-//        if (!silentMode)
-//            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
-//        if (iteration > 1) {
-//            //Iterate through all loop target nodes.
-//            // Check if the signal difference between this and the previous state
-//            // is less than the convergence threshold
-//            for (Node node : loopTargetNodes) {
-//                double prevSignal = node.getSignal(iteration - 1);
-//                double thisSignal = node.getSignal();
-//                if (prevSignal != 0)
-//                    if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
-//                        return false;
-//            }
-//            if (!silentMode) {
-//                String message = "Reached converged at iteration: " + iteration;
-//                logger.debug(message);
-//                System.out.println(message);
-//            }
-//            return true;
-//        } else {
-//            return false;
-//        }
-        return false;
-
-
+        if (!silentMode)
+            System.out.println("PSFC:: Convergence check: Iteration: " + iteration);
+        if (iteration > 1) {
+            //Iterate through all nodes.
+            // Check if the signal difference between this and the previous state
+            // is less than the convergence threshold
+            for (Node node : graph.getNodes()) {
+                double prevSignal = node.getSignal(iteration - 2);
+                double thisSignal = node.getSignal(iteration - 1); //last iteration
+                if (prevSignal != 0)
+                    if (Math.abs((thisSignal - prevSignal) / prevSignal) > convergenceThreshold / 100)
+                        return false;
+            }
+            if (!silentMode) {
+                String message = "Reached convergance at iteration: " + iteration;
+                logger.debug(message);
+                System.out.println(message);
+            }
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public void setNodeDataProps(Properties nodeDataProps) {
@@ -859,5 +857,8 @@ public class PSF {
         }
     }
 
+    public static void main(String[] args) {
 
+
+    }
 }

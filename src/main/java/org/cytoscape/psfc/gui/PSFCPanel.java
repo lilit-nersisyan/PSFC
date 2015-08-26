@@ -1370,7 +1370,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
 
-
     private void addActionListeners_jp_Options() {
         //Algorithms
         jcb_sortingAlgorithm.addActionListener(new ActionListener() {
@@ -2137,9 +2136,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
 
-    /******************
-     Actions: jp_Rules
-     ******************/
+    /**
+     * ***************
+     * Actions: jp_Rules
+     * ****************
+     */
     private void jb_rulePresetsGuideActionPerformed(ActionEvent e) {
         (new OpenFileAction(PSFCActivator.getRulePresetsFileName())).actionPerformed(e);
     }
@@ -2373,15 +2374,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void jb_userManualActionPerformed(ActionEvent e) {
-        String[] buttons = new String[]{"As local PDF", "In Web browser"};
+        //Temp solution before download and open as local file option implementation
+        String[] buttons = new String[]{"Open in Web browser"};
         int rc = JOptionPane.showOptionDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
-                "Open PSFC User Manual:", "Open PSFC User Manual",
+                "PSFC User Manual is at " + PSFCActivator.getUserManualURL(), "PSFC User Manual",
                 JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
-                buttons,buttons[1]);
-        if(rc == 0)
-            new OpenFileAction(PSFCActivator.getUserManualFileName()).actionPerformed(e);
-        else
+                buttons, buttons[0]);
+        if (rc == 0)
             new WebLoadAction(PSFCActivator.getUserManualURL()).actionPerformed(e);
+//        String[] buttons = new String[]{"As local PDF", "In Web browser"};
+//        int rc = JOptionPane.showOptionDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
+//                "Open PSFC User Manual:", "Open PSFC User Manual",
+//                JOptionPane.DEFAULT_OPTION, JOptionPane.QUESTION_MESSAGE, null,
+//                buttons, buttons[1]);
+//        if (rc == 0)
+//            new OpenFileAction(PSFCActivator.getUserManualFileName()).actionPerformed(e);
+//        else
+//            new WebLoadAction(PSFCActivator.getUserManualURL()).actionPerformed(e);
 
     }
 
@@ -2404,7 +2413,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_calculateFlow.setBackground(new Color(51, 102, 0));
         jb_calculateFlow.setOpaque(true);
         jb_calculateFlow.setBorderPainted(false);
-
 
 
         //Button groups
@@ -2469,11 +2477,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jtxt_numOfSamplings.setText(numOfSamplings + "");
             jtxt_numOfSamplingsActionPerformed();
         } catch (NumberFormatException e) {
+            System.out.println("PSFC::" + "Exception while parsing number of samplings property." + Arrays.toString(e.getStackTrace()));
         }
 
         propValue = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.ChangeNetworkLayout.getName());
-        if(propValue != null)
-        jchb_changeNetworkLayout.setSelected(propValue.equals("false")? false : true);
+        if (propValue != null)
+            jchb_changeNetworkLayout.setSelected(propValue.equals("true") ? true : false);
 
         //EdgeTypeRuleNameConfigFile
         String fileName = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName());
@@ -2493,7 +2502,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jbg_splitSignalOn.add(jrb_outgoingEdges);
 
         //default selection
-        jrb_outgoingEdges.setSelected(true);
+        jrb_incomingEdges.setSelected(true);
 
         //Set selectionFromProperties
         propValue = PSFCActivator.getPsfcProps()
@@ -2512,7 +2521,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jbg_signalSplitRule.add(jrb_suppliedWeights);
 
         //default selection
-        jrb_noSplitRule.setSelected(true);
+        jrb_proportional.setSelected(true);
 
         //Set selectionFromProperties
         propValue = PSFCActivator.getPsfcProps()
@@ -2530,7 +2539,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jbg_multipleSignalProcessingRule.add(jrb_multiplication);
 
         //default selection
-        jrb_updatedNodeScores.setSelected(true);
+        jrb_addition.setSelected(true);
 
         //Set selectionFromProperties
         propValue = PSFCActivator.getPsfcProps()
@@ -2861,12 +2870,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private Properties getLoopHandlingProperties() {
         Properties properties = new Properties();
 
-        if(jchb_iterateUntilConvergence.isSelected()) {
+        if (jchb_iterateUntilConvergence.isSelected()) {
             properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.ITERATE_UNTIL_CONVERGENCE);
-            properties.setProperty(ELoopHandlingProps.ConvergenceThreshold.getName(), Double.parseDouble(jtxt_convergenceThreshold.getText())+"");
+            properties.setProperty(ELoopHandlingProps.ConvergenceThreshold.getName(), Double.parseDouble(jtxt_convergenceThreshold.getText()) + "");
             properties.setProperty(ELoopHandlingProps.MaxNumOfIterations.getName(), Integer.parseInt(jtxt_maxNumOfIterations.getText()) + "");
-        } else{
-            if(jchb_precomputeLoops.isSelected())
+        } else {
+            if (jchb_precomputeLoops.isSelected())
                 properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.PRECOMPUTE_LOOPS);
             else
                 properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.IGNORE_LOOPS); //default
@@ -3016,7 +3025,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
-    private CyColumn getEdgeIsBackwardColumn(){
+    private CyColumn getEdgeIsBackwardColumn() {
         try {
             CyNetwork network = getSelectedNetwork();
             return network.getDefaultEdgeTable().getColumn(EColumnNames.PSFC_IS_BACKWARD.getName());

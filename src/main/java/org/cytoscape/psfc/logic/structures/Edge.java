@@ -21,7 +21,6 @@ public class Edge {
     private Integer rank = 0;
     private int loopCount = 0;
     private boolean isBackward = false;
-    private double belatedSignal = 0;
 
     Edge(Node source, Node target) {
         if (target == null || source == null)
