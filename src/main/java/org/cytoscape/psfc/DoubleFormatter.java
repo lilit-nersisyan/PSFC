@@ -11,7 +11,6 @@ import java.util.Locale;
 public class DoubleFormatter {
     static int precision = 10000;
 
-
     public static double formatDouble(Double value){
         DecimalFormatSymbols decimalSymbol = new DecimalFormatSymbols(Locale.getDefault());
         decimalSymbol.setDecimalSeparator('.');
