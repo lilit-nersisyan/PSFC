@@ -18,7 +18,7 @@
     <artifactId>psfc</artifactId>
     <packaging>bundle</packaging>
     <name>PSFC</name>
-    <version>1.0.2</version>x
+    <version>1.1.0</version>
     <build>
         <plugins>
             <plugin>
@@ -117,11 +117,11 @@
             <version>${cytoscape.api.version}</version>
             <scope>provided</scope>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.cytoscape</groupId>
             <artifactId>service-api</artifactId>
             <version>${cytoscape.api.version}</version>
-           <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
