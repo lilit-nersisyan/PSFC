@@ -54,7 +54,10 @@ public class VisualizeFlowAction extends AbstractCyAction {
         this.minSignal = minSignal;
         this.maxSignal = maxSignal;
         this.minEdgeSignal = minEdgeSignal;
-        this.maxEdgeSignal = maxEdgeSignal;
+        if(maxEdgeSignal == minEdgeSignal)
+            this.maxEdgeSignal = minEdgeSignal + 0.1;
+        else
+            this.maxEdgeSignal = maxEdgeSignal;
         this.levels = levels;
         this.psfcPanel = psfcPanel;
     }

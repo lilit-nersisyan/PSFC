@@ -117,16 +117,23 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     }
 
     private class CalculateScoreFlowTask extends AbstractTask {
+        boolean success = true;
+        String errorMessage;
+
+
         Thread psfThread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
                     psf.calculateFlow();
                 } catch (Exception e) {
-                    e.printStackTrace();
+//                    e.printStackTrace();
+                    success = false;
+                    errorMessage = e.getMessage();
                 }
             }
         });
+
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
             taskMonitor.setTitle("PSFC.CalculateFlowTask");
@@ -248,10 +255,14 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 try {
 //                    psf.calculateFlow();
                     psfThread.run();
+                    if(!success){
+                        throw new Exception(errorMessage);
+                    }
                 } catch (Exception e) {
                     PSFCActivator.getLogger().error("Error occurred while flow score calculation. Reason: "
                             + e.getMessage(), e);
-                    throw new Exception("PSFC::Exception " + e.getMessage(), e);
+                    throw new Exception(e.getMessage().startsWith("PSFC") ? e.getMessage()
+                            : "PSFC::" + e.getMessage(), e);
                 }
                 taskMonitor.setProgress(0.7);
                 PSFCActivator.getLogger().debug("Pathway flow signals successfully updated");
