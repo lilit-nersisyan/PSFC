@@ -9,7 +9,9 @@ public enum EColumnNames {
     PSFC_EDGE_SIGNAL("psf_l"),
     PSFC_PVAL("psfc_pval"),
     PSFC_FINAL("psf_final"),
-    PSFC_IS_BACKWARD("psf_isbackward")
+    PSFC_IS_BACKWARD("psf_isbackward"),
+    PSFC_isOperator("psf_isOperator"),
+    PSFC_FUNCTION("psf_function")
     ;
 
 

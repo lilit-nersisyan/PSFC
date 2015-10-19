@@ -10,7 +10,6 @@ import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.gui.PSFCPanel;
-import org.cytoscape.psfc.logic.algorithms.EpiNetSimulator;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.properties.EpsfcProps;

@@ -26,6 +26,8 @@ public class Node {
     private int level = 1;
     private static String defaultValue = "1";
     private TreeMap<Integer, Double> signals = new TreeMap<>();
+    private boolean isOperator = false;
+    private String function = null;
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
@@ -181,4 +183,15 @@ public class Node {
         System.out.println(value);
         System.out.println(fValue);
     }
+
+    public void setOperatorFunction(String function) {
+        if(function == null)
+            throw new IllegalArgumentException("Function cannot be null for operator nodes");
+        this.isOperator = true;
+    }
+
+    public void setNonOperator(){
+        this.isOperator = false;
+    }
+
 }

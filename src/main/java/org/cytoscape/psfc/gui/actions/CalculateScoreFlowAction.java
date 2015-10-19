@@ -44,6 +44,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private CyColumn edgeTypeColumn;
     private CyColumn nodeDataColumn;
     private CyColumn nodeLevelColumn;
+    private CyColumn isOperatorColumn;
+    private CyColumn nodeFunctionColumn;
     private CyColumn edgeIsBackwardColumn;
     private File edgeTypeRuleNameConfigFile;
     private File ruleConfigFile;
@@ -61,7 +63,10 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                                     CyColumn edgeTypeColumn,
                                     CyColumn nodeDataColumn,
                                     CyColumn nodeLevelColumn,
-                                    CyColumn edgeIsBackwardColumn, File edgeTypeRuleNameConfigFile,
+                                    CyColumn isOperatorColumn,
+                                    CyColumn nodeFunctionColumn,
+                                    CyColumn edgeIsBackwardColumn,
+                                    File edgeTypeRuleNameConfigFile,
                                     File ruleConfigFile,
                                     Properties nodeDataProperties,
                                     Properties multiSignalProps,
@@ -74,6 +79,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         this.edgeTypeColumn = edgeTypeColumn;
         this.nodeDataColumn = nodeDataColumn;
         this.nodeLevelColumn = nodeLevelColumn;
+        this.isOperatorColumn = isOperatorColumn;
+        this.nodeFunctionColumn = nodeFunctionColumn;
         this.edgeIsBackwardColumn = edgeIsBackwardColumn;
         this.edgeIsBackwardColumn = edgeIsBackwardColumn;
         this.edgeTypeRuleNameConfigFile = edgeTypeRuleNameConfigFile;
