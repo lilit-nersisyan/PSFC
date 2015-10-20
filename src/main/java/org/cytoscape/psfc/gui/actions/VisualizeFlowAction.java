@@ -45,6 +45,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private double maxWidth = 7.;
 
 
+
     public VisualizeFlowAction(CyNetwork network, double minSignal,
                                double maxSignal, ArrayList<Integer> levels,
                                double minEdgeSignal, double maxEdgeSignal,
@@ -54,9 +55,9 @@ public class VisualizeFlowAction extends AbstractCyAction {
         this.minSignal = minSignal;
         this.maxSignal = maxSignal;
         this.minEdgeSignal = minEdgeSignal;
-        if(maxEdgeSignal == minEdgeSignal)
-            this.maxEdgeSignal = minEdgeSignal + 0.1;
-        else
+//        if(maxEdgeSignal == minEdgeSignal)
+//            this.maxEdgeSignal = minEdgeSignal + 0.1;
+//        else
             this.maxEdgeSignal = maxEdgeSignal;
         this.levels = levels;
         this.psfcPanel = psfcPanel;
@@ -133,7 +134,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
 
                 VisualStyle visualStyle = PSFCActivator.visualMappingManager.getVisualStyle(NetworkCyManager.getNetworkView(network));
 
-                try {
+//                try {
                     ArrayList<CyNetworkView> networkViews = new ArrayList<CyNetworkView>();
                     networkViews.addAll(NetworkCyManager.getNetworkViews(network));
                     for (CyNetworkView networkView : networkViews) {
@@ -152,13 +153,14 @@ public class VisualizeFlowAction extends AbstractCyAction {
                         networkView.setVisualProperty(BasicVisualLexicon.NODE_BORDER_PAINT, borderPaint);
                         visualStyle.apply(networkView);
                         networkView.updateView();
-                        Thread.sleep(500);
+//                        Thread.sleep(500);
                     }
-                } catch (InterruptedException e) {
-                    throw new Exception("PSFC::Exception " + "problem while updating network view. Reason: " + e.getCause() + "\n" + Arrays.toString(e.getStackTrace()));
-                } finally {
-                    System.gc();
-                }
+
+//                } catch (InterruptedException e) {
+//                    throw new Exception("PSFC::Exception " + "problem while updating network view. Reason: " + e.getCause() + "\n" + Arrays.toString(e.getStackTrace()));
+//                } finally {
+//                    System.gc();
+//                }
             }
         }
 

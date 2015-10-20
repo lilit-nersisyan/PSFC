@@ -107,46 +107,6 @@ public class NetworkGraphMapper {
             String nodeName = getCyNodeName(cyNode,network);
             psfNode.setName(nodeName);
             cyNodePsfNodeMap.put(cyNode, psfNode);
-            boolean isOperator = network.getDefaultNodeTable().getRow(cyNode.getSUID()).
-                    get(EColumnNames.PSFC_isOperator.getName(), Boolean.class);
-            if(isOperator){
-                String function = network.getDefaultNodeTable().getRow(cyNode.getSUID()).
-                        get(EColumnNames.PSFC_FUNCTION.getName(), String.class);
-                StringTokenizer tokenizer = new StringTokenizer(function, "\"", true);
-                ArrayList<CyNode> sourceNodes = new ArrayList<>();
-                while (tokenizer.hasMoreTokens()){
-                    String token = tokenizer.nextToken();
-                    if(token.equals("\"")){
-                        //First quote
-                        if(!tokenizer.hasMoreTokens())
-                            throw new Exception("Function at node " + nodeName + " has unbalanced \"s. Each node name should be surrounded with double quotes");
-                        //inside quotes
-                        String var = tokenizer.nextToken();
-                        if(!tokenizer.hasMoreTokens())
-                            throw new Exception("Function at node " + nodeName + " has unbalanced \"s. Each node name should be surrounded with double quotes");
-                        //Second quote
-                        tokenizer.nextToken();
-                        //Balanced quotes: parse var
-
-                        ArrayList<CyNode> sourceNodeList = getCyNodesByName(var, network);
-                        if(sourceNodeList.isEmpty())
-                            throw new Exception("Error in function at node " + nodeName + ". No node with name " + var + " found in the etwork.");
-                        if(sourceNodeList.size() > 1){
-                            throw new Exception("Error in function at node " + nodeName + ". More than one source nodes with name " + var + " exist.");
-                        }
-                        CyNode sourceNode = sourceNodeList.get(0);
-                        if(!network.containsEdge(sourceNode, cyNode))
-                            throw new Exception("Error in function at node " + nodeName + ". The node " + var + " is not a source node for " + nodeName);
-                        sourceNodes.add(sourceNode);
-                    }
-                }
-                if(sourceNodes.isEmpty()) {
-                    String warning = "Warning: operator function at node " + nodeName + " contains no real nodes";
-                    PSFCActivator.getLogger().debug(warning);
-                    System.out.println(warning);
-                }
-                psfNode.setOperatorFunction(function);
-            }
         }
 
         for (Object edgeObj : network.getEdgeList()) {
