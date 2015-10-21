@@ -23,7 +23,6 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 /**
  * PUBLIC CLASS VisualizeFlowAction
@@ -31,34 +30,41 @@ import java.util.Arrays;
  * which performs node color visual mapping based on node signals.
  */
 public class VisualizeFlowAction extends AbstractCyAction {
-    private final double minSignal;
-    private final double maxSignal;
+    private final double minNodeSignal;
+    private final double midNodeSignal;
+    private final double maxNodeSignal;
     private final PSFCPanel psfcPanel;
     private final double minEdgeSignal;
+    private final double midEdgeSignal;
     private final double maxEdgeSignal;
     private CyNetwork network;
     private ArrayList<Integer> levels;
     private Color borderPaint = Color.black;
-    private Color minColor = Color.decode("#CCE5CC");
-    private Color maxColor = Color.decode("#1F761F");
-    private double minWidth = 0.5;
-    private double maxWidth = 7.;
+    public static Color minNodeColor = Color.decode("#000080");
+    public static Color midNodeColor = Color.decode("#FFFFFF");
+    public static Color maxNodeColor = Color.decode("#800000");
+    public static double minEdgeWidth = 1.;
+    public static double midEdgeWidth = 4.;
+    public static double maxEdgeWidth = 7.;
 
 
 
-    public VisualizeFlowAction(CyNetwork network, double minSignal,
-                               double maxSignal, ArrayList<Integer> levels,
-                               double minEdgeSignal, double maxEdgeSignal,
+    public VisualizeFlowAction(CyNetwork network, double minNodeSignal, double midNodeSignal,
+                               double maxNodeSignal, ArrayList<Integer> levels,
+                               double minEdgeSignal, double midEdgeSignal, double maxEdgeSignal,
+                               double minEdgeWidth, double midEdgeWidth, double maxEdgeWidth,
                                PSFCPanel psfcPanel) {
         super("VisualizeFlowAction");
         this.network = network;
-        this.minSignal = minSignal;
-        this.maxSignal = maxSignal;
+        this.minNodeSignal = minNodeSignal;
+        this.midNodeSignal = midNodeSignal;
+        this.maxNodeSignal = maxNodeSignal;
         this.minEdgeSignal = minEdgeSignal;
-//        if(maxEdgeSignal == minEdgeSignal)
-//            this.maxEdgeSignal = minEdgeSignal + 0.1;
-//        else
-            this.maxEdgeSignal = maxEdgeSignal;
+        this.midEdgeSignal = midEdgeSignal;
+        this.maxEdgeSignal = maxEdgeSignal;
+        this.minEdgeWidth = minEdgeWidth;
+        this.midEdgeWidth = midEdgeWidth;
+        this.maxEdgeWidth = maxEdgeWidth;
         this.levels = levels;
         this.psfcPanel = psfcPanel;
     }
@@ -78,6 +84,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
         private final CyColumn nodeSignalColumn;
         private final CyColumn edgeSignalColumn;
         private int level;
+        private boolean isCancelled = false;
 
         private VisualizeFlowTask(int level) {
             this.level = level;
@@ -115,10 +122,12 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 } catch (Exception e) {
                     throw new Exception("PSFC::Exception " + nodeSignalColumn.getName() + " should be of type " + Double.class.getName());
                 }
-                BoundaryRangeValues<Paint> brvMin = new BoundaryRangeValues<Paint>(Color.WHITE, minColor, minColor);
-                nodeColorMapping.addPoint(minSignal, brvMin);
-                BoundaryRangeValues<Paint> brvMax = new BoundaryRangeValues<Paint>(maxColor, maxColor, Color.BLACK);
-                nodeColorMapping.addPoint(maxSignal, brvMax);
+                BoundaryRangeValues<Paint> brvMin = new BoundaryRangeValues<Paint>(minNodeColor, minNodeColor, midNodeColor);
+                nodeColorMapping.addPoint(minNodeSignal, brvMin);
+                BoundaryRangeValues<Paint> brvMid = new BoundaryRangeValues<Paint>(minNodeColor, midNodeColor, maxNodeColor);
+                nodeColorMapping.addPoint(midNodeSignal, brvMid);
+                BoundaryRangeValues<Paint> brvMax = new BoundaryRangeValues<Paint>(midNodeColor, maxNodeColor, maxNodeColor);
+                nodeColorMapping.addPoint(maxNodeSignal, brvMax);
 
                 try {
                     edgeWidthMapping = (ContinuousMapping<Double, Double>) PSFCActivator.vmfFactoryC.createVisualMappingFunction
@@ -126,9 +135,11 @@ public class VisualizeFlowAction extends AbstractCyAction {
                 } catch (Exception e) {
                     throw new Exception("PSFC::Exception " + edgeSignalColumn.getName() + " should be of type " + Double.class.getName());
                 }
-                BoundaryRangeValues<Double> brvWidthMin = new BoundaryRangeValues<Double>(1., minWidth, minWidth);
+                BoundaryRangeValues<Double> brvWidthMin = new BoundaryRangeValues<Double>(minEdgeWidth, minEdgeWidth, midEdgeWidth);
                 edgeWidthMapping.addPoint(minEdgeSignal, brvWidthMin);
-                BoundaryRangeValues<Double> brvWidthMax = new BoundaryRangeValues<Double>(maxWidth, maxWidth, 8.);
+                BoundaryRangeValues<Double> brvWidthMid = new BoundaryRangeValues<Double>(minEdgeWidth, midEdgeWidth, maxEdgeWidth);
+                edgeWidthMapping.addPoint(midEdgeSignal, brvWidthMid);
+                BoundaryRangeValues<Double> brvWidthMax = new BoundaryRangeValues<Double>(midEdgeWidth, maxEdgeWidth, maxEdgeWidth);
                 edgeWidthMapping.addPoint(maxEdgeSignal, brvWidthMax);
 
 
@@ -138,15 +149,21 @@ public class VisualizeFlowAction extends AbstractCyAction {
                     ArrayList<CyNetworkView> networkViews = new ArrayList<CyNetworkView>();
                     networkViews.addAll(NetworkCyManager.getNetworkViews(network));
                     for (CyNetworkView networkView : networkViews) {
+                        if(isCancelled)
+                            break;
                         for (CyNode cyNode : network.getNodeList()) {
                             View<CyNode> nodeView = networkView.getNodeView(cyNode);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
                         }
+                        if(isCancelled)
+                            break;
                         for (CyEdge cyEdge : network.getEdgeList()) {
                             View<CyEdge> edgeView = networkView.getEdgeView(cyEdge);
                             edgeView.clearValueLock(BasicVisualLexicon.EDGE_WIDTH);
                         }
+                        if(isCancelled)
+                            break;
 
                         visualStyle.addVisualMappingFunction(nodeColorMapping);
                         visualStyle.addVisualMappingFunction(edgeWidthMapping);
@@ -166,6 +183,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
 
         @Override
         public void cancel() {
+            isCancelled = true;
             System.gc();
         }
 
