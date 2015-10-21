@@ -53,6 +53,7 @@ public class VisualizeFlowAction extends AbstractCyAction {
                                double maxNodeSignal, ArrayList<Integer> levels,
                                double minEdgeSignal, double midEdgeSignal, double maxEdgeSignal,
                                double minEdgeWidth, double midEdgeWidth, double maxEdgeWidth,
+                               Color minNodeColor, Color midNodeColor, Color maxNodeColor,
                                PSFCPanel psfcPanel) {
         super("VisualizeFlowAction");
         this.network = network;
@@ -65,6 +66,9 @@ public class VisualizeFlowAction extends AbstractCyAction {
         this.minEdgeWidth = minEdgeWidth;
         this.midEdgeWidth = midEdgeWidth;
         this.maxEdgeWidth = maxEdgeWidth;
+        this.minNodeColor = minNodeColor;
+        this.midNodeColor = midNodeColor;
+        this.maxNodeColor = maxNodeColor;
         this.levels = levels;
         this.psfcPanel = psfcPanel;
     }

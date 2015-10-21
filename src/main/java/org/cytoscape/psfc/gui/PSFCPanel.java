@@ -2118,8 +2118,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jl_selectedNetwork.setForeground(new java.awt.Color(51, 102, 0));
             jl_selectedNetwork.setToolTipText("");
         } else {
-            jl_selectedNetwork.setForeground(new java.awt.Color(153, 0, 0));
-            jl_selectedNetwork.setToolTipText("Selected network is not currently visualized, or refresh network selection");
+            PSFCActivator.cyApplicationManager.setCurrentNetwork(selectedNetwork);
+//            jl_selectedNetwork.setForeground(new java.awt.Color(153, 0, 0));
+//            jl_selectedNetwork.setToolTipText("Selected network is not currently visualized, or refresh network selection");
         }
     }
 
@@ -2206,6 +2207,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 levels,
                 signals[minEdgeSignalIndex], signals[midEdgeSignalIndex], signals[maxEdgeSignalIndex],
                 networkMinMaxEdgeWidthMap.get(network)[0], networkMinMaxEdgeWidthMap.get(network)[1],networkMinMaxEdgeWidthMap.get(network)[2],
+                networkMinMaxNodeColorMap.get(network)[0],networkMinMaxNodeColorMap.get(network)[1], networkMinMaxNodeColorMap.get(network)[2],
                 this);
         visualizeFlowAction.actionPerformed(e);
     }
