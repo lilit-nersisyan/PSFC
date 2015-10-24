@@ -60,6 +60,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private int minEdgeSignalIndex = 3;
     private int midEdgeSignalIndex = 4;
     private int maxEdgeSignalIndex = 5;
+    private static Color minNodeColor = Color.decode("#000080");
+    private static Color midNodeColor = Color.decode("#FFFFFF");
+    private static Color maxNodeColor = Color.decode("#800000");
+    private static double minEdgeWidth = 1.;
+    private static double midEdgeWidth = 4.;
+    private static double maxEdgeWidth = 7.;
     private HashMap<CyNetwork, double[]> networkMinMaxSignalsMap = new HashMap<>(); // contains minNodeSignal, midNodeSignal, maxNodeSignal, minEdgeSignal, midEdgeSignal, maxEdgeSignal
     private HashMap<CyNetwork, double[]> networkMinMaxEdgeWidthMap = new HashMap<>();
     private HashMap<CyNetwork, Color[]> networkMinMaxNodeColorMap = new HashMap<>();
@@ -2451,6 +2457,18 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
             /*** End of General settings ***/
 
+            /*** Visualization ***/
+            psfcProps.setProperty(EpsfcProps.NodeColorMin.getName(), String.valueOf(jp_colorChooser_min.getBackground().getRGB()));
+            psfcProps.setProperty(EpsfcProps.NodeColorMid.getName(), String.valueOf(jp_colorChooser_mid.getBackground().getRGB()));
+            psfcProps.setProperty(EpsfcProps.NodeColorMax.getName(), String.valueOf(jp_colorChooser_max.getBackground().getRGB()));
+
+            psfcProps.setProperty(EpsfcProps.EdgeWidthMin.getName(), jtxt_edgeWidth_min.getText());
+            psfcProps.setProperty(EpsfcProps.EdgeWidthMid.getName(), jtxt_edgeWidth_mid.getText());
+            psfcProps.setProperty(EpsfcProps.EdgeWidthMax.getName(), jtxt_edgeWidth_max.getText());
+
+
+            /*** End of Visualization ***/
+
             /*** Options ***/
 
             psfcProps.setProperty(EpsfcProps.SortingAlgorithm.getName(),
@@ -2907,6 +2925,52 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_calculateFlow.setBackground(new Color(51, 102, 0));
         jb_calculateFlow.setOpaque(true);
         jb_calculateFlow.setBorderPainted(false);
+
+        String property = "";
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.NodeColorMin.getName());
+            minNodeColor = Color.decode(property);
+            jp_colorChooser_min.setBackground(minNodeColor);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load minNodeColor from property " + property);
+        }
+
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.NodeColorMid.getName());
+            midNodeColor = Color.decode(property);
+            jp_colorChooser_mid.setBackground(midNodeColor);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load midNodeColor from property " + property);
+        }
+
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.NodeColorMax.getName());
+            maxNodeColor = Color.decode(property);
+            jp_colorChooser_max.setBackground(maxNodeColor);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load minNodeColor from property " + property);
+        }
+
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.EdgeWidthMin.getName());
+            minEdgeWidth = Double.parseDouble(property);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load minEdgeWidth from property " + EpsfcProps.EdgeWidthMin.getName());
+        }
+
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.EdgeWidthMid.getName());
+            midEdgeWidth = Double.parseDouble(property);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load midEdgeWidth from property " + EpsfcProps.EdgeWidthMid.getName());
+        }
+
+        try {
+            property = (String) PSFCActivator.getPsfcProps().get(EpsfcProps.EdgeWidthMax.getName());
+            maxEdgeWidth = Double.parseDouble(property);
+        } catch (NumberFormatException e) {
+            System.out.println("PSFC::Could not load maxEdgeWidth from property " + EpsfcProps.EdgeWidthMax.getName());
+        }
 
 
         //Button groups

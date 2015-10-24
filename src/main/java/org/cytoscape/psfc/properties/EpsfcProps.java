@@ -24,7 +24,14 @@ public enum EpsfcProps {
     BootstrapMode("bootstrapMode"),
     BootstrapExpMatrix("bootstrapExpMatrix"),
     NumOfSamplings("NumOfSamplings"),
-    ChangeNetworkLayout("changeNetworkLayout");
+    ChangeNetworkLayout("changeNetworkLayout"),
+    NodeColorMin("nodeColorMin"),
+    NodeColorMid("nodeColorMid"),
+    NodeColorMax("nodeColorMax"),
+    EdgeWidthMin("edgeWidthMin"),
+    EdgeWidthMid("edgeWidthMid"),
+    EdgeWidthMax("edgeWidthMax")
+    ;
 
     private boolean oldValue = true;
     private boolean newValue = true;

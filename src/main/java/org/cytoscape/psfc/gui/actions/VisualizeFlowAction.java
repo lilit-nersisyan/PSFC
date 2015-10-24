@@ -9,6 +9,7 @@ import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.net.NetworkCyManager;
+import org.cytoscape.psfc.properties.EpsfcProps;
 import org.cytoscape.view.model.CyNetworkView;
 import org.cytoscape.view.model.View;
 import org.cytoscape.view.presentation.property.BasicVisualLexicon;
@@ -18,6 +19,7 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
+import sun.print.PSPrinterJob;
 
 import javax.swing.*;
 import java.awt.*;
@@ -156,6 +158,9 @@ public class VisualizeFlowAction extends AbstractCyAction {
                         if(isCancelled)
                             break;
                         for (CyNode cyNode : network.getNodeList()) {
+                            if(cyNode.getSUID().equals(new Long(87)))
+                                System.out.println("PKCDelta");
+
                             View<CyNode> nodeView = networkView.getNodeView(cyNode);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
