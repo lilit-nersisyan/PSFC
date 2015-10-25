@@ -2067,13 +2067,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 new double[]{minNodeSignal, midNodeSignal, maxNodeSignal,
                         minEdgeSignal, midEdgeSignal, maxEdgeSignal});
         networkMinMaxEdgeWidthMap.put(network, new double[]{
-                VisualizeFlowAction.minEdgeWidth,
-                VisualizeFlowAction.midEdgeWidth,
-                VisualizeFlowAction.maxEdgeWidth});
+                minEdgeWidth,
+                midEdgeWidth,
+                maxEdgeWidth});
         networkMinMaxNodeColorMap.put(network, new Color[]{
-                VisualizeFlowAction.minNodeColor,
-                VisualizeFlowAction.midNodeColor,
-                VisualizeFlowAction.maxNodeColor
+                minNodeColor,
+                midNodeColor,
+                maxNodeColor
         });
 
     }

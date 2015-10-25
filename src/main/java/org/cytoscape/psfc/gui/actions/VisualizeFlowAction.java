@@ -42,12 +42,12 @@ public class VisualizeFlowAction extends AbstractCyAction {
     private CyNetwork network;
     private ArrayList<Integer> levels;
     private Color borderPaint = Color.black;
-    public static Color minNodeColor = Color.decode("#000080");
-    public static Color midNodeColor = Color.decode("#FFFFFF");
-    public static Color maxNodeColor = Color.decode("#800000");
-    public static double minEdgeWidth = 1.;
-    public static double midEdgeWidth = 4.;
-    public static double maxEdgeWidth = 7.;
+    private Color minNodeColor ;
+    private Color midNodeColor ;
+    private Color maxNodeColor ;
+    private double minEdgeWidth = 1.;
+    private double midEdgeWidth = 4.;
+    private double maxEdgeWidth = 7.;
 
 
 
@@ -158,9 +158,6 @@ public class VisualizeFlowAction extends AbstractCyAction {
                         if(isCancelled)
                             break;
                         for (CyNode cyNode : network.getNodeList()) {
-                            if(cyNode.getSUID().equals(new Long(87)))
-                                System.out.println("PKCDelta");
-
                             View<CyNode> nodeView = networkView.getNodeView(cyNode);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_FILL_COLOR);
                             nodeView.clearValueLock(BasicVisualLexicon.NODE_BORDER_PAINT);
