@@ -6,12 +6,16 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.PSFCActivator;
+import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
 
 import javax.swing.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * PUBLIC CLASS NetworkGraphMapper
@@ -97,9 +101,11 @@ public class NetworkGraphMapper {
 
         for (Object nodeObj : network.getNodeList()) {
             CyNode cyNode = (CyNode) nodeObj;
+
             Node psfNode = graph.addNode();
             graph.setCyNode(psfNode, cyNode);
-            psfNode.setName(network.getDefaultNodeTable().getRow(cyNode.getSUID()).get(CyNetwork.NAME, String.class));
+            String nodeName = getCyNodeName(cyNode,network);
+            psfNode.setName(nodeName);
             cyNodePsfNodeMap.put(cyNode, psfNode);
         }
 
@@ -117,6 +123,20 @@ public class NetworkGraphMapper {
         graph.setNetwork(network);
 
         return graph;
+    }
+
+    private static String getCyNodeName(CyNode cyNode, CyNetwork network) {
+        return(network.getDefaultNodeTable().getRow(cyNode.getSUID()).get(CyNetwork.NAME, String.class));
+    }
+
+    private static ArrayList<CyNode> getCyNodesByName(String nodeName, CyNetwork network){
+        List<CyNode> cyNodes = network.getNodeList();
+        ArrayList<CyNode> cyNodesWithName = new ArrayList<>();
+        for(CyNode cyNode : cyNodes){
+            if(getCyNodeName(cyNode, network).equals(nodeName))
+                cyNodesWithName.add(cyNode);
+        }
+        return cyNodesWithName;
     }
 
 }
