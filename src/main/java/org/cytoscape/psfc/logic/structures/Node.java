@@ -26,7 +26,6 @@ public class Node {
     private int level = 1;
     private static String defaultValue = "1";
     private TreeMap<Integer, Double> signals = new TreeMap<>();
-    private boolean isOperator = false;
     private String function = null;
 
     /**
@@ -187,11 +186,10 @@ public class Node {
     public void setOperatorFunction(String function) {
         if(function == null)
             throw new IllegalArgumentException("Function cannot be null for operator nodes");
-        this.isOperator = true;
     }
 
-    public void setNonOperator(){
-        this.isOperator = false;
+    public boolean isOperator(){
+        return function != null;
     }
 
 }

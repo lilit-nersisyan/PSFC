@@ -232,6 +232,44 @@ public class EpiNetSimulator {
         return graph;
     }
 
+    private Graph cpgOperatorSubnet() {
+
+        Graph graph = cpgSubnet();
+
+
+        Node DNDMs = graph.addNode();
+        DNDMs.setName("DNDM's");
+        DNDMs.setLevel(0);
+        DNDMs.setValue(1);
+
+        Node cellDivision = graph.addNode();
+        cellDivision.setName("Cell division");
+        cellDivision.setLevel(0);
+        DNDMs.setValue(1);
+
+        Node CpG = graph.addNode();
+        CpG.setName("CpG");
+        CpG.setLevel(1);
+        DNDMs.setValue(1);
+
+        Node DNMT1 = graph.addNode();
+        DNMT1.setName("DNMT1");
+        DNMT1.setLevel(0);
+        DNDMs.setValue(1);
+
+        Node DNMT3 = graph.addNode();
+        DNMT3.setName("DNMT's");
+        DNMT3.setLevel(0);
+        DNDMs.setValue(1);
+
+        graph.addEdge(DNDMs, CpG).setEdgeType(demethylation);
+        graph.addEdge(cellDivision, CpG).setEdgeType(demethylation);
+        graph.addEdge(DNMT1, CpG).setEdgeType(methylation);
+        graph.addEdge(DNMT3, CpG).setEdgeType(methylation);
+
+        return graph;
+    }
+
     private Graph h3k9Subnet() {
         Graph graph = new Graph();
 
@@ -253,7 +291,7 @@ public class EpiNetSimulator {
         return graph;
     }
 
-    private Graph simpleNet(){
+    private Graph simpleNet() {
         Graph graph = new Graph();
 
         // ------------   h3k9  ------------ //
@@ -465,8 +503,7 @@ public class EpiNetSimulator {
         }
     }
 
-    public static void main(String[] args) {
-
+    public void runDependencyTests() {
         double min = 0.01;
         double x = min;
         double max = 100;
@@ -513,5 +550,12 @@ public class EpiNetSimulator {
             }
         }).run();
 
+
+    }
+
+    public static void main(String[] args) {
+        EpiNetSimulator epiNetSimulator = new EpiNetSimulator();
+        Graph graph = epiNetSimulator.cpgSubnet();
+        graph.visualize();
     }
 }
