@@ -2256,8 +2256,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 }
                 PrintWriter writer = new PrintWriter(summaryFile);
                 String header = "Name";
-                for(CyColumn nextColumn : selectedNodeDataColumns){
-                    header += String.format("\tscore.%s\tpval.%s", nextColumn.getName(), nextColumn.getName());
+                for(CyColumn key : columnScoreMap.keySet()){
+                    header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
                 }
                 writer.write(header);
 
@@ -2271,6 +2271,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 writer.close();
                 taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
             }
+            System.gc();
         }
     }
 
