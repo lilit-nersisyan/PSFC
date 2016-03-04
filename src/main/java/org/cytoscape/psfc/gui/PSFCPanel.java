@@ -1,5 +1,6 @@
 package org.cytoscape.psfc.gui;
 
+import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.model.*;
@@ -10,6 +11,9 @@ import org.cytoscape.psfc.gui.enums.EColumnNames;
 import org.cytoscape.psfc.logic.algorithms.Bootstrap;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.properties.*;
+import org.cytoscape.work.AbstractTask;
+import org.cytoscape.work.TaskIterator;
+import org.cytoscape.work.TaskMonitor;
 
 import javax.swing.*;
 import javax.swing.event.ChangeEvent;
@@ -25,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.*;
+import java.util.List;
 
 /**
  * PUBCLI CLASS PSFCPanel
@@ -69,7 +74,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private HashMap<CyNetwork, double[]> networkMinMaxSignalsMap = new HashMap<>(); // contains minNodeSignal, midNodeSignal, maxNodeSignal, minEdgeSignal, midEdgeSignal, maxEdgeSignal
     private HashMap<CyNetwork, double[]> networkMinMaxEdgeWidthMap = new HashMap<>();
     private HashMap<CyNetwork, Color[]> networkMinMaxNodeColorMap = new HashMap<>();
-
+    private ArrayList<CyColumn> selectedNodeDataColumns;
 
     public PSFCPanel() {
         this.setPreferredSize(new Dimension(380, getHeight()));
@@ -125,6 +130,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_flow_fw;
     private javax.swing.JButton jb_flow_home;
     private javax.swing.JButton jb_flow_rv;
+    private javax.swing.JButton jb_multipleColumns;
     private javax.swing.JButton jb_openLogFile;
     private javax.swing.JButton jb_projectWebPage;
     private javax.swing.JButton jb_refreshEdgeRanks;
@@ -209,11 +215,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JRadioButton jrb_edgeRanks;
     private javax.swing.JRadioButton jrb_equal;
     private javax.swing.JRadioButton jrb_incomingEdges;
+    private javax.swing.JRadioButton jrb_multipleColumns;
     private javax.swing.JRadioButton jrb_multiplication;
     private javax.swing.JRadioButton jrb_noRanks;
     private javax.swing.JRadioButton jrb_noSplitRule;
     private javax.swing.JRadioButton jrb_outgoingEdges;
     private javax.swing.JRadioButton jrb_proportional;
+    private javax.swing.JRadioButton jrb_singleColumn;
     private javax.swing.JRadioButton jrb_suppliedWeights;
     private javax.swing.JRadioButton jrb_updatedNodeScores;
     private javax.swing.JScrollPane jsl_iterateUntilConvergence;
@@ -245,6 +253,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private ButtonGroup jbg_signalProcessingOrder;
     private ButtonGroup jbg_loopHandling;
     private ButtonGroup jbg_bootstrapType;
+    private ButtonGroup jbg_singleMultipleColumns;
 
 
     private void initComponents() {
@@ -262,6 +271,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jcb_nodeDataAttribute = new javax.swing.JComboBox();
         jl_selectNodeDataAttribute = new javax.swing.JLabel();
         jb_refreshNodeDataAttrs = new javax.swing.JButton();
+        jb_multipleColumns = new javax.swing.JButton();
+        jrb_singleColumn = new javax.swing.JRadioButton();
+        jrb_multipleColumns = new javax.swing.JRadioButton();
         jp_flowVisualization = new javax.swing.JPanel();
         jsl_levels = new javax.swing.JSlider();
         jl_flowVisualization = new javax.swing.JLabel();
@@ -409,15 +421,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_refreshNodeDataAttrs.setMinimumSize(new java.awt.Dimension(20, 20));
         jb_refreshNodeDataAttrs.setPreferredSize(new java.awt.Dimension(20, 20));
 
+        jb_multipleColumns.setText("Choose columns");
+
+        jrb_singleColumn.setText("single column");
+
+        jrb_multipleColumns.setText("multiple columns");
+
         javax.swing.GroupLayout jp_network_attrsLayout = new javax.swing.GroupLayout(jp_network_attrs);
         jp_network_attrs.setLayout(jp_network_attrsLayout);
         jp_network_attrsLayout.setHorizontalGroup(
                 jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_network_attrsLayout.createSequentialGroup()
+                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                .addComponent(jl_network_and_attrs)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jl_chooseNetwork)
-                                        .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                 .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -430,38 +450,56 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
-                                                .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
-                                .addComponent(jl_network_and_attrs)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                                .addComponent(jrb_singleColumn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                .addGap(57, 57, 57))
+                                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                                                .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                                                .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                        .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
+                                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                                        .addComponent(jb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, 120, Short.MAX_VALUE)
+                                                        .addComponent(jrb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                                .addContainerGap(14, Short.MAX_VALUE))
         );
         jp_network_attrsLayout.setVerticalGroup(
                 jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                 .addComponent(jl_network_and_attrs, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(12, 12, 12)
+                                .addGap(5, 5, 5)
                                 .addComponent(jl_chooseNetwork)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGap(1, 1, 1)
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jb_checkEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_refreshEdgeTypeAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addGap(25, 25, 25)
+                                                .addComponent(jrb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_multipleColumns))
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addGap(11, 11, 11)
+                                                .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(1, 1, 1)
+                                                .addComponent(jrb_singleColumn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addGap(8, 8, 8))
         );
 
         jp_flowVisualization.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -479,10 +517,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_colorScheme.setForeground(new java.awt.Color(102, 102, 102));
         jl_colorScheme.setText("Color scheme");
 
+        jl_color_min.setForeground(new java.awt.Color(102, 102, 102));
         jl_color_min.setText("Min");
 
+        jl_color_mid.setForeground(new java.awt.Color(102, 102, 102));
         jl_color_mid.setText("Mid");
 
+        jl_color_max.setForeground(new java.awt.Color(102, 102, 102));
         jl_color_max.setText("Max");
 
         jp_colorChooser_min.setBackground(new java.awt.Color(0, 0, 102));
@@ -534,10 +575,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_colorScheme1.setForeground(new java.awt.Color(102, 102, 102));
         jl_colorScheme1.setText("Edge width");
 
+        jl_edgeWidth_min.setForeground(new java.awt.Color(102, 102, 102));
         jl_edgeWidth_min.setText("Min");
 
+        jl_edgeWidth_mid.setForeground(new java.awt.Color(102, 102, 102));
         jl_edgeWidth_mid.setText("Mid");
 
+        jl_edgeWidth_max.setForeground(new java.awt.Color(102, 102, 102));
         jl_edgeWidth_max.setText("Max");
 
         jtxt_edgeWidth_min.setMinimumSize(new java.awt.Dimension(14, 14));
@@ -1457,6 +1501,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_saveSettings)))
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
     }
 
     private void setModels() {
@@ -1558,7 +1603,24 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jb_refreshNodeDataAttrsActionPerformed();
             }
         });
-
+        jrb_singleColumn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_singleColumnActionPerformed();
+            }
+        });
+        jrb_multipleColumns.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jrb_multipleColumnsActionPerformed();
+            }
+        });
+        jb_multipleColumns.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_multipleColumnsActionPerformed();
+            }
+        });
 
         //Flow visualization
         jsl_levels.addChangeListener(new ChangeListener() {
@@ -2014,15 +2076,128 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         Properties loopHandlingProps = getLoopHandlingProperties();
         if (multiSignalProps == null)
             return;
-
-        calculateFlowAction = new CalculateScoreFlowAction(
-                network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn, isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
-                edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
-                multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
-        if (jchb_CalculateSignificance.isSelected()) {
-            calculateFlowAction.setBootstrapProps(getBootstrapProperties());
+        if(jrb_multipleColumns.isSelected()){
+            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask=
+                    new CalculateScoreFlowMultipleColumnsTask(e, network,
+                            edgeTypeColumn, nodeLevelColumn,
+                            isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
+                            nodeDataProperties,
+                            multiSignalProps,loopHandlingProps, this);
+            TaskIterator taskIterator = new TaskIterator();
+            taskIterator.append(calculateScoreFlowMultipleColumnsTask);
+            PSFCActivator.taskManager.execute(taskIterator);
         }
-        calculateFlowAction.actionPerformed(e);
+//        if (selectedNodeDataColumns != null && !selectedNodeDataColumns.isEmpty()) {
+//            System.out.println("selected columns: " + selectedNodeDataColumns);
+//            for (CyColumn nextColumn : selectedNodeDataColumns) {
+//                System.out.println("Performing PSF for column " + nextColumn.getName());
+//
+//                calculateFlowAction = new CalculateScoreFlowAction(
+//                        network, edgeTypeColumn, nextColumn, nodeLevelColumn, isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
+//                        edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
+//                        multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
+//                if (jchb_CalculateSignificance.isSelected()) {
+//                    calculateFlowAction.setBootstrapProps(getBootstrapProperties());
+//                }
+//                calculateFlowAction.actionPerformed(e);
+//                int timeout = 10;
+//                int time = 0;
+//                while (!calculateFlowAction.done() && time < timeout) {
+//                    try {
+//                        Thread.sleep(100);
+//                        time++;
+//                    } catch (InterruptedException e1) {
+//                        e1.printStackTrace();
+//                    }
+//                }
+//
+//            }
+//        }
+        else {
+            calculateFlowAction = new CalculateScoreFlowAction(
+                    network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn, isOperatorColumn,
+                    nodeFunctionColumn, edgeIsBackwardColumn,
+                    edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
+                    multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
+            if (jchb_CalculateSignificance.isSelected()) {
+                calculateFlowAction.setBootstrapProps(getBootstrapProperties());
+            }
+            calculateFlowAction.actionPerformed(e);
+        }
+    }
+
+    class CalculateScoreFlowMultipleColumnsTask extends AbstractTask{
+        private final ActionEvent e;
+        private CyNetwork network;
+        private CyColumn edgeTypeColumn;
+        private CyColumn nodeLevelColumn;
+        private CyColumn isOperatorColumn;
+        private Properties nodeDataProperties;
+        private Properties multiSignalProps;
+        private Properties loopHandlingProps;
+        private CyColumn nodeFunctionColumn;
+        private CyColumn edgeIsBackwardColumn;
+        private PSFCPanel psfcPanel;
+
+        public CalculateScoreFlowMultipleColumnsTask(ActionEvent e, CyNetwork network,
+                                                     CyColumn edgeTypeColumn,
+                                                     CyColumn nodeLevelColumn,
+                                                     CyColumn isOperatorColumn,
+                                                     CyColumn nodeFunctionColumn,
+                                                     CyColumn edgeIsBackwardColumn,
+                                                     Properties nodeDataProperties,
+                                                     Properties multiSignalProps,
+                                                     Properties loopHandlingProps,
+                                                     PSFCPanel psfcPanel) {
+            this.network = network;
+            this.edgeTypeColumn = edgeTypeColumn;
+            this.nodeLevelColumn = nodeLevelColumn;
+            this.isOperatorColumn = isOperatorColumn;
+            this.nodeFunctionColumn = nodeFunctionColumn;
+            this.edgeIsBackwardColumn = edgeIsBackwardColumn;
+            this.nodeDataProperties = nodeDataProperties;
+            this.multiSignalProps = multiSignalProps;
+            this.loopHandlingProps = loopHandlingProps;
+            this.e = e;
+            this.psfcPanel = psfcPanel;
+        }
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            taskMonitor.setTitle("PSFC.CalculateFlowForMultipleColumnsTask");
+            if (selectedNodeDataColumns != null && !selectedNodeDataColumns.isEmpty()) {
+                taskMonitor.setStatusMessage("Selected columns: " + selectedNodeDataColumns);
+                for (CyColumn nextColumn : selectedNodeDataColumns) {
+                    taskMonitor.setStatusMessage("Performing PSF for column " + nextColumn.getName());
+
+                    calculateFlowAction = new CalculateScoreFlowAction(
+                            network, edgeTypeColumn, nextColumn, nodeLevelColumn, isOperatorColumn,
+                            nodeFunctionColumn, edgeIsBackwardColumn,
+                            edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
+                            multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(),
+                            psfcPanel);
+                    if (jchb_CalculateSignificance.isSelected()) {
+                        calculateFlowAction.setBootstrapProps(getBootstrapProperties());
+                    }
+                    if(cancelled){
+                        break;
+                    }
+                    calculateFlowAction.actionPerformed(e);
+                    int timeout = 10;
+                    int time = 0;
+
+                    while (!calculateFlowAction.done() && time < timeout) {
+                        try {
+                            Thread.sleep(100);
+                            time++;
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+
+                }
+            }
+        }
     }
 
     private void mapMinMaxSignals(CyNetwork network) {
@@ -2148,7 +2323,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 attributes[i++] = column.getName();
             }
             jcb_nodeDataAttribute.setModel(new DefaultComboBoxModel(attributes));
-
             //Select item from properties, if valid
             String edgeTypeAttr = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.NodeDataAttribute.getName());
             for (i = 0; i < jcb_nodeDataAttribute.getItemCount(); i++) {
@@ -2160,9 +2334,115 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     }
 
+
     private void jb_refreshNodeDataAttrsActionPerformed() {
         setjcb_nodeDataAttributes();
         enableButtons();
+    }
+
+    private void jrb_singleColumnActionPerformed() {
+        enableButtons();
+    }
+
+    private void jrb_multipleColumnsActionPerformed() {
+        enableButtons();
+    }
+
+    private void jb_multipleColumnsActionPerformed() {
+        CyNetwork network = getSelectedNetwork();
+        Collection<CyColumn> columns = network.getDefaultNodeTable().getColumns();
+        MultipleColumnSelection multipleColumnSelection = new MultipleColumnSelection(columns);
+        multipleColumnSelection.setVisible(true);
+    }
+
+    private class MultipleColumnSelection extends JFrame {
+        private Collection<CyColumn> columns;
+        private javax.swing.JButton jb_select;
+        private javax.swing.JList jl_columnList;
+        private javax.swing.JScrollPane jsp_columnList;
+
+
+        MultipleColumnSelection(Collection<CyColumn> columns) {
+            this.columns = columns;
+            initComponents();
+        }
+
+        private void initComponents() {
+            jb_select = new javax.swing.JButton();
+            jsp_columnList = new javax.swing.JScrollPane();
+            jl_columnList = new javax.swing.JList();
+
+            setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+            jb_select.setText("Select");
+            jb_select.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    jb_selectActionPerformed();
+                }
+            });
+
+            final String[] strings;
+            if (columns != null) {
+                strings = new String[columns.size()];
+                int i = 0;
+                for (CyColumn column : columns) {
+                    strings[i++] = column.getName();
+                }
+            } else {
+                strings = new String[]{"null columns"};
+            }
+
+            jl_columnList.setModel(new javax.swing.AbstractListModel() {
+                public int getSize() {
+                    return strings.length;
+                }
+
+                public Object getElementAt(int i) {
+                    return strings[i];
+                }
+            });
+            jsp_columnList.setViewportView(jl_columnList);
+
+            javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+            getContentPane().setLayout(layout);
+            layout.setHorizontalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addContainerGap()
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jsp_columnList)
+                                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                                    .addGap(0, 154, Short.MAX_VALUE)
+                                                    .addComponent(jb_select)))
+                                    .addContainerGap())
+            );
+            layout.setVerticalGroup(
+                    layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                    .addGap(4, 4, 4)
+                                    .addComponent(jsp_columnList, javax.swing.GroupLayout.PREFERRED_SIZE, 139, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                    .addComponent(jb_select)
+                                    .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            );
+            pack();
+        }
+
+        private void jb_selectActionPerformed() {
+            selectedNodeDataColumns = new ArrayList<CyColumn>();
+            List<String> selectedValues = jl_columnList.getSelectedValuesList();
+            for (String value : selectedValues) {
+                Iterator<CyColumn> iterator = columns.iterator();
+                while (iterator.hasNext()) {
+                    CyColumn next = iterator.next();
+                    if (next.getName().equals(value))
+                        selectedNodeDataColumns.add(next);
+                }
+            }
+            setVisible(false);
+            enableButtons();
+        }
+
     }
 
     private void jb_refreshEdgeTypeAttrsActionPerformed() {
@@ -2212,8 +2492,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 signals[minNodeSignalIndex], signals[midNodeSignalIndex], signals[maxNodeSignalIndex],
                 levels,
                 signals[minEdgeSignalIndex], signals[midEdgeSignalIndex], signals[maxEdgeSignalIndex],
-                networkMinMaxEdgeWidthMap.get(network)[0], networkMinMaxEdgeWidthMap.get(network)[1],networkMinMaxEdgeWidthMap.get(network)[2],
-                networkMinMaxNodeColorMap.get(network)[0],networkMinMaxNodeColorMap.get(network)[1], networkMinMaxNodeColorMap.get(network)[2],
+                networkMinMaxEdgeWidthMap.get(network)[0], networkMinMaxEdgeWidthMap.get(network)[1], networkMinMaxEdgeWidthMap.get(network)[2],
+                networkMinMaxNodeColorMap.get(network)[0], networkMinMaxNodeColorMap.get(network)[1], networkMinMaxNodeColorMap.get(network)[2],
                 this);
         visualizeFlowAction.actionPerformed(e);
     }
@@ -2330,7 +2610,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jtxt_edgeWidth_min.setText(DoubleFormatter.formatDouble(newValue) + "");
     }
 
-    private void jtxt_edgeWidth_midActionPerformed(){
+    private void jtxt_edgeWidth_midActionPerformed() {
         double minValue = networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[0];
         double maxValue = networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[2];
         double oldValue = networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[1];
@@ -2341,15 +2621,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jtxt_edgeWidth_mid.setText(oldValue + "");
             return;
         }
-        if(newValue < minValue || newValue > maxValue) {
+        if (newValue < minValue || newValue > maxValue) {
             jtxt_edgeWidth_mid.setText(oldValue + "");
             return;
         }
         networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[1] = newValue;
-        jtxt_edgeWidth_mid.setText(DoubleFormatter.formatDouble(newValue)+"");
+        jtxt_edgeWidth_mid.setText(DoubleFormatter.formatDouble(newValue) + "");
     }
 
-    private void jtxt_edgeWidth_maxActionPerformed(){
+    private void jtxt_edgeWidth_maxActionPerformed() {
         double midValue = networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[1];
         double oldValue = networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[2];
         double newValue;
@@ -2359,12 +2639,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             jtxt_edgeWidth_max.setText(oldValue + "");
             return;
         }
-        if(newValue < midValue) {
+        if (newValue < midValue) {
             jtxt_edgeWidth_max.setText(oldValue + "");
             return;
         }
         networkMinMaxEdgeWidthMap.get(getSelectedNetwork())[2] = newValue;
-        jtxt_edgeWidth_max.setText(DoubleFormatter.formatDouble(newValue)+"");
+        jtxt_edgeWidth_max.setText(DoubleFormatter.formatDouble(newValue) + "");
     }
 
     private void jchb_changeNetworkLayoutActionPerformed() {
@@ -2398,7 +2678,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     private void activateFlowVisualizationPanel(CyNetwork network) {
         HashMap<Integer, HashMap<CyNode, Double>> levelNodeSignalMap = networkLevelNodeSignalMap.get(network);
-        if (levelNodeSignalMap == null) {
+        if (levelNodeSignalMap == null || jrb_multipleColumns.isSelected()) {
             jsl_levels.setEnabled(false);
             jb_flow_home.setEnabled(false);
             jb_flow_rv.setEnabled(false);
@@ -3016,6 +3296,10 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jrb_min.setEnabled(false);
         jrb_mean.setEnabled(false); */
 
+        jbg_singleMultipleColumns = new ButtonGroup();
+        jbg_singleMultipleColumns.add(jrb_singleColumn);
+        jbg_singleMultipleColumns.add(jrb_multipleColumns);
+        jrb_singleColumn.setSelected(true);
         jbg_bootstrapType = new ButtonGroup();
         jbg_bootstrapType.add(jrb_SampleCentric);
         jbg_bootstrapType.add(jrb_GeneCentric);
@@ -3292,7 +3576,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             setTabIcon(0, getRedFlagIcon());
         } else {
             jb_sortNetwork.setEnabled(true);
-            boolean nodeDataColumn = getNodeDataColumn() != null;
+            boolean nodeDataColumn;
+            if (jrb_singleColumn.isSelected()) {
+                nodeDataColumn = getNodeDataColumn() != null;
+                jcb_nodeDataAttribute.setEnabled(true);
+                jb_multipleColumns.setEnabled(false);
+            } else {
+                jcb_nodeDataAttribute.setEnabled(false);
+                jb_multipleColumns.setEnabled(true);
+                nodeDataColumn = (selectedNodeDataColumns != null && !selectedNodeDataColumns.isEmpty());
+            }
             boolean edgeTypeColumn = getEdgeTypeColumn() != null;
             boolean config = (edgeTypeRuleNameConfigFile != null &&
                     edgeTypeRuleNameConfigFile.exists());

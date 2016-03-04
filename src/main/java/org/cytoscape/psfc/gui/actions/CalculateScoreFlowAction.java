@@ -23,6 +23,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -52,10 +53,12 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private File scoreBackupFile;
     private String networkName;
     private boolean calculateSignificance;
+    private HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap; //to be used by backupscorestask, since the signals may later be updtaed by bootstrap
 
 
     private Properties bootstrapProps;
     private PSF psf;
+    private boolean done = false;
     HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap =
             new HashMap<Integer, HashMap<CyNode, Double>>();
 
@@ -93,7 +96,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
 
         this.networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
-        this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + ".xls");
+        this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + nodeDataColumn.getName() + ".xls");
         try {
             boolean success = scoreBackupFile.createNewFile();
             if (!success) {
@@ -121,6 +124,10 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
     public void setBootstrapProps(Properties bootstrapProps) {
         this.bootstrapProps = bootstrapProps;
+    }
+
+    public boolean done() {
+        return done;
     }
 
     private class CalculateScoreFlowTask extends AbstractTask {
@@ -228,10 +235,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
             //Delete previous signal and p value columns if present
             taskMonitor.setStatusMessage("Deleting PSFC columns, if previously present.");
-            NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultNodeTable(), EColumnNames.PSFC_NODE_SIGNAL.getName());
-            NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultNodeTable(), EColumnNames.PSFC_EDGE_SIGNAL.getName());
-            NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_PVAL.getName());
-            NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_FINAL.getName());
+            int deleted;
+            deleted = NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultNodeTable(), EColumnNames.PSFC_NODE_SIGNAL.getName());
+            deleted = NetworkCyManager.deleteAttributeColumnByPrefix(network.getDefaultEdgeTable(), EColumnNames.PSFC_EDGE_SIGNAL.getName());
+            deleted = NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_PVAL.getName());
+            deleted = NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_FINAL.getName());
 
 
             //Instantiate new PSF class with generated graph, and perform pathway flow calculation
@@ -362,6 +370,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 throw new Exception("PSFC::Exception " + "PSFC::Exception " + e.getMessage());
             } finally {
                 PSFCActivator.getLogger().debug("PSFC Score Flow calculation finished");
+                levelNodeSignalMap = psf.getLevelNodeSignalMap();
                 System.gc();
             }
 
@@ -433,8 +442,12 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private class BackupResultsTask extends AbstractTask {
         boolean cancelled = false;
 
+
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            if(levelNodeSignalMap == null){
+                throw new Exception("No node signals available for score backup");
+            }
             taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
             try {
                 PrintWriter writer = new PrintWriter(scoreBackupFile);
@@ -442,6 +455,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 for (int level : psf.getLevelNodesMap().keySet()) {
                     columnNames += "\tsignal_" + level;
                 }
+
 
                 HashMap<Node, Double> targetPValueMap = null;
 
@@ -461,10 +475,13 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                             + node.getLevel();
 
                     for (Integer level : psf.getLevelNodesMap().keySet()) {
-                        if (level >= node.getLevel())
-                            score = node.getSignal();
+                        if (level >= node.getLevel()) {
+//                            score = node.getSignal();
+                            score = levelNodeSignalMap.get(node.getLevel()).get(node);
+                        }
                         else
                             score = node.getValue();
+
                         line += "\t" + score;
                     }
                     if (targetPValueMap != null && !targetPValueMap.isEmpty())
@@ -481,6 +498,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 throw new Exception("PSFC::Exception " + "Problem writing node scores to file "
                         + scoreBackupFile.getAbsolutePath()
                         + ". Reason: " + e.getMessage(), e);
+            }
+            finally {
+                done = true;
             }
 
         }

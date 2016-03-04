@@ -7,7 +7,7 @@ public enum EColumnNames {
     Level("psfc.level"),
     PSFC_NODE_SIGNAL("psf_l"),
     PSFC_EDGE_SIGNAL("psf_l"),
-    PSFC_PVAL("psfc_pval"),
+    PSFC_PVAL("psf_pval"),
     PSFC_FINAL("psf_final"),
     PSFC_IS_BACKWARD("psf_isbackward"),
     PSFC_isOperator("psf_isOperator"),

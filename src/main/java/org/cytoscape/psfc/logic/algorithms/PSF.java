@@ -94,6 +94,7 @@ public class PSF {
         loopHandlingProps.put(ELoopHandlingProps.MaxNumOfIterations.getName(), ELoopHandlingProps.MAX_NUM_OF_ITERATION_DEFAULT);
     }
 
+
     public void calculateFlow() throws Exception {
         if (!silentMode) {
             logger.debug("PSF calculation started");
@@ -549,8 +550,8 @@ public class PSF {
                 for (Edge edge : edges) {
                     double source;
                     double target;
-                    if(splitOn == EMultiSignalProps.SPLIT_OUTGOING) {
-                        source = edge.getSource().getSignal()*edge.getWeight();
+                    if (splitOn == EMultiSignalProps.SPLIT_OUTGOING) {
+                        source = edge.getSource().getSignal() * edge.getWeight();
                         target = edge.getTarget().getValue();
                     } else {
                         source = edge.getSource().getSignal();
@@ -572,6 +573,7 @@ public class PSF {
             }
 
         }
+
         /**
          * For each node at nextLevel, update the signals of the edges between that node
          * and its parent nodes from previous levels, by applying rules for edge type to
