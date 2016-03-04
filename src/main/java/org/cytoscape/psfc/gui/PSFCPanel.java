@@ -24,10 +24,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 
@@ -2196,6 +2193,83 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     }
 
                 }
+                //create a summary backup file
+                String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
+                File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
+                HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
+                HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
+                ArrayList<String> rownames  = new ArrayList<>();
+                boolean firstFile = true;
+                for (CyColumn nextColumn : selectedNodeDataColumns) {
+                    File scoreBackupFile = new File(PSFCActivator.getPSFCDir(),
+                            networkName + nextColumn.getName() + ".xls");
+                    ArrayList<Double> scores = new ArrayList<>();
+                    ArrayList<Double> pvals = new ArrayList<>();
+
+                    if(scoreBackupFile.exists()){
+                        BufferedReader reader = new BufferedReader(new FileReader(scoreBackupFile));
+                        String line;
+                        int ncol = 0, scoreInd = 0, pvalInd =0 ;
+                        while ((line = reader.readLine()) != null){
+                            String[] tokens = line.split("\t");
+                            if(line.startsWith("SUID")){
+                                ncol = tokens.length;
+                                if(ncol < 2)
+                                    throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file " + scoreBackupFile + " was less than 2");
+                                scoreInd = ncol - 2;
+                                pvalInd = ncol - 1;
+                            } else {
+                                if(firstFile) {
+                                    rownames.add(tokens[1]);
+                                }
+
+                                try {
+                                    double score = Double.parseDouble(tokens[scoreInd]);
+                                    scores.add(score);
+                                } catch (NumberFormatException e1) {
+                                    throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                            "The value in " + scoreBackupFile.getName() + " at column "
+                                            + scoreInd + " and rowname " + tokens[1] +
+                                            " was not convertable to double");
+                                }
+
+
+                                try {
+                                    double pval = Double.parseDouble(tokens[pvalInd]);
+                                    pvals.add(pval);
+                                } catch (NumberFormatException e1) {
+                                    throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                            "The value in " + scoreBackupFile.getName() + " at column "
+                                            + pvalInd + " and rowname " + tokens[1] +
+                                            " was not convertable to double");
+                                }
+
+                            }
+                        }
+                        reader.close();
+                        columnScoreMap.put(nextColumn, scores);
+                        columnPvalMap.put(nextColumn, pvals);
+                        firstFile = false;
+                    } else {
+                        throw new Exception("PSFC: Error while generating summary file. The backup file: " + scoreBackupFile.getAbsolutePath() + " does not exist");
+                    }
+                }
+                PrintWriter writer = new PrintWriter(summaryFile);
+                String header = "Name";
+                for(CyColumn nextColumn : selectedNodeDataColumns){
+                    header += String.format("\tscore.%s\tpval.%s", nextColumn.getName(), nextColumn.getName());
+                }
+                writer.write(header);
+
+                for(int i =0; i < rownames.size(); i++){
+                    String line = rownames.get(i);
+                    for(CyColumn key : columnScoreMap.keySet()){
+                        line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
+                    }
+                    writer.append("\n" + line);
+                }
+                writer.close();
+                taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
             }
         }
     }
