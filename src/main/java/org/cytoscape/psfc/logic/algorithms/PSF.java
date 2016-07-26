@@ -5,7 +5,6 @@ import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
-import org.cytoscape.psfc.logic.structures.GraphTestCases;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
