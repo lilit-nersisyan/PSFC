@@ -472,7 +472,7 @@ public class PSF {
         }
 
         /**
-         * For each not at level, assemble the signals of the edges between that node
+         * For each node at level, assemble the signals of the edges between that node
          * and its parent nodes from previous levels, either adding or multiplying them together.
          * The node signal is overridden by the assembled signal.
          *
@@ -501,6 +501,15 @@ public class PSF {
             }
         }
 
+        /**
+         * Creates an ArrayList of Edges between a node and its parentNodes depending on the loopMode.
+         * In case of  precomputeMode, only the backward edges are collected.
+         * In case of loopMode, all the edges are collected.
+         * Otherwise, all the edges except for backwards are collected.
+         * @param node
+         * @param parentNodes
+         * @return
+         */
         private ArrayList<Edge> collectEdges(Node node,ArrayList<Node> parentNodes){
             ArrayList<Edge> edges = new ArrayList<Edge>();
             for (Node parentNode : parentNodes) {
