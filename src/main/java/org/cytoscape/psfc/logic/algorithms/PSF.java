@@ -3,6 +3,7 @@ package org.cytoscape.psfc.logic.algorithms;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
@@ -10,7 +11,12 @@ import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 
+import java.lang.reflect.Array;
 import java.util.*;
+
+import static com.google.common.primitives.Doubles.max;
+import static com.google.common.primitives.Doubles.min;
+import static com.sun.javafx.util.Utils.sum;
 
 /**
  * PUBLIC CLASS PSF
@@ -426,19 +432,8 @@ public class PSF {
         private void updateSignalsByCascade(int nextLevel) throws Exception {
             for (Node node : levelNodesMap.get(nextLevel)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                for (Node parentNode : parentNodes) {
-                    Edge edge = graph.getEdge(parentNode, node);
-                    if (precomputeMode) {
-                        if (edge.isBackward())
-                            edges.add(edge);
-                    } else if (loopMode) {
-                        edges.add(edge);
-                    } else {
-                        if (!edge.isBackward())
-                            edges.add(edge);
-                    }
-                }
+                ArrayList<Edge> edges = collectEdges(node, parentNodes);
+
 
                 if (orderRule == EMultiSignalProps.ORDER_RANKS) {
                     Collections.sort(edges, new Comparator<Edge>() {
@@ -482,44 +477,113 @@ public class PSF {
         }
 
         /**
-         * For each not at level, assemble the signals of the edges between that node
+         * For each node at level, assemble the signals of the edges between that node
          * and its parent nodes from previous levels, either adding or multiplying them together.
          * The node signal is overridden by the assembled signal.
          *
          * @param level
          */
-        private void processMultipleSignals(int level) {
+        private void processMultipleSignals(int level) throws Exception {
             for (Node node : levelNodesMap.get(level)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                for (Node parentNode : parentNodes) {
-                    Edge edge = graph.getEdge(parentNode, node);
-                    if (precomputeMode) {
-                        if (edge.isBackward())
-                            edges.add(edge);
-                    } else if (loopMode) {
-                        edges.add(edge);
-                    } else {
-                        if (!edge.isBackward())
-                            edges.add(edge);
-                    }
-                }
-                double signal;
-                if (multiRule == EMultiSignalProps.ADDITION) {
-                    signal = 0;
-                    for (Edge edge : edges) {
-                        signal += edge.getSignal();
-                    }
 
-                } else {
-                    signal = 1;
-                    for (Edge edge : edges) {
-                        signal *= edge.getSignal();
+                ArrayList<Edge> edges = collectEdges(node, parentNodes);
+                double signal;
+                String function = node.getFunction();
+                if (function != null){
+                    try {
+                        signal = applyFunction(function, edges);
+                    } catch (Exception e) {
+                        throw new Exception("Problem handling function " + function + " at node " + node.toString());
                     }
-//                    node.setSignal(signal, iteration);
+                } else {
+                    if (multiRule == EMultiSignalProps.ADDITION) {
+                        signal = 0;
+                        for (Edge edge : edges) {
+                            signal += edge.getSignal();
+                        }
+                    } else {
+                        signal = 1;
+                        for (Edge edge : edges) {
+                            signal *= edge.getSignal();
+                        }
+                    }
                 }
                 node.setSignal(signal, iteration);
             }
+        }
+
+        /**
+         * Functions are from the list:
+         *  min
+         *  max
+         *  sum
+         *  prod
+         *
+         * For now, these function are applied on all of the input edges.
+         * Later, the functions will allow for any operation on any subset of the edges.
+         *
+         * @param function
+         * @param edges
+         * @return
+         */
+        private double applyFunction(String function, ArrayList<Edge> edges) throws Exception {
+            double[] signals = new double[edges.size()];
+            for(int i = 0; i < signals.length; i++){
+                signals[i] = edges.get(i).getSignal();
+            }
+            double signal = Double.NaN;
+
+            switch (function){
+                case "min":
+                    signal =min(signals);
+                    break;
+                case "max":
+                    signal = max(signals);
+                    break;
+                case "sum":
+                    signal = 0;
+                    for(double s : signals){
+                        signal += s;
+                    }
+                    break;
+                case "prod":
+                    signal = 1;
+                    for(double s : signals){
+                        signal *= s;
+                    }
+                    break;
+                default:
+                    throw new Exception("Function " + function +
+                            " is not defined in PSFC: use either of {min, max, sum, prod}");
+            }
+            return signal;
+        }
+
+        /**
+         * Creates an ArrayList of Edges between a node and its parentNodes depending on the loopMode.
+         * In case of  precomputeMode, only the backward edges are collected.
+         * In case of loopMode, all the edges are collected.
+         * Otherwise, all the edges except for backwards are collected.
+         * @param node
+         * @param parentNodes
+         * @return
+         */
+        private ArrayList<Edge> collectEdges(Node node,ArrayList<Node> parentNodes){
+            ArrayList<Edge> edges = new ArrayList<Edge>();
+            for (Node parentNode : parentNodes) {
+                Edge edge = graph.getEdge(parentNode, node);
+                if (precomputeMode) {
+                    if (edge.isBackward())
+                        edges.add(edge);
+                } else if (loopMode) {
+                    edges.add(edge);
+                } else {
+                    if (!edge.isBackward())
+                        edges.add(edge);
+                }
+            }
+            return edges;
         }
 
 //        private void updateEdgeSignals(int level) throws Exception {
@@ -532,19 +596,8 @@ public class PSF {
         private void updateEdgeSignals(int level) throws Exception {
             for (Node node : levelNodesMap.get(level)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                for (Node parentNode : parentNodes) {
-                    Edge edge = graph.getEdge(parentNode, node);
-                    if (precomputeMode) {
-                        if (edge.isBackward())
-                            edges.add(edge);
-                    } else if (loopMode) {
-                        edges.add(edge);
-                    } else {
-                        if (!edge.isBackward())
-                            edges.add(edge);
-                    }
-                }
+                ArrayList<Edge> edges = collectEdges(node, parentNodes);
+
 
                 for (Edge edge : edges) {
                     double source;
@@ -573,124 +626,6 @@ public class PSF {
 
         }
 
-        /**
-         * For each node at nextLevel, update the signals of the edges between that node
-         * and its parent nodes from previous levels, by applying rules for edge type to
-         * source node signal and target node value.
-         *
-         * @param level
-         */
-        private void updateEdgeSignals_incoming(int level) throws Exception {
-            for (Node node : levelNodesMap.get(level)) {
-                ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                for (Node parentNode : parentNodes) {
-                    Edge edge = graph.getEdge(parentNode, node);
-                    if (precomputeMode) {
-                        if (edge.isBackward())
-                            edges.add(edge);
-                    } else if (loopMode) {
-                        edges.add(edge);
-                    } else {
-                        if (!edge.isBackward())
-                            edges.add(edge);
-                    }
-                }
-
-                for (Edge edge : edges) {
-                    double source = edge.getSource().getSignal();
-                    double target = edge.getWeight() * edge.getTarget().getValue();
-                    double signal;
-                    try {
-                        signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
-                    } catch (Exception e) {
-                        String message = "Exception at rule calculation for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage();
-//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
-                        logger.debug(message);
-                        throw new Exception(message, e);
-                    }
-                    edge.setSignal(signal);
-                }
-
-            }
-
-        }
-
-        /**
-         * For each not at prevLevel, update the signals of the edges between that node
-         * and its child nodes from next levels, by applying rules for edge type to
-         * source node signal and target node value.
-         *
-         * @param level
-         */
-        private void updateEdgeSignals_outgoing(int level) throws Exception {
-            int prevLevel = level - 1;
-            //new code
-
-            //end of new code
-            for (Node node : levelNodesMap.get(prevLevel)) {
-                ArrayList<Node> childNodes = graph.getChildNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                ArrayList<Edge> backwardEdges = new ArrayList<Edge>();
-                ArrayList<Edge> forwardEdges = new ArrayList<Edge>();
-                //precomute mode - add only backward edges
-                if (loopMode || precomputeMode) {
-                    ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                    for (Node parentNode : parentNodes) {
-                        Edge edge = graph.getEdge(parentNode, node);
-                        if (edge.isBackward())
-                            backwardEdges.add(edge);
-                    }
-                }
-
-                if (loopMode || !precomputeMode) {
-                    for (Node childNode : childNodes) {
-                        Edge edge = graph.getEdge(node, childNode);
-                        if (!edge.isBackward())
-                            forwardEdges.add(edge);
-                    }
-                }
-                if (loopMode) {
-                    edges.addAll(backwardEdges);
-                    edges.addAll(forwardEdges);
-                } else if (precomputeMode) {
-                    edges.addAll(backwardEdges);
-                } else {
-                    edges.addAll(forwardEdges);
-                }
-//                //LoopMode add backward and forward edges
-//                for (Node childNode : childNodes) {
-//                    Edge edge = graph.getEdge(node, childNode);
-//                    if(precomputeMode) {
-//                        if (edge.isBackward())
-//                            edges.add(edge);
-//                    } else if(loopMode){
-//                        edges.add(edge);
-//                    } else{
-//                        if(!edge.isBackward())
-//                            edges.add(edge);
-//                    }
-//                }
-                for (Edge edge : edges) {
-                    double source = edge.getWeight() * edge.getSource().getSignal();
-                    double target = edge.getTarget().getValue();
-                    double signal = 0;
-                    try {
-                        signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
-                    } catch (Exception e) {
-                        String message = "Exception at rule calculation for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage();
-//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
-                        logger.debug(message);
-                        throw new Exception(message, e);
-                    }
-                    edge.setSignal(signal);
-                }
-
-            }
-        }
-
 
         /**
          * Assign edge weights by splitting the edges between each node
@@ -706,19 +641,7 @@ public class PSF {
         private void assignEdgeWeights_incoming(int nextLevel) {
             for (Node node : levelNodesMap.get(nextLevel)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = new ArrayList<Edge>();
-                for (Node parentNode : parentNodes) {
-                    Edge edge = graph.getEdge(parentNode, node);
-                    if (precomputeMode) {
-                        if (edge.isBackward())
-                            edges.add(edge);
-                    } else if (loopMode) {
-                        edges.add(edge);
-                    } else {
-                        if (!edge.isBackward())
-                            edges.add(edge);
-                    }
-                }
+                ArrayList<Edge> edges = collectEdges(node, parentNodes);
 
                 if (splitRule == EMultiSignalProps.SPLIT_EQUAL)
                     for (Edge edge : edges) {

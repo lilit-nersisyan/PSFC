@@ -13,8 +13,10 @@ import org.cytoscape.model.CyEdge;
 import org.cytoscape.model.CyNetwork;
 import org.cytoscape.model.CyNode;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
+import org.jgraph.JGraph;
 import org.jgrapht.graph.DefaultDirectedWeightedGraph;
 
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.TreeMap;
@@ -513,6 +515,13 @@ public class Graph {
                 targetNodes.add(node);
         }
         return targetNodes;
+    }
+
+    public void visualize(){
+        JGraph jGraph = new JGraph(new org.jgrapht.ext.JGraphModelAdapter(jgraph));
+        JFrame jFrame = new JFrame();
+        jFrame.getContentPane().add(jGraph);
+        jFrame.setVisible(true);
     }
 
     @Override

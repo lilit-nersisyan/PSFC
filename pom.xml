@@ -18,7 +18,8 @@
     <artifactId>psfc</artifactId>
     <packaging>bundle</packaging>
     <name>PSFC</name>
-    <version>1.0.3</version>
+    <version>1.1.0</version>
+
     <build>
         <plugins>
             <plugin>
@@ -117,11 +118,11 @@
             <version>${cytoscape.api.version}</version>
             <scope>provided</scope>
         </dependency>
-       <dependency>
+        <dependency>
             <groupId>org.cytoscape</groupId>
             <artifactId>service-api</artifactId>
             <version>${cytoscape.api.version}</version>
-           <scope>provided</scope>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.osgi</groupId>
@@ -181,9 +182,22 @@
         </dependency>
         <dependency>
             <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-ext</artifactId>
+            <version>0.9.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jgrapht</groupId>
             <artifactId>jgrapht-core</artifactId>
             <version>0.9.0</version>
         </dependency>
+
+        <dependency>
+            <groupId>jgraph</groupId>
+            <artifactId>jgraph</artifactId>
+            <version>5.13.0.0</version>
+        </dependency>
+
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>

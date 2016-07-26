@@ -1,6 +1,7 @@
 package org.cytoscape.psfc.gui.actions;
 
 import org.cytoscape.application.swing.AbstractCyAction;
+import org.cytoscape.application.swing.CyNodeViewContextMenuFactory;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
@@ -26,6 +27,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Properties;
 
 /**
@@ -203,6 +205,20 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             } catch (Exception e) {
                 throw new Exception("PSFC::Exception " + e.getMessage(), e);
             }
+
+            // Retrieving node scores from CyTable and keeping them in graph nodes
+            taskMonitor.setStatusMessage("Retrieving node functions");
+            HashMap<CyNode, String> cyNodeFunctionMap;
+            try {
+                cyNodeFunctionMap = getCyNodeFunctionMap();
+            } catch (Exception e) {
+                throw new Exception("PSFC::Exception " + "Node functions could not be retrieved from the column " + nodeFunctionColumn.getName());
+            }
+            try {
+                GraphManager.assignNodeFunctions(graph, cyNodeFunctionMap);
+            } catch (Exception e) {
+                throw new Exception("PSFC::Exception " + e.getMessage(), e);
+            }
             taskMonitor.setProgress(0.2);
 
             //If edge weights are user supplied, take them from CyTable and keep in graph edges
@@ -244,7 +260,8 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
             //Instantiate new PSF class with generated graph, and perform pathway flow calculation
             try {
-                psf = new PSF(graph, RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
+                psf = new PSF(graph,
+                        RuleFilesParser.parseSimpleRules(edgeTypeRuleNameConfigFile, ruleConfigFile),
                         PSFCActivator.getLogger());
                 psf.setNodeDataProps(nodeDataProps);
                 psf.setMultiSignalProps(multiSignalProps);
@@ -270,7 +287,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 try {
 //                    psf.calculateFlow();
                     psfThread.run();
-                    if(!success){
+                    if (!success) {
                         throw new Exception(errorMessage);
                     }
                 } catch (Exception e) {
@@ -375,8 +392,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             }
 
         }
+
         @Override
-        public void cancel(){
+        public void cancel() {
 //            psfThread.interrupt();
             psf.setCancelled(true);
 
@@ -405,6 +423,35 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 cyEdgeIsBackwardMap.put(cyEdge, isBackward);
             }
             return cyEdgeIsBackwardMap;
+        }
+
+        private HashMap<CyNode, String> getCyNodeFunctionMap() throws Exception {
+            HashMap<CyNode, String> map = new HashMap<>();
+            String attr = nodeFunctionColumn.getName();
+            for (Object cyNodeObj : network.getNodeList()) {
+                CyNode cyNode = (CyNode) cyNodeObj;
+                CyRow row = network.getDefaultNodeTable().getRow(cyNode.getSUID());
+                Object obj;
+                try {
+                    obj = row.get(attr, nodeFunctionColumn.getType());
+                } catch (Exception e) {
+                    throw new Exception("Error while retrieving node functions from row " +
+                            row.toString() + ". Reason: " + e.getMessage());
+                }
+                String function = null;
+                if(obj == null)
+                    continue;
+                if(obj instanceof String){
+                    String objV = (String) obj;
+                    if (!objV.equals(""))
+                        function = objV;
+                } else {
+                    throw new Exception("the function column " + nodeFunctionColumn.getName() +
+                            " must be String");
+                }
+                map.put(cyNode,function);
+            }
+            return map;
         }
 
         private HashMap<CyNode, Double> getCyNodeDataMap() throws Exception {
@@ -467,7 +514,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 writer.append(columnNames);
                 double score;
                 for (Node node : psf.getGraph().getNodes()) {
-                    if(cancelled)
+                    if (cancelled)
                         break;
                     CyNode cyNode = psf.getGraph().getCyNode(node);
                     String line = cyNode.getSUID().toString() + "\t"
@@ -504,8 +551,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             }
 
         }
+
         @Override
-        public void cancel(){
+        public void cancel() {
             cancelled = true;
             System.gc();
         }
@@ -568,9 +616,10 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
             }
         }
+
         @Override
-        public void cancel(){
-            if(bootstrap != null)
+        public void cancel() {
+            if (bootstrap != null)
                 bootstrap.setCancelled(true);
             System.gc();
         }
