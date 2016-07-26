@@ -542,7 +542,7 @@ public class PSF {
                     signal = max(signals);
                     break;
                 case "sum":
-                    signal = 1;
+                    signal = 0;
                     for(double s : signals){
                         signal += s;
                     }
