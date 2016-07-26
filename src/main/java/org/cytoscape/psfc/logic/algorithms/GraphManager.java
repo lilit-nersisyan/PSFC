@@ -124,6 +124,21 @@ public class GraphManager {
     }
 
     /**
+     * Takes the operator functions from <code>CyNode</code> : <code>String</code> map and keeps them in
+     * respective <code>Node</code>s in the graph.
+     * @param graph Graph containing the Nodes to be mapped
+     * @param cyNodeFunctionMap map containing <code>CyNode</code> : function mapping
+     * @throws Exception if a <code>Node</code> does not exist for any <code>CyNode</code>
+     */
+    public static void assignNodeFunctions(Graph graph, HashMap<CyNode, String> cyNodeFunctionMap) throws Exception {
+        for (CyNode cyNode : cyNodeFunctionMap.keySet()){
+            Node node = graph.getNode(cyNode);
+            if(node == null)
+                throw new Exception("No node exists for CyNode " + cyNode.getSUID());
+            graph.getNode(cyNode).setFunction(cyNodeFunctionMap.get(cyNode));
+        }
+    }
+    /**
      * Takes values from given <code>CyEdge</code> : <code>Double</code>-weight map and keeps them in
      * respective <code>Edge</code>s in the graph.
      * @param graph Graph containing the Edges to be mapped
@@ -216,4 +231,6 @@ public class GraphManager {
         }
         return cyEdgeIsBackwardMap;
     }
+
+
 }

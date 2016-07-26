@@ -3,6 +3,7 @@ package org.cytoscape.psfc.logic.algorithms;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.GraphTestCases;
@@ -13,6 +14,10 @@ import org.cytoscape.psfc.properties.ENodeDataProps;
 
 import java.lang.reflect.Array;
 import java.util.*;
+
+import static com.google.common.primitives.Doubles.max;
+import static com.google.common.primitives.Doubles.min;
+import static com.sun.javafx.util.Utils.sum;
 
 /**
  * PUBLIC CLASS PSF
@@ -478,27 +483,81 @@ public class PSF {
          *
          * @param level
          */
-        private void processMultipleSignals(int level) {
+        private void processMultipleSignals(int level) throws Exception {
             for (Node node : levelNodesMap.get(level)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
 
                 ArrayList<Edge> edges = collectEdges(node, parentNodes);
                 double signal;
-                if (multiRule == EMultiSignalProps.ADDITION) {
-                    signal = 0;
-                    for (Edge edge : edges) {
-                        signal += edge.getSignal();
+                String function = node.getFunction();
+                if (function != null){
+                    try {
+                        signal = applyFunction(function, edges);
+                    } catch (Exception e) {
+                        throw new Exception("Problem handling function " + function + " at node " + node.toString());
                     }
-
                 } else {
-                    signal = 1;
-                    for (Edge edge : edges) {
-                        signal *= edge.getSignal();
+                    if (multiRule == EMultiSignalProps.ADDITION) {
+                        signal = 0;
+                        for (Edge edge : edges) {
+                            signal += edge.getSignal();
+                        }
+                    } else {
+                        signal = 1;
+                        for (Edge edge : edges) {
+                            signal *= edge.getSignal();
+                        }
                     }
-//                    node.setSignal(signal, iteration);
                 }
                 node.setSignal(signal, iteration);
             }
+        }
+
+        /**
+         * Functions are from the list:
+         *  min
+         *  max
+         *  sum
+         *  prod
+         *
+         * For now, these function are applied on all of the input edges.
+         * Later, the functions will allow for any operation on any subset of the edges.
+         *
+         * @param function
+         * @param edges
+         * @return
+         */
+        private double applyFunction(String function, ArrayList<Edge> edges) throws Exception {
+            double[] signals = new double[edges.size()];
+            for(int i = 0; i < signals.length; i++){
+                signals[i] = edges.get(i).getSignal();
+            }
+            double signal = Double.NaN;
+
+            switch (function){
+                case "min":
+                    signal =min(signals);
+                    break;
+                case "max":
+                    signal = max(signals);
+                    break;
+                case "sum":
+                    signal = 1;
+                    for(double s : signals){
+                        signal += s;
+                    }
+                    break;
+                case "prod":
+                    signal = 1;
+                    for(double s : signals){
+                        signal *= s;
+                    }
+                    break;
+                default:
+                    throw new Exception("Function " + function +
+                            " is not defined in PSFC: use either of {min, max, sum, prod}");
+            }
+            return signal;
         }
 
         /**

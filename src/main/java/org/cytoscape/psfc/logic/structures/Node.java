@@ -192,4 +192,12 @@ public class Node {
         return function != null;
     }
 
+    public String getFunction() {
+        return function;
+    }
+
+    public void setFunction(String function) {
+        if(!function.equals(""))
+            this.function = function;
+    }
 }
