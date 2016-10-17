@@ -56,7 +56,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private String networkName;
     private boolean calculateSignificance;
     private HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap; //to be used by backupscorestask, since the signals may later be updtaed by bootstrap
-
+    private TaskMonitor taskMonitor;
 
     private Properties bootstrapProps;
     private PSF psf;
@@ -114,6 +114,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
         final BackupResultsTask backupResultsTask = new BackupResultsTask();
         TaskIterator taskIterator = new TaskIterator();
+
         taskIterator.append(psfTask);
         if (calculateSignificance) {
             final CalculateSignificanceTask calculateSignificanceTask =
@@ -121,7 +122,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             taskIterator.append(calculateSignificanceTask);
         }
         taskIterator.append(backupResultsTask);
-        PSFCActivator.taskManager.execute(taskIterator);
+        PSFCActivator.synchTaskManager.execute(taskIterator);
     }
 
     public void setBootstrapProps(Properties bootstrapProps) {
@@ -152,7 +153,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
-            taskMonitor.setTitle("PSFC.CalculateFlowTask");
+            taskMonitor.setTitle("PSFC.CalculateFlowTask for column " + nodeDataColumn.getName());
 
             //Converting network to Graph
             taskMonitor.setStatusMessage("Converting network to PSFC Graph");
@@ -268,7 +269,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 psf.setLoopHandlingProps(loopHandlingProps);
 
                 PSFCActivator.getLogger().info("\n################\n################");
-                System.out.println("\nPSFC:: Flow calculation\n");
+                System.out.println("\nPSFC:: Flow calculation on clumn " + nodeDataColumn.getName() + "\n");
                 String date = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date());
                 PSFCActivator.getLogger().info(date);
                 System.out.println("PSFC:: Date: " + date + "\n");

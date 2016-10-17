@@ -30,7 +30,7 @@ import java.util.List;
 
 /**
  * PUBCLI CLASS PSFCPanel
- * <p/>
+ * <p>
  * Sets the components of the app panel, located in the WEST CytoPanel group.
  */
 public class PSFCPanel extends JPanel implements CytoPanelComponent {
@@ -2019,25 +2019,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             );
             return;
         }
-        CyColumn nodeDataColumn = getNodeDataColumn();
-        if (nodeDataColumn == null) {
-            JOptionPane.showMessageDialog(this,
-                    "Selected Node Data column does not exist. \nPlease, refresh the column list and choose a valid Node Data column for pathway flow calculation.",
-                    "PSFC user message", JOptionPane.OK_OPTION);
-            return;
-        }
-        boolean isNumber = true;
-        if (!nodeDataColumn.getType().getName().equals(Double.class.getName()))
-            if (!nodeDataColumn.getType().getName().equals(Integer.class.getName()))
-                isNumber = false;
-        if (!isNumber) {
-            JOptionPane.showMessageDialog(this,
-                    "Illegal NodeData column: should be numeric. " +
-                            "\nPlease, choose a valid column for pathway flow calculation.",
-                    "PSFC user message", JOptionPane.OK_OPTION
-            );
-            return;
-        }
 
         boolean sorted = checkSorted(network);
         SortNetworkAction sortNetworkAction;
@@ -2073,13 +2054,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         Properties loopHandlingProps = getLoopHandlingProperties();
         if (multiSignalProps == null)
             return;
-        if(jrb_multipleColumns.isSelected()){
-            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask=
+        if (jrb_multipleColumns.isSelected()) {
+            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask =
                     new CalculateScoreFlowMultipleColumnsTask(e, network,
                             edgeTypeColumn, nodeLevelColumn,
                             isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
                             nodeDataProperties,
-                            multiSignalProps,loopHandlingProps, this);
+                            multiSignalProps, loopHandlingProps, this);
             TaskIterator taskIterator = new TaskIterator();
             taskIterator.append(calculateScoreFlowMultipleColumnsTask);
             PSFCActivator.taskManager.execute(taskIterator);
@@ -2111,6 +2092,26 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 //            }
 //        }
         else {
+            CyColumn nodeDataColumn = getNodeDataColumn();
+            if (nodeDataColumn == null) {
+                JOptionPane.showMessageDialog(this,
+                        "Selected Node Data column does not exist. \nPlease, refresh the column list and choose a valid Node Data column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION);
+                return;
+            }
+
+            boolean isNumber = true;
+            if (!nodeDataColumn.getType().getName().equals(Double.class.getName()))
+                if (!nodeDataColumn.getType().getName().equals(Integer.class.getName()))
+                    isNumber = false;
+            if (!isNumber) {
+                JOptionPane.showMessageDialog(this,
+                        "Illegal NodeData column: should be numeric. " +
+                                "\nPlease, choose a valid column for pathway flow calculation.",
+                        "PSFC user message", JOptionPane.OK_OPTION
+                );
+                return;
+            }
             calculateFlowAction = new CalculateScoreFlowAction(
                     network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn, isOperatorColumn,
                     nodeFunctionColumn, edgeIsBackwardColumn,
@@ -2123,7 +2124,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
-    class CalculateScoreFlowMultipleColumnsTask extends AbstractTask{
+    class CalculateScoreFlowMultipleColumnsTask extends AbstractTask {
         private final ActionEvent e;
         private CyNetwork network;
         private CyColumn edgeTypeColumn;
@@ -2176,7 +2177,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     if (jchb_CalculateSignificance.isSelected()) {
                         calculateFlowAction.setBootstrapProps(getBootstrapProperties());
                     }
-                    if(cancelled){
+                    if (cancelled) {
                         break;
                     }
                     calculateFlowAction.actionPerformed(e);
@@ -2198,7 +2199,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
                 HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
                 HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
-                ArrayList<String> rownames  = new ArrayList<>();
+                ArrayList<String> rownames = new ArrayList<>();
                 boolean firstFile = true;
                 for (CyColumn nextColumn : selectedNodeDataColumns) {
                     File scoreBackupFile = new File(PSFCActivator.getPSFCDir(),
@@ -2206,20 +2207,20 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     ArrayList<Double> scores = new ArrayList<>();
                     ArrayList<Double> pvals = new ArrayList<>();
 
-                    if(scoreBackupFile.exists()){
+                    if (scoreBackupFile.exists()) {
                         BufferedReader reader = new BufferedReader(new FileReader(scoreBackupFile));
                         String line;
-                        int ncol = 0, scoreInd = 0, pvalInd =0 ;
-                        while ((line = reader.readLine()) != null){
+                        int ncol = 0, scoreInd = 0, pvalInd = 0;
+                        while ((line = reader.readLine()) != null) {
                             String[] tokens = line.split("\t");
-                            if(line.startsWith("SUID")){
+                            if (line.startsWith("SUID")) {
                                 ncol = tokens.length;
-                                if(ncol < 2)
+                                if (ncol < 2)
                                     throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file " + scoreBackupFile + " was less than 2");
                                 scoreInd = ncol - 2;
                                 pvalInd = ncol - 1;
                             } else {
-                                if(firstFile) {
+                                if (firstFile) {
                                     rownames.add(tokens[1]);
                                 }
 
@@ -2256,14 +2257,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 }
                 PrintWriter writer = new PrintWriter(summaryFile);
                 String header = "Name";
-                for(CyColumn key : columnScoreMap.keySet()){
+                for (CyColumn key : columnScoreMap.keySet()) {
                     header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
                 }
                 writer.write(header);
 
-                for(int i =0; i < rownames.size(); i++){
+                for (int i = 0; i < rownames.size(); i++) {
                     String line = rownames.get(i);
-                    for(CyColumn key : columnScoreMap.keySet()){
+                    for (CyColumn key : columnScoreMap.keySet()) {
                         line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
                     }
                     writer.append("\n" + line);
@@ -3703,6 +3704,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     jl_exprMatrixFile.setEnabled(false);
                 }
             } else {
+                setTabIcon(1, getGreenFlagIcon());
+                jl_exprMatrixFile.setText("");
                 jrb_SampleCentric.setEnabled(false);
                 jrb_GeneCentric.setEnabled(false);
                 jl_exprMatrixFile.setEnabled(false);

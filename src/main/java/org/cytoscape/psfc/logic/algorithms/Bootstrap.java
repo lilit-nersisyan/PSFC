@@ -103,17 +103,19 @@ public class Bootstrap {
             }
             //reassign node values according to the resampling type
             this.cycle = sampling;
-            logger.debug("Bootstrap cycle " + sampling);
+//            logger.debug("Bootstrap cycle " + sampling);
             if (taskMonitor != null) {
                 taskMonitor.setProgress(cycle / ((double) numOfSamplings));
-                taskMonitor.setStatusMessage("Bootstrap cycle: " + cycle + " (of )" + numOfSamplings);
+
+//                taskMonitor.setStatusMessage("Bootstrap cycle: " + cycle + " (of )" + numOfSamplings);
             }
             resample();
-            logger.debug(graph.toString());
+//            logger.debug(graph.toString());
 
             //calculate PSF with the resampled values and keep the
             // target signals in a priority queue per each target node
             try {
+                psf.setSilentMode(true);
                 psf.calculateFlow();
                 for (Node target : targetNodes) {
                     targetSampleValuesMap.get(target).add(target.getSignal());
@@ -129,7 +131,7 @@ public class Bootstrap {
         for (Node target : targetNodes) {
             double signal = targetNodeSignals.get(target);
             PriorityQueue<Double> bootstrapValues = targetSampleValuesMap.get(target);
-            logger.debug("Bootstrap summary for target node: " + target.getName());
+//            logger.debug("Bootstrap summary for target node: " + target.getName());
             targetPvalueMap.put(target, getBootstrapPValue(signal, bootstrapValues));
         }
 //        System.out.println(targetPvalueMap);

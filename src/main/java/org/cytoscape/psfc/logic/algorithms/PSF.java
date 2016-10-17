@@ -3,7 +3,6 @@ package org.cytoscape.psfc.logic.algorithms;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
-import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
 import org.cytoscape.psfc.logic.structures.Node;
@@ -11,12 +10,10 @@ import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 import static com.google.common.primitives.Doubles.max;
 import static com.google.common.primitives.Doubles.min;
-import static com.sun.javafx.util.Utils.sum;
 
 /**
  * PUBLIC CLASS PSF
@@ -536,7 +533,7 @@ public class PSF {
 
             switch (function){
                 case "min":
-                    signal =min(signals);
+                    signal = min(signals);
                     break;
                 case "max":
                     signal = max(signals);

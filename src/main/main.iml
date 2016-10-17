@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <module type="JAVA_MODULE" version="4">
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
@@ -8,22 +7,20 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: org.cytoscape:service-api:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.cytoscape:swing-application-api:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.cytoscape:work-swing-api:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.cytoscape:work-api:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: org.cytoscape:session-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
+    <orderEntry type="library" name="Maven: de.congrace:exp4j:0.3.11" level="project" />
+    <orderEntry type="library" name="Maven: com.googlecode.guava-osgi:guava-osgi:9.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:model-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:swing-application-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:work-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:work-swing-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:service-api:3.0.2" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:session-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:viewmodel-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:vizmap-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:application-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:event-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: org.osgi:org.osgi.core:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: log4j:log4j:1.2.17" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.5" level="project" />
-    <orderEntry type="library" name="Maven: org.cytoscape:presentation-api:3.0.2" level="project" />
-    <orderEntry type="library" name="Maven: com.googlecode.guava-osgi:guava-osgi:9.0.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:0.9.0" level="project" />
-    <orderEntry type="library" name="Maven: de.congrace:exp4j:0.3.11" level="project" />
   </component>
 </module>
