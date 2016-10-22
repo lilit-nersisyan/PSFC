@@ -1,5 +1,6 @@
 package org.cytoscape.psfc.logic.algorithms;
 
+import com.google.common.primitives.Doubles;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
@@ -14,6 +15,7 @@ import java.util.*;
 
 import static com.google.common.primitives.Doubles.max;
 import static com.google.common.primitives.Doubles.min;
+import static java.lang.System.in;
 
 /**
  * PUBLIC CLASS PSF
@@ -489,7 +491,7 @@ public class PSF {
                 String function = node.getFunction();
                 if (function != null){
                     try {
-                        signal = applyFunction(function, edges);
+                        signal = applyFunction(function, parentNodes);
                     } catch (Exception e) {
                         throw new Exception("Problem handling function " + function + " at node " + node.toString());
                     }
@@ -521,22 +523,41 @@ public class PSF {
          * Later, the functions will allow for any operation on any subset of the edges.
          *
          * @param function
-         * @param edges
+         * @param parentNodes
          * @return
          */
-        private double applyFunction(String function, ArrayList<Edge> edges) throws Exception {
-            double[] signals = new double[edges.size()];
+        private double applyFunction(String function, ArrayList<Node> parentNodes) throws Exception {
+            double[] signals = new double[parentNodes.size()];
             for(int i = 0; i < signals.length; i++){
-                signals[i] = edges.get(i).getSignal();
+                signals[i] = parentNodes.get(i).getSignal();
             }
             double signal = Double.NaN;
 
             switch (function){
                 case "min":
-                    signal = min(signals);
+                    //compute min but don't account for 1's (those may be missing values)
+                    signal = Double.MAX_VALUE;
+
+                    for(Double s : signals){
+                        if ( s != 1){
+                            if ( s < signal)
+                                signal = s;
+                        }
+                    }
+                    if(signal == Double.MAX_VALUE)
+                        signal = 1;
                     break;
                 case "max":
-                    signal = max(signals);
+                    //compute max but don't account for 1's (those may be missing values)
+                    signal = Double.MIN_VALUE;
+                    for(Double s : signals){
+                        if (s != 1){
+                            if ( s > signal)
+                                signal = s;
+                        }
+                    }
+                    if(signal == Double.MIN_VALUE)
+                        signal = 1;
                     break;
                 case "sum":
                     signal = 0;

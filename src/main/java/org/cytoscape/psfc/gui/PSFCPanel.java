@@ -2310,7 +2310,11 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                             maxEdgeSignal = signal;
                     }
         }
-        midNodeSignal = (minNodeSignal + maxNodeSignal) / 2;
+        // set the midNodeSignal default to 1
+        if (maxNodeSignal >= 1)
+            midNodeSignal = 1;
+        else
+            midNodeSignal = (minNodeSignal + maxNodeSignal) / 2;
         midEdgeSignal = (minEdgeSignal + maxEdgeSignal) / 2;
 
 
