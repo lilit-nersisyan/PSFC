@@ -571,6 +571,13 @@ public class PSF {
                         signal *= s;
                     }
                     break;
+                case "mean":
+                    signal = 1;
+                    for(double s : signals){
+                        signal += s;
+                    }
+                    signal /= signals.length;
+                    break;
                 default:
                     throw new Exception("Function " + function +
                             " is not defined in PSFC: use either of {min, max, sum, prod}");

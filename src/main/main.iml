@@ -23,5 +23,8 @@
     <orderEntry type="library" name="Maven: org.cytoscape:presentation-api:3.0.2" level="project" />
     <orderEntry type="library" name="Maven: de.congrace:exp4j:0.3.11" level="project" />
     <orderEntry type="library" name="Maven: com.googlecode.guava-osgi:guava-osgi:9.0.0" level="project" />
+    <orderEntry type="library" name="Maven: jgraph:jgraph:5.13.0.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:0.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-ext:0.9.1" level="project" />
   </component>
 </module>
