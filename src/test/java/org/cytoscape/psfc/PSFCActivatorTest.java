@@ -7,6 +7,7 @@ import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.service.util.internal.FakeBundleContext;
 import org.cytoscape.session.CySessionManager;
+import org.cytoscape.task.write.ExportNetworkViewTaskFactory;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -37,6 +38,7 @@ public final class PSFCActivatorTest {
             CyNetworkManager.class,
             CyNetworkViewFactory.class,
             CyNetworkViewManager.class,
+            ExportNetworkViewTaskFactory.class,
             VisualMappingManager.class,
             VisualMappingFunctionFactory.class,
             VisualStyleFactory.class,

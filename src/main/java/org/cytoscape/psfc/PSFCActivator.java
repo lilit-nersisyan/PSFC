@@ -15,6 +15,7 @@ import org.cytoscape.psfc.properties.ENodeDataProps;
 import org.cytoscape.psfc.properties.EpsfcProps;
 import org.cytoscape.service.util.AbstractCyActivator;
 import org.cytoscape.session.CySessionManager;
+import org.cytoscape.task.write.ExportNetworkViewTaskFactory;
 import org.cytoscape.view.model.CyNetworkViewFactory;
 import org.cytoscape.view.model.CyNetworkViewManager;
 import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
@@ -38,6 +39,7 @@ public class PSFCActivator extends AbstractCyActivator {
     public static SynchronousTaskManager synchTaskManager;
     public static CySessionManager cySessionManager;
     public static CyNetworkFactory networkFactory;
+    public static ExportNetworkViewTaskFactory exportNetworkViewTaskFactory;
     public static CyNetworkViewFactory networkViewFactory;
     public static CyNetworkManager networkManager;
     public static CyNetworkViewManager networkViewManager;
@@ -106,6 +108,7 @@ public class PSFCActivator extends AbstractCyActivator {
         synchTaskManager = getService(bc, SynchronousTaskManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
         networkFactory = getService(bc, CyNetworkFactory.class);
+        exportNetworkViewTaskFactory = getService(bc, ExportNetworkViewTaskFactory.class);
         networkViewFactory = getService(bc, CyNetworkViewFactory.class);
         networkManager = getService(bc, CyNetworkManager.class);
         networkViewManager = getService(bc, CyNetworkViewManager.class);
@@ -130,6 +133,7 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, synchTaskManager, SynchronousTaskManager.class, new Properties());
         registerService(bc, cySessionManager, CySessionManager.class, new Properties());
         registerService(bc, networkFactory, CyNetworkFactory.class, new Properties());
+        registerService(bc, exportNetworkViewTaskFactory, ExportNetworkViewTaskFactory.class, new Properties());
         registerService(bc, networkViewFactory, CyNetworkViewFactory.class, new Properties());
         registerService(bc, networkViewManager, CyNetworkViewManager.class, new Properties());
         registerService(bc, networkManager, CyNetworkManager.class, new Properties());

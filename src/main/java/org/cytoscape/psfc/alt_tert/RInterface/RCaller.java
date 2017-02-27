@@ -7,7 +7,7 @@ import java.io.*;
  */
 public class RCaller {
     private File scriptFile = null;
-
+    private String args = "";
 
     public RCaller(File scriptFile) throws FileNotFoundException{
         if(scriptFile.exists())
@@ -16,9 +16,13 @@ public class RCaller {
             new FileNotFoundException("Could not find file " + scriptFile.getAbsolutePath());
     }
 
+    public void setArgs(String args) {
+        this.args = args;
+    }
+
     public void execute() throws IOException, InterruptedException {
-        System.out.println("Running the R script " + scriptFile.getName());
-        Runtime.getRuntime().exec("Rscript test.R" );
+        System.out.println("Running the R script " + scriptFile.getAbsolutePath() + " " + args);
+        Runtime.getRuntime().exec("Rscript " + scriptFile.getAbsolutePath() + " " + args);
         Runtime rt = Runtime.getRuntime();
         Process proc = rt.exec("Rscript " + scriptFile.getAbsolutePath());
         InputStream stdin = proc.getInputStream();
@@ -43,4 +47,6 @@ public class RCaller {
             e.printStackTrace();
         }
     }
+
+
 }

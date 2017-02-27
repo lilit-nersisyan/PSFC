@@ -18,7 +18,7 @@
     <artifactId>psfc</artifactId>
     <packaging>bundle</packaging>
     <name>PSFC</name>
-    <version>1.1.1</version>
+    <version>1.1.net</version>
 
     <build>
         <plugins>
@@ -125,6 +125,12 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.cytoscape</groupId>
+            <artifactId>core-task-api</artifactId>
+            <version>${cytoscape.api.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
             <version>${osgi.api.version}</version>
@@ -144,6 +150,7 @@
             <version>${cytoscape.api.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>

@@ -17,7 +17,9 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMapping;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.*;
 import java.util.*;
+import java.util.List;
 
 /**
  * PUBLIC CLASS NetworkManager
@@ -345,4 +347,82 @@ public class NetworkCyManager {
     }
 
 
+    public static void getNodeTable(CyNetwork selectedNetwork) {
+        CyTable cytable = selectedNetwork.getDefaultNodeTable();
+    }
+    public static void exportNodeNameEntrezTable(CyNetwork selectedNetwork, File file){
+        CyTable cyTable = selectedNetwork.getDefaultNodeTable();
+        List<CyRow> rows = cyTable.getAllRows();
+        try {
+            PrintWriter writer = new PrintWriter(file);
+            String header = "name,entrez,network";
+            writer.append(header + "\n");
+
+            for(CyNode node : selectedNetwork.getNodeList()){
+                String name = cyTable.getRow(node.getSUID()).get("name", String.class);
+                String entrez = cyTable.getRow(node.getSUID()).get("entrez", String.class);
+                String network = cyTable.getRow(node.getSUID()).get("network", String.class);
+                writer.append(name + "," + entrez + "," + network + "\n");
+            }
+
+            writer.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static Set<String> setNodeAttributesFromFile(CyNetwork selectedNetwork, File fcMat) throws Exception {
+        if(!fcMat.exists())
+            throw new FileNotFoundException("Could not find file " + fcMat.getAbsolutePath());
+        BufferedReader reader = new BufferedReader(new FileReader(fcMat));
+        String line;
+        try {
+            List<CyNode> nodeList =  selectedNetwork.getNodeList();
+            Map<String, CyNode> nodeNameCyNodeMap = new HashMap<>();
+            for (CyNode cyNode : nodeList){
+                String name = getNodeName(selectedNetwork, cyNode);
+                if(nodeNameCyNodeMap.containsKey(name))
+                    throw new Exception("PSFC:: Net: cannot map fc mat to nodes: duplicate node names: " + name);
+                nodeNameCyNodeMap.put(name, cyNode);
+            }
+            //create map: keys = column names; values = map {keys = cynode; values = fc values}
+            Map<String, Map<CyNode, Double>> fcColcyNodeFcMap = new HashMap<>();
+            ArrayList<String> fcLines = new ArrayList<>();
+            while ((line = reader.readLine()) != null){
+                fcLines.add(line);
+            }
+
+            //Initialize the upper level map: keys = colnames; values = anothermap
+            String[] colnames = fcLines.get(0).split("\t");
+            for(int i = 1; i < colnames.length; i++){
+                Map<CyNode, Double> cyNodeFcMap  = new HashMap<>();
+                fcColcyNodeFcMap.put(colnames[i], cyNodeFcMap);
+            }
+            //populate maps for each fc column
+            for(int j = 1; j < fcLines.size(); j++) {
+                String[] tokens = fcLines.get(j).split("\t");
+                String nodeName = tokens[0];
+                for(int col = 1; col < colnames.length; col++){
+                    String colname = colnames[col];
+                    Double fcValue = Double.parseDouble(tokens[col]);
+                    Map<CyNode, Double> cyNodeFcMap = fcColcyNodeFcMap.get(colname);
+                    cyNodeFcMap.put(nodeNameCyNodeMap.get(nodeName), fcValue);
+                }
+            }
+            //set node attributes from the map
+            for(String colname : fcColcyNodeFcMap.keySet()){
+                setNodeAttributesFromMap(selectedNetwork, fcColcyNodeFcMap.get(colname), colname, Double.class);
+            }
+            return fcColcyNodeFcMap.keySet();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static String getNodeName(CyNetwork network, CyNode cyNode){
+        return  network.getDefaultNodeTable().getRow(cyNode.getSUID()).get(CyNetwork.NAME, String.class);
+    }
 }
