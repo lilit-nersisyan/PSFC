@@ -123,6 +123,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JButton jb_checkEdgeTypes;
     private javax.swing.JButton jb_chooseEdgeTypeConfigFile;
     private javax.swing.JButton jb_chooseRuleNameRuleConfigFile;
+    private javax.swing.JButton jb_editEdgeTypeConfig;
+    private javax.swing.JButton jb_editRuleNameRuleConfig;
     private javax.swing.JButton jb_flow_end;
     private javax.swing.JButton jb_flow_fw;
     private javax.swing.JButton jb_flow_home;
@@ -325,10 +327,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_chooseEdgeTypeConfigFile = new javax.swing.JButton();
         jl_edgeTypeConfigFile = new javax.swing.JLabel();
         jl_edgeTypeConfigFileName = new javax.swing.JLabel();
+        jb_editEdgeTypeConfig = new javax.swing.JButton();
         jp_ruleConfigPanel = new javax.swing.JPanel();
         jl_ruleConfigFile = new javax.swing.JLabel();
         jb_chooseRuleNameRuleConfigFile = new javax.swing.JButton();
         jl_ruleNameRuleConfigFileName = new javax.swing.JLabel();
+        jb_editRuleNameRuleConfig = new javax.swing.JButton();
         jb_rulePresetsGuide = new javax.swing.JButton();
         jp_multiInOutRulesPanel = new javax.swing.JPanel();
         jl_multiInOutRules = new javax.swing.JLabel();
@@ -436,7 +440,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_chooseNetwork)
                                         .addComponent(jl_selectEdgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 170, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                 .addComponent(jcb_edgeTypeAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -445,26 +448,28 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_checkEdgeTypes, javax.swing.GroupLayout.PREFERRED_SIZE, 69, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
-                                                .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                                .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
-                                                                .addComponent(jrb_singleColumn, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                                .addComponent(jrb_singleColumn, javax.swing.GroupLayout.DEFAULT_SIZE, 127, Short.MAX_VALUE)
                                                                 .addGap(57, 57, 57))
                                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
                                                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                                         .addGroup(jp_network_attrsLayout.createSequentialGroup()
-                                                                                .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 150, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                                                .addComponent(jcb_nodeDataAttribute, 0, 0, Short.MAX_VALUE)
                                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                                                 .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                         .addComponent(jl_selectNodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                                         .addComponent(jb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                                        .addComponent(jrb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                                .addContainerGap(16, Short.MAX_VALUE))
+                                                        .addComponent(jrb_multipleColumns, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                                        .addGroup(jp_network_attrsLayout.createSequentialGroup()
+                                                .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, 201, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                        .addComponent(jl_chooseNetwork))
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap(30, Short.MAX_VALUE))
         );
         jp_network_attrsLayout.setVerticalGroup(
                 jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -472,7 +477,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addComponent(jl_network_and_attrs, javax.swing.GroupLayout.PREFERRED_SIZE, 15, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(5, 5, 5)
                                 .addComponent(jl_chooseNetwork)
-                                .addGap(1, 1, 1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addComponent(jcb_network, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(jb_refreshNetworks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -498,7 +503,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addGroup(jp_network_attrsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jb_refreshNodeDataAttrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addComponent(jcb_nodeDataAttribute, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                                .addGap(8, 8, 8))
+                                .addGap(39, 39, 39))
         );
 
         jp_flowVisualization.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -596,14 +601,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_currentLevel.setForeground(new java.awt.Color(102, 102, 102));
         jl_currentLevel.setText("0");
 
-        jtxt_minNodeSignal.setEditable(false);
+        jtxt_minNodeSignal.setEditable(true);
         jtxt_minNodeSignal.setMinimumSize(new java.awt.Dimension(14, 14));
         jtxt_minNodeSignal.setPreferredSize(new java.awt.Dimension(18, 18));
 
         jtxt_midNodeSignal.setMinimumSize(new java.awt.Dimension(14, 14));
         jtxt_midNodeSignal.setPreferredSize(new java.awt.Dimension(18, 18));
 
-        jtxt_maxNodeSignal.setEditable(false);
+        jtxt_maxNodeSignal.setEditable(true);
         jtxt_maxNodeSignal.setMinimumSize(new java.awt.Dimension(14, 14));
         jtxt_maxNodeSignal.setPreferredSize(new java.awt.Dimension(18, 18));
 
@@ -750,21 +755,21 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jp_General.setLayout(jp_GeneralLayout);
         jp_GeneralLayout.setHorizontalGroup(
                 jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jp_GeneralLayout.createSequentialGroup()
+                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_GeneralLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                        .addComponent(jp_network_attrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addGroup(jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                        .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jp_network_attrs, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
         jp_GeneralLayout.setVerticalGroup(
                 jp_GeneralLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_GeneralLayout.createSequentialGroup()
                                 .addGap(5, 5, 5)
                                 .addComponent(jp_network_attrs, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(18, 18, 18)
-                                .addComponent(jp_flowVisualization, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addGap(111, 111, 111))
+                                .addGap(53, 53, 53)
+                                .addComponent(jp_flowVisualization, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(36, Short.MAX_VALUE))
         );
 
         jtp_psfc.addTab("General", jp_General);
@@ -920,7 +925,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addComponent(jp_algorithms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(59, 59, 59)
                                 .addComponent(jp_significance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(93, Short.MAX_VALUE))
+                                .addContainerGap(160, Short.MAX_VALUE))
         );
 
         jtp_psfc.addTab("Options", jp_Options);
@@ -943,6 +948,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_edgeTypeConfigFileName.setText("n/a");
         jl_edgeTypeConfigFileName.setMaximumSize(new java.awt.Dimension(135, 14));
 
+        jb_editEdgeTypeConfig.setBorder(null);
+
         javax.swing.GroupLayout jp_edgeTypeConfigPanelLayout = new javax.swing.GroupLayout(jp_edgeTypeConfigPanel);
         jp_edgeTypeConfigPanel.setLayout(jp_edgeTypeConfigPanelLayout);
         jp_edgeTypeConfigPanelLayout.setHorizontalGroup(
@@ -950,10 +957,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_edgeTypeConfigPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jb_chooseEdgeTypeConfigFile)
-                                        .addComponent(jl_edgeTypeConfigFile)
-                                        .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGap(24, 24, 24))
+                                        .addGroup(jp_edgeTypeConfigPanelLayout.createSequentialGroup()
+                                                .addGroup(jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jb_chooseEdgeTypeConfigFile)
+                                                        .addComponent(jl_edgeTypeConfigFile, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                                .addGap(0, 8, Short.MAX_VALUE))
+                                        .addGroup(jp_edgeTypeConfigPanelLayout.createSequentialGroup()
+                                                .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jb_editEdgeTypeConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addContainerGap())
         );
         jp_edgeTypeConfigPanelLayout.setVerticalGroup(
                 jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -962,7 +975,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jb_chooseEdgeTypeConfigFile)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(jp_edgeTypeConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addComponent(jb_editEdgeTypeConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jl_edgeTypeConfigFileName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -980,6 +995,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_ruleNameRuleConfigFileName.setText("n/a");
         jl_ruleNameRuleConfigFileName.setMaximumSize(new java.awt.Dimension(135, 14));
 
+        jb_editRuleNameRuleConfig.setBorder(null);
+
         javax.swing.GroupLayout jp_ruleConfigPanelLayout = new javax.swing.GroupLayout(jp_ruleConfigPanel);
         jp_ruleConfigPanel.setLayout(jp_ruleConfigPanelLayout);
         jp_ruleConfigPanelLayout.setHorizontalGroup(
@@ -987,10 +1004,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_ruleConfigFile)
-                                        .addComponent(jb_chooseRuleNameRuleConfigFile)
-                                        .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(38, Short.MAX_VALUE))
+                                        .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
+                                                .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jb_editRuleNameRuleConfig, javax.swing.GroupLayout.PREFERRED_SIZE, 16, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
+                                                .addGroup(jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                                        .addComponent(jl_ruleConfigFile)
+                                                        .addComponent(jb_chooseRuleNameRuleConfigFile))
+                                                .addGap(0, 0, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         jp_ruleConfigPanelLayout.setVerticalGroup(
                 jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -999,8 +1022,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jb_chooseRuleNameRuleConfigFile)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(325, 325, 325))
+                                .addGroup(jp_ruleConfigPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jp_ruleConfigPanelLayout.createSequentialGroup()
+                                                .addComponent(jl_ruleNameRuleConfigFileName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 0, Short.MAX_VALUE))
+                                        .addComponent(jb_editRuleNameRuleConfig, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap())
         );
 
         javax.swing.GroupLayout jp_simpleRulesLayout = new javax.swing.GroupLayout(jp_simpleRules);
@@ -1011,21 +1038,25 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_simpleRulesLayout.createSequentialGroup()
                                                 .addContainerGap()
-                                                .addComponent(jl_simpleRules))
+                                                .addComponent(jl_simpleRules)
+                                                .addGap(0, 0, Short.MAX_VALUE))
                                         .addGroup(jp_simpleRulesLayout.createSequentialGroup()
-                                                .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                                .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 167, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                                .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 160, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
         jp_simpleRulesLayout.setVerticalGroup(
                 jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jp_simpleRulesLayout.createSequentialGroup()
                                 .addComponent(jl_simpleRules)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addGroup(jp_simpleRulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addComponent(jp_edgeTypeConfigPanel, javax.swing.GroupLayout.DEFAULT_SIZE, 87, Short.MAX_VALUE)
+                                        .addGroup(jp_simpleRulesLayout.createSequentialGroup()
+                                                .addComponent(jp_ruleConfigPanel, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addGap(0, 5, Short.MAX_VALUE)))
+                                .addContainerGap())
         );
 
         jb_rulePresetsGuide.setBackground(new java.awt.Color(255, 255, 255));
@@ -1141,7 +1172,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jcb_edgeWeights, 0, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_refreshWeigths, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                .addContainerGap(46, Short.MAX_VALUE))
         );
         jp_multiInOutRulesPanelLayout.setVerticalGroup(
                 jp_multiInOutRulesPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1195,23 +1226,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_RulesLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jp_RulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jp_RulesLayout.createSequentialGroup()
                                                 .addComponent(jb_rulePresetsGuide)
                                                 .addGap(0, 0, Short.MAX_VALUE))
-                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap())
         );
         jp_RulesLayout.setVerticalGroup(
                 jp_RulesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_RulesLayout.createSequentialGroup()
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addContainerGap()
                                 .addComponent(jb_rulePresetsGuide)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(jp_simpleRules, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 28, Short.MAX_VALUE)
                                 .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap())
+                                .addGap(24, 24, 24))
         );
 
         jtp_psfc.addTab("Rules", jp_Rules);
@@ -1227,7 +1258,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jp_ignoreLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_ignoreLoopsLayout.createSequentialGroup()
                                 .addComponent(jchb_ignoreLoops)
-                                .addGap(0, 103, Short.MAX_VALUE))
+                                .addGap(0, 111, Short.MAX_VALUE))
         );
         jp_ignoreLoopsLayout.setVerticalGroup(
                 jp_ignoreLoopsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1285,7 +1316,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
                                                 .addContainerGap()
-                                                .addComponent(jsl_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, 319, Short.MAX_VALUE))
+                                                .addComponent(jsl_iterateUntilConvergence, javax.swing.GroupLayout.DEFAULT_SIZE, 327, Short.MAX_VALUE))
                                         .addGroup(jp_iterateUntilConvergenceLayout.createSequentialGroup()
                                                 .addGap(21, 21, 21)
                                                 .addGroup(jp_iterateUntilConvergenceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1428,7 +1459,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                         .addComponent(jb_projectWebPage, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)))
                                         .addGroup(jp_HelpLayout.createSequentialGroup()
                                                 .addGap(24, 24, 24)
-                                                .addComponent(jta_about, javax.swing.GroupLayout.DEFAULT_SIZE, 335, Short.MAX_VALUE)))
+                                                .addComponent(jta_about, javax.swing.GroupLayout.DEFAULT_SIZE, 343, Short.MAX_VALUE)))
                                 .addContainerGap())
         );
         jp_HelpLayout.setVerticalGroup(
@@ -1467,14 +1498,12 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addGroup(layout.createSequentialGroup()
-                                                .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                                .addContainerGap())
+                                        .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
                                                         .addComponent(jb_openLogFile, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                                         .addComponent(jb_saveSettings, javax.swing.GroupLayout.DEFAULT_SIZE, 126, Short.MAX_VALUE))
-                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 74, Short.MAX_VALUE)
+                                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 70, Short.MAX_VALUE)
                                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                                         .addComponent(jb_calculateFlow, javax.swing.GroupLayout.Alignment.TRAILING)
                                                         .addComponent(jl_selectedNetwork, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 165, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -1484,8 +1513,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(layout.createSequentialGroup()
                                 .addContainerGap()
-                                .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 498, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(49, 49, 49)
+                                .addComponent(jtp_psfc, javax.swing.GroupLayout.PREFERRED_SIZE, 565, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                         .addGroup(layout.createSequentialGroup()
                                                 .addComponent(jl_selectedNetwork)
@@ -1495,8 +1524,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_openLogFile)
                                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                                 .addComponent(jb_saveSettings)))
-                                .addContainerGap(127, Short.MAX_VALUE))
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
     }
 
 
@@ -1676,10 +1706,24 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
+        jtxt_minNodeSignal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jtxt_minNodeSignalActionPerformed();
+            }
+        });
+
         jtxt_midNodeSignal.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jtxt_midNodeSignalActionPerformed();
+            }
+        });
+
+        jtxt_maxNodeSignal.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jtxt_maxNodeSignalActionPerformed();
             }
         });
 
@@ -1795,10 +1839,25 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             }
         });
 
+        jb_editEdgeTypeConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_editEdgeTypeConfigActionPerformed(e);
+            }
+        });
+
+
         jb_chooseRuleNameRuleConfigFile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jb_chooseRuleNameRuleConfigFileActionPerformed();
+            }
+        });
+
+        jb_editRuleNameRuleConfig.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jb_editRuleNameRuleConfigActionPerformed(e);
             }
         });
 
@@ -2054,43 +2113,27 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         if (multiSignalProps == null)
             return;
         if (jrb_multipleColumns.isSelected()) {
-            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask =
-                    new CalculateScoreFlowMultipleColumnsTask(e, network,
-                            edgeTypeColumn, nodeLevelColumn,
+//            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask =
+//                    new CalculateScoreFlowMultipleColumnsTask(e, network,
+//                            edgeTypeColumn, nodeLevelColumn,
+//                            isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
+//                            nodeDataProperties,
+//                            multiSignalProps, loopHandlingProps, this);
+
+//            TaskIterator taskIterator = new TaskIterator();
+//            taskIterator.append(calculateScoreFlowMultipleColumnsTask);
+//            PSFCActivator.taskManager.execute(taskIterator);
+            CalculateScoreFlowMultiColAction calculateScoreFlowMultiColAction =
+                    new CalculateScoreFlowMultiColAction(network, edgeTypeColumn,
+                            selectedNodeDataColumns, nodeLevelColumn,
                             isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
-                            nodeDataProperties,
-                            multiSignalProps, loopHandlingProps, this);
-            TaskIterator taskIterator = new TaskIterator();
-            taskIterator.append(calculateScoreFlowMultipleColumnsTask);
-            PSFCActivator.taskManager.execute(taskIterator);
-        }
-//        if (selectedNodeDataColumns != null && !selectedNodeDataColumns.isEmpty()) {
-//            System.out.println("selected columns: " + selectedNodeDataColumns);
-//            for (CyColumn nextColumn : selectedNodeDataColumns) {
-//                System.out.println("Performing PSF for column " + nextColumn.getName());
-//
-//                calculateFlowAction = new CalculateScoreFlowAction(
-//                        network, edgeTypeColumn, nextColumn, nodeLevelColumn, isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
-//                        edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
-//                        multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
-//                if (jchb_CalculateSignificance.isSelected()) {
-//                    calculateFlowAction.setBootstrapProps(getBootstrapProperties());
-//                }
-//                calculateFlowAction.actionPerformed(e);
-//                int timeout = 10;
-//                int time = 0;
-//                while (!calculateFlowAction.done() && time < timeout) {
-//                    try {
-//                        Thread.sleep(100);
-//                        time++;
-//                    } catch (InterruptedException e1) {
-//                        e1.printStackTrace();
-//                    }
-//                }
-//
-//            }
-//        }
-        else {
+                            edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile,
+                            nodeDataProperties, multiSignalProps, loopHandlingProps,
+                            jchb_CalculateSignificance.isSelected(), this);
+            if(jchb_CalculateSignificance.isSelected())
+                calculateScoreFlowMultiColAction.setBootstrapProps(getBootstrapProperties());
+            calculateScoreFlowMultiColAction.actionPerformed(e);
+        } else {
             CyColumn nodeDataColumn = getNodeDataColumn();
             if (nodeDataColumn == null) {
                 JOptionPane.showMessageDialog(this,
@@ -2176,9 +2219,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                     if (jchb_CalculateSignificance.isSelected()) {
                         calculateFlowAction.setBootstrapProps(getBootstrapProperties());
                     }
-                    if (cancelled) {
-                        break;
-                    }
+
                     calculateFlowAction.actionPerformed(e);
                     int timeout = 10;
                     int time = 0;
@@ -2191,85 +2232,90 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                             e1.printStackTrace();
                         }
                     }
-
+                    if (cancelled || calculateFlowAction.isCancelled()) {
+                        break;
+                    }
                 }
-                //create a summary backup file
-                String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
-                File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
-                HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
-                HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
-                ArrayList<String> rownames = new ArrayList<>();
-                boolean firstFile = true;
-                for (CyColumn nextColumn : selectedNodeDataColumns) {
-                    File scoreBackupFile = new File(PSFCActivator.getPSFCDir(),
-                            networkName + nextColumn.getName() + ".xls");
-                    ArrayList<Double> scores = new ArrayList<>();
-                    ArrayList<Double> pvals = new ArrayList<>();
+                if (!cancelled && !calculateFlowAction.isCancelled()) {
 
-                    if (scoreBackupFile.exists()) {
-                        BufferedReader reader = new BufferedReader(new FileReader(scoreBackupFile));
-                        String line;
-                        int ncol = 0, scoreInd = 0, pvalInd = 0;
-                        while ((line = reader.readLine()) != null) {
-                            String[] tokens = line.split("\t");
-                            if (line.startsWith("SUID")) {
-                                ncol = tokens.length;
-                                if (ncol < 2)
-                                    throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file " + scoreBackupFile + " was less than 2");
-                                scoreInd = ncol - 2;
-                                pvalInd = ncol - 1;
-                            } else {
-                                if (firstFile) {
-                                    rownames.add(tokens[1]);
+                    //create a summary backup file
+                    String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
+                    File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
+                    HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
+                    HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
+                    ArrayList<String> rownames = new ArrayList<>();
+                    boolean firstFile = true;
+                    for (CyColumn nextColumn : selectedNodeDataColumns) {
+                        File scoreBackupFile = new File(PSFCActivator.getPSFCDir(),
+                                networkName + nextColumn.getName() + ".xls");
+                        ArrayList<Double> scores = new ArrayList<>();
+                        ArrayList<Double> pvals = new ArrayList<>();
+
+                        if (scoreBackupFile.exists()) {
+                            BufferedReader reader = new BufferedReader(new FileReader(scoreBackupFile));
+                            String line;
+                            int ncol = 0, scoreInd = 0, pvalInd = 0;
+                            while ((line = reader.readLine()) != null) {
+                                String[] tokens = line.split("\t");
+                                if (line.startsWith("SUID")) {
+                                    ncol = tokens.length;
+                                    if (ncol < 2)
+                                        throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file " + scoreBackupFile + " was less than 2");
+                                    scoreInd = ncol - 2;
+                                    pvalInd = ncol - 1;
+                                } else {
+                                    if (firstFile) {
+                                        rownames.add(tokens[1]);
+                                    }
+
+                                    try {
+                                        double score = Double.parseDouble(tokens[scoreInd]);
+                                        scores.add(score);
+                                    } catch (NumberFormatException e1) {
+                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                                "The value in " + scoreBackupFile.getName() + " at column "
+                                                + scoreInd + " and rowname " + tokens[1] +
+                                                " was not convertable to double");
+                                    }
+
+
+                                    try {
+                                        double pval = Double.parseDouble(tokens[pvalInd]);
+                                        pvals.add(pval);
+                                    } catch (NumberFormatException e1) {
+                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                                "The value in " + scoreBackupFile.getName() + " at column "
+                                                + pvalInd + " and rowname " + tokens[1] +
+                                                " was not convertable to double");
+                                    }
+
                                 }
-
-                                try {
-                                    double score = Double.parseDouble(tokens[scoreInd]);
-                                    scores.add(score);
-                                } catch (NumberFormatException e1) {
-                                    throw new NumberFormatException("PSFC:: Error while generating summary file. " +
-                                            "The value in " + scoreBackupFile.getName() + " at column "
-                                            + scoreInd + " and rowname " + tokens[1] +
-                                            " was not convertable to double");
-                                }
-
-
-                                try {
-                                    double pval = Double.parseDouble(tokens[pvalInd]);
-                                    pvals.add(pval);
-                                } catch (NumberFormatException e1) {
-                                    throw new NumberFormatException("PSFC:: Error while generating summary file. " +
-                                            "The value in " + scoreBackupFile.getName() + " at column "
-                                            + pvalInd + " and rowname " + tokens[1] +
-                                            " was not convertable to double");
-                                }
-
                             }
+                            reader.close();
+                            columnScoreMap.put(nextColumn, scores);
+                            columnPvalMap.put(nextColumn, pvals);
+                            firstFile = false;
+                        } else {
+                            throw new Exception("PSFC: Error while generating summary file. The backup file: " + scoreBackupFile.getAbsolutePath() + " does not exist");
                         }
-                        reader.close();
-                        columnScoreMap.put(nextColumn, scores);
-                        columnPvalMap.put(nextColumn, pvals);
-                        firstFile = false;
-                    } else {
-                        throw new Exception("PSFC: Error while generating summary file. The backup file: " + scoreBackupFile.getAbsolutePath() + " does not exist");
                     }
-                }
-                PrintWriter writer = new PrintWriter(summaryFile);
-                String header = "Name";
-                for (CyColumn key : columnScoreMap.keySet()) {
-                    header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
-                }
-                writer.write(header);
-
-                for (int i = 0; i < rownames.size(); i++) {
-                    String line = rownames.get(i);
+                    PrintWriter writer = new PrintWriter(summaryFile);
+                    String header = "Name";
                     for (CyColumn key : columnScoreMap.keySet()) {
-                        line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
+                        header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
                     }
-                    writer.append("\n" + line);
+                    writer.write(header);
+
+                    for (int i = 0; i < rownames.size(); i++) {
+                        String line = rownames.get(i);
+                        for (CyColumn key : columnScoreMap.keySet()) {
+                            line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
+                        }
+                        writer.append("\n" + line);
+                    }
+                    writer.close();
+                    taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
                 }
-                writer.close();
-                taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
             }
             System.gc();
         }
@@ -2629,6 +2675,27 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
+    private void jtxt_minNodeSignalActionPerformed() {
+        double oldValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[minNodeSignalIndex];
+        double maxValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[maxNodeSignalIndex];
+        double midValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[midNodeSignalIndex];
+
+        Double newValue;
+        try {
+            newValue = Double.parseDouble(jtxt_minNodeSignal.getText());
+        } catch (NumberFormatException e) {
+            jtxt_minNodeSignal.setText(oldValue + "");
+            return;
+        }
+
+        if (newValue > maxValue) {
+            jtxt_minNodeSignal.setText(oldValue + "");
+            return;
+        }
+        networkMinMaxSignalsMap.get(getSelectedNetwork())[minNodeSignalIndex] = newValue;
+        jtxt_minNodeSignal.setText(DoubleFormatter.formatDouble(newValue) + "");
+    }
+
     private void jtxt_midNodeSignalActionPerformed() {
         double minValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[minNodeSignalIndex];
         double maxValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[maxNodeSignalIndex];
@@ -2648,6 +2715,27 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
         networkMinMaxSignalsMap.get(getSelectedNetwork())[midNodeSignalIndex] = newValue;
         jtxt_midNodeSignal.setText(DoubleFormatter.formatDouble(newValue) + "");
+    }
+
+    private void jtxt_maxNodeSignalActionPerformed() {
+        double minValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[minNodeSignalIndex];
+        double oldValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[maxNodeSignalIndex];
+        double midValue = networkMinMaxSignalsMap.get(getSelectedNetwork())[midNodeSignalIndex];
+
+        Double newValue;
+        try {
+            newValue = Double.parseDouble(jtxt_maxNodeSignal.getText());
+        } catch (NumberFormatException e) {
+            jtxt_maxNodeSignal.setText(oldValue + "");
+            return;
+        }
+
+        if (newValue < midValue) {
+            jtxt_maxNodeSignal.setText(oldValue + "");
+            return;
+        }
+        networkMinMaxSignalsMap.get(getSelectedNetwork())[maxNodeSignalIndex] = newValue;
+        jtxt_maxNodeSignal.setText(DoubleFormatter.formatDouble(newValue) + "");
     }
 
     private void jtxt_midEdgeSignalActionPerformed() {
@@ -3095,6 +3183,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         enableButtons();
     }
 
+
     private boolean setEdgeTypeRuleNameConfigFile(File file) {
         if (file.exists()) {
             String name = file.getName();
@@ -3109,6 +3198,40 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             return true;
         }
         return false;
+    }
+
+    private void jb_editEdgeTypeConfigActionPerformed(ActionEvent e) {
+        if (edgeTypeRuleNameConfigFile != null & edgeTypeRuleNameConfigFile.exists()) {
+            try {
+                Desktop.getDesktop().edit(edgeTypeRuleNameConfigFile);
+            } catch (IOException e1) {
+                try {
+                    Desktop.getDesktop().open(edgeTypeRuleNameConfigFile.getParentFile());
+                } catch (IOException e2) {
+                    System.out.println("PSFC:: cannot open the folder: "
+                            + edgeTypeRuleNameConfigFile.getParent());
+                }
+                System.out.println("PSFC:: cannot open the file: "
+                        + edgeTypeRuleNameConfigFile + " for editing");
+            }
+        }
+    }
+
+    private void jb_editRuleNameRuleConfigActionPerformed(ActionEvent e) {
+        if (ruleNameRuleConfigFile != null & ruleNameRuleConfigFile.exists()) {
+            try {
+                Desktop.getDesktop().edit(ruleNameRuleConfigFile);
+            } catch (IOException e1) {
+                try {
+                    Desktop.getDesktop().open(ruleNameRuleConfigFile.getParentFile());
+                } catch (IOException e2) {
+                    System.out.println("PSFC:: cannot open the folder: "
+                            + ruleNameRuleConfigFile.getParent());
+                }
+                System.out.println("PSFC:: cannot open the file: "
+                        + ruleNameRuleConfigFile + " for editing");
+            }
+        }
     }
 
     private boolean setExprMatrixFile(File file) {
@@ -3408,14 +3531,24 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         //EdgeTypeRuleNameConfigFile
         String fileName = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.EdgeTypeRuleNameConfigFile.getName());
         File file = new File(fileName);
-        if (file.exists())
+        jb_editEdgeTypeConfig.setIcon(getIcon("edit.png"));
+        if (file.exists()) {
             setEdgeTypeRuleNameConfigFile(file);
+            jb_editEdgeTypeConfig.setEnabled(true);
+        } else {
+            jb_editEdgeTypeConfig.setEnabled(false);
+        }
 
         //RuleNameRuleConfigFile
         fileName = PSFCActivator.getPsfcProps().getProperty(EpsfcProps.RuleNameRuleConfigFile.getName());
         file = new File(fileName);
-        if (file.exists())
+        jb_editRuleNameRuleConfig.setIcon(getIcon("edit.png"));
+        if (file.exists()) {
             setRuleNameRuleConfigFile(file);
+            jb_editRuleNameRuleConfig.setEnabled(true);
+        } else {
+            jb_editRuleNameRuleConfig.setEnabled(false);
+        }
 
         //Split signal on button group
         jbg_splitSignalOn = new ButtonGroup();
@@ -3668,12 +3801,19 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             boolean edgeTypeColumn = getEdgeTypeColumn() != null;
             boolean config = (edgeTypeRuleNameConfigFile != null &&
                     edgeTypeRuleNameConfigFile.exists());
+            if (config)
+                jb_editEdgeTypeConfig.setEnabled(true);
+            else
+                jb_editEdgeTypeConfig.setEnabled(false);
             if (!nodeDataColumn || !edgeTypeColumn)
                 setTabIcon(0, getRedFlagIcon());
             else
                 setTabIcon(0, getGreenFlagIcon());
 
-
+            if (ruleNameRuleConfigFile != null && ruleNameRuleConfigFile.exists())
+                jb_editRuleNameRuleConfig.setEnabled(true);
+            else
+                jb_editRuleNameRuleConfig.setEnabled(false);
             config = (config && ruleNameRuleConfigFile != null && ruleNameRuleConfigFile.exists());
             if (!config)
                 setTabIcon(2, getRedFlagIcon());

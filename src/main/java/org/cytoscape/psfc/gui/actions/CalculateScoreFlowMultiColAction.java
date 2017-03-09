@@ -14,17 +14,17 @@ import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.psfc.net.NetworkGraphMapper;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
-import org.cytoscape.work.AbstractTask;
-import org.cytoscape.work.TaskIterator;
-import org.cytoscape.work.TaskMonitor;
+import org.cytoscape.work.*;
 
 
+import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Properties;
@@ -36,13 +36,13 @@ import java.util.Properties;
  * initiates the task for calculating score flows of the network based on available scores,
  * rules and topology.
  */
-
-public class CalculateScoreFlowAction extends AbstractCyAction {
+public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
     private final Properties nodeDataProps;
     private final Properties multiSignalProps;
     private final PSFCPanel psfcPanel;
     private final Properties loopHandlingProps;
+    private final ArrayList<CyColumn> selectedNodeDataColumns;
     private CyNetwork network;
     private CyColumn edgeTypeColumn;
     private CyColumn nodeDataColumn;
@@ -57,6 +57,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
     private boolean calculateSignificance;
     private HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap; //to be used by backupscorestask, since the signals may later be updtaed by bootstrap
     private TaskMonitor taskMonitor;
+    boolean allCancelled = false;
+    boolean exceptionOccured = false;
+
 
     private Properties bootstrapProps;
     private PSF psf;
@@ -65,25 +68,25 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             new HashMap<Integer, HashMap<CyNode, Double>>();
     private boolean success;
 
-    public CalculateScoreFlowAction(CyNetwork network,
-                                    CyColumn edgeTypeColumn,
-                                    CyColumn nodeDataColumn,
-                                    CyColumn nodeLevelColumn,
-                                    CyColumn isOperatorColumn,
-                                    CyColumn nodeFunctionColumn,
-                                    CyColumn edgeIsBackwardColumn,
-                                    File edgeTypeRuleNameConfigFile,
-                                    File ruleConfigFile,
-                                    Properties nodeDataProperties,
-                                    Properties multiSignalProps,
-                                    Properties loopHandlingProps,
-                                    boolean calculateSignificance,
-                                    PSFCPanel psfcPanel) {
+    public CalculateScoreFlowMultiColAction(CyNetwork network,
+                                            CyColumn edgeTypeColumn,
+                                            ArrayList<CyColumn> selectedNodeDataColumns,
+                                            CyColumn nodeLevelColumn,
+                                            CyColumn isOperatorColumn,
+                                            CyColumn nodeFunctionColumn,
+                                            CyColumn edgeIsBackwardColumn,
+                                            File edgeTypeRuleNameConfigFile,
+                                            File ruleConfigFile,
+                                            Properties nodeDataProperties,
+                                            Properties multiSignalProps,
+                                            Properties loopHandlingProps,
+                                            boolean calculateSignificance,
+                                            PSFCPanel psfcPanel) {
         super("Calculate score flow");
 
         this.network = network;
         this.edgeTypeColumn = edgeTypeColumn;
-        this.nodeDataColumn = nodeDataColumn;
+        this.selectedNodeDataColumns = selectedNodeDataColumns;
         this.nodeLevelColumn = nodeLevelColumn;
         this.isOperatorColumn = isOperatorColumn;
         this.nodeFunctionColumn = nodeFunctionColumn;
@@ -99,60 +102,85 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
 
         this.networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
-        this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + nodeDataColumn.getName() + ".xls");
-        try {
-            boolean success = scoreBackupFile.createNewFile();
-            if (!success) {
-                PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
-            }
-        } catch (IOException e) {
-            PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath(), e);
-        }
+
+
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        done = false;
-        final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
-        final BackupResultsTask backupResultsTask = new BackupResultsTask();
-        TaskIterator taskIterator = new TaskIterator();
+        if(selectedNodeDataColumns.size() == 1){
+            done = false;
+            this.nodeDataColumn = selectedNodeDataColumns.get(0);
+            final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
+            final BackupResultsTask backupResultsTask = new BackupResultsTask();
+            TaskIterator taskIterator = new TaskIterator();
 
-        taskIterator.append(psfTask);
-        if (calculateSignificance) {
-            final CalculateSignificanceTask calculateSignificanceTask =
-                    new CalculateSignificanceTask();
-            taskIterator.append(calculateSignificanceTask);
+            taskIterator.append(psfTask);
+            if (calculateSignificance) {
+                final CalculateSignificanceTask calculateSignificanceTask =
+                        new CalculateSignificanceTask();
+                taskIterator.append(calculateSignificanceTask);
+            }
+            taskIterator.append(backupResultsTask);
+            PSFCActivator.taskManager.execute(taskIterator);
+        } else {
+            for (CyColumn column : selectedNodeDataColumns) {
+                if (allCancelled || exceptionOccured)
+                    break;
+                this.nodeDataColumn = column;
+                System.out.println("Computing psf for column " + column);
+                this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + nodeDataColumn.getName() + ".xls");
+                try {
+                    boolean success = scoreBackupFile.createNewFile();
+                    if (!success) {
+                        PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
+                    }
+                } catch (IOException e1) {
+                    exceptionOccured = true;
+                    PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath(), e1);
+                }
+                TaskIterator taskIterator = new TaskIterator();
+
+                final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
+                final BackupResultsTask backupResultsTask = new BackupResultsTask();
+
+                taskIterator.append(psfTask);
+                if (calculateSignificance) {
+                    final CalculateSignificanceTask calculateSignificanceTask =
+                            new CalculateSignificanceTask();
+                    taskIterator.append(calculateSignificanceTask);
+                }
+                taskIterator.append(backupResultsTask);
+                MyTaskObserver taskObserver = new MyTaskObserver();
+                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
+
+
+                while (!taskObserver.allComplete()) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e1) {
+                        exceptionOccured = true;
+                        e1.printStackTrace();
+                    }
+                }
+            }
         }
-        taskIterator.append(backupResultsTask);
-        PSFCActivator.taskManager.execute(taskIterator);
     }
 
     public void setBootstrapProps(Properties bootstrapProps) {
         this.bootstrapProps = bootstrapProps;
     }
 
-    public boolean done() {
-        return done;
-    }
 
-    public boolean isCancelled() {
-        return !success;
-    }
-
-    private class CalculateScoreFlowTask extends AbstractTask {
+    private class CalculateScoreFlowTask extends AbstractTask implements ObservableTask{
         boolean flowSuccess = true;
         String errorMessage;
-
-
         Thread psfThread = new Thread(new Runnable() {
-
             @Override
             public void run() {
                 try {
                     psf.calculateFlow();
-
                 } catch (Exception e) {
-//                    e.printStackTrace();
                     flowSuccess = false;
                     errorMessage = e.getMessage();
                 }
@@ -161,8 +189,21 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
-            success = false;
+            exceptionOccured = true;
             taskMonitor.setTitle("PSFC.CalculateFlowTask for column " + nodeDataColumn.getName());
+            if (nodeDataColumn == null) {
+                throw  new Exception("Selected Node Data column does not exist. " +
+                        "\nPlease, refresh the column list and choose a valid Node Data column for pathway flow calculation.");
+            }
+
+            boolean isNumber = true;
+            if (!nodeDataColumn.getType().getName().equals(Double.class.getName()))
+                if (!nodeDataColumn.getType().getName().equals(Integer.class.getName()))
+                    isNumber = false;
+            if (!isNumber) {
+                throw new Exception("Illegal NodeData column: should be numeric. " +
+                                "\nPlease, choose a valid column for pathway flow calculation.");
+            }
 
             //Converting network to Graph
             taskMonitor.setStatusMessage("Converting network to PSFC Graph");
@@ -302,7 +343,6 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
 
                 try {
-//                    psf.calculateFlow();
                     psfThread.run();
                     if (!flowSuccess) {
                         throw new Exception(errorMessage);
@@ -397,10 +437,11 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
                 // Trigger psfcPanel to update Flow Visualization Panel
                 psfcPanel.setVisualizationComponents(network, levelCyNodeScoreMap, levelCyEdgeScoreMap);
-
+                exceptionOccured = false;
                 taskMonitor.setStatusMessage("Flow calculation task complete");
                 taskMonitor.setProgress(1);
             } catch (Exception e) {
+                exceptionOccured = true;
                 throw new Exception("PSFC::Exception " + "PSFC::Exception " + e.getMessage());
             } finally {
                 PSFCActivator.getLogger().debug("PSFC Score Flow calculation finished");
@@ -417,6 +458,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
             psf.setCancelled(true);
             flowSuccess = false;
             success = false;
+            allCancelled = true;
             System.gc();
         }
 
@@ -504,14 +546,18 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         }
 
 
+        @Override
+        public <R> R getResults(Class<? extends R> aClass) {
+            return null;
+        }
     }
 
-    private class BackupResultsTask extends AbstractTask {
+    private class BackupResultsTask extends AbstractTask implements ObservableTask {
         boolean cancelled = false;
-
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            exceptionOccured = true;
             success = false;
             if(levelNodeSignalMap == null){
                 throw new Exception("No node signals available for score backup");
@@ -561,8 +607,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 writer.close();
                 PSFCActivator.getLogger().debug("Written flow scores to file "
                         + scoreBackupFile.getAbsolutePath());
-
+                exceptionOccured = false;
             } catch (FileNotFoundException e) {
+                exceptionOccured = true;
                 throw new Exception("PSFC::Exception " + "Problem writing node scores to file "
                         + scoreBackupFile.getAbsolutePath()
                         + ". Reason: " + e.getMessage(), e);
@@ -577,7 +624,13 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
         @Override
         public void cancel() {
             cancelled = true;
+            allCancelled = true;
             System.gc();
+        }
+
+        @Override
+        public <R> R getResults(Class<? extends R> aClass) {
+            return null;
         }
     }
 
@@ -587,6 +640,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            exceptionOccured = true;
             success = false;
             taskMonitor.setTitle("PSFC.CalculateSignificanceTask");
             taskMonitor.setProgress(0);
@@ -637,7 +691,9 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 NetworkCyManager.setNodeAttributesFromMap(network, cyNodePValueMap, EColumnNames.PSFC_PVAL.getName(), Double.class);
                 taskMonitor.setStatusMessage("Bootstrap significance calculation complete");
                 taskMonitor.setProgress(1);
+                exceptionOccured = false;
             } catch (Exception e) {
+                exceptionOccured = true;
                 throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
             }
             finally {
@@ -652,6 +708,7 @@ public class CalculateScoreFlowAction extends AbstractCyAction {
                 bootstrap.setCancelled(true);
             cancelled = true;
             success = false;
+            allCancelled = true;
             System.gc();
         }
     }

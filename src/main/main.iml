@@ -26,5 +26,16 @@
     <orderEntry type="library" name="Maven: jgraph:jgraph:5.13.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-core:0.9.0" level="project" />
     <orderEntry type="library" name="Maven: org.jgrapht:jgrapht-ext:0.9.1" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:work-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:application-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:swing-application-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:event-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:service-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:session-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:viewmodel-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:vizmap-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:work-swing-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:model-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:presentation-api:3.4.0" level="project" />
   </component>
 </module>

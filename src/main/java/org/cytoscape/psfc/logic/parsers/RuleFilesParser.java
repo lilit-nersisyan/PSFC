@@ -12,7 +12,7 @@ import java.util.HashMap;
  */
 public class RuleFilesParser {
 
-    public static HashMap<String, String> parseSimpleRules(File edgeTypeRuleNameConfigFile,
+    public HashMap<String, String> parseSimpleRules(File edgeTypeRuleNameConfigFile,
                                                             File ruleConfigFile) throws Exception {
         HashMap<String, String> edgeTypeRuleNameMap = parseEdgeTypeRuleNameConfigFile(edgeTypeRuleNameConfigFile);
         HashMap<String, String> ruleNameRuleMap = parseRuleNameRuleConfigFile(ruleConfigFile);
@@ -26,7 +26,7 @@ public class RuleFilesParser {
         return edgeTypeRuleMap;
     }
 
-    public static HashMap<String, String> parseRuleNameRuleConfigFile(File ruleConfigFile) throws Exception {
+    public HashMap<String, String> parseRuleNameRuleConfigFile(File ruleConfigFile) throws Exception {
         BufferedReader reader = new BufferedReader(new FileReader(ruleConfigFile));
         String line;
         HashMap<String, String> ruleNameRuleMap = new HashMap<String, String>();
@@ -44,7 +44,7 @@ public class RuleFilesParser {
     }
 
 
-    public static HashMap<String, String> parseEdgeTypeRuleNameConfigFile
+    public HashMap<String, String> parseEdgeTypeRuleNameConfigFile
             (File edgeTypeRuleNameConfigFile) throws Exception {
         BufferedReader reader = new BufferedReader(new FileReader(edgeTypeRuleNameConfigFile));
         String line;
