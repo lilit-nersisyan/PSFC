@@ -8,11 +8,10 @@ import org.cytoscape.work.TaskObserver;
  * Created by Lilit Nersisyan on 3/7/2017.
  */
 public class MyTaskObserver implements TaskObserver {
-    boolean taskComplete = false;
     boolean allComplete = false;
     @Override
     public void taskFinished(ObservableTask observableTask) {
-        System.out.println("bzzz: task finished");
+        System.out.println("Task finished: " + observableTask.toString());
     }
 
     @Override
@@ -25,4 +24,7 @@ public class MyTaskObserver implements TaskObserver {
         return allComplete;
     }
 
+    public void reset() {
+        allComplete = false;
+    }
 }

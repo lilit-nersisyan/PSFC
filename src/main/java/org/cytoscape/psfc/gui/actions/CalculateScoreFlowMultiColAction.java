@@ -59,6 +59,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     private TaskMonitor taskMonitor;
     boolean allCancelled = false;
     boolean exceptionOccured = false;
+    MyTaskObserver taskObserver = new MyTaskObserver();
 
 
     private Properties bootstrapProps;
@@ -123,6 +124,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             }
             taskIterator.append(backupResultsTask);
             PSFCActivator.taskManager.execute(taskIterator);
+
         } else {
             for (CyColumn column : selectedNodeDataColumns) {
                 if (allCancelled || exceptionOccured)
@@ -151,9 +153,8 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     taskIterator.append(calculateSignificanceTask);
                 }
                 taskIterator.append(backupResultsTask);
-                MyTaskObserver taskObserver = new MyTaskObserver();
-                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
-
+//                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
+                PSFCActivator.justTaskManager.execute(taskIterator, taskObserver);
 
                 while (!taskObserver.allComplete()) {
                     try {
@@ -163,6 +164,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                         e1.printStackTrace();
                     }
                 }
+                taskObserver.reset();
             }
         }
     }
@@ -617,6 +619,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             finally {
                 success = true;
                 done = true;
+                System.gc();
             }
 
         }
@@ -634,7 +637,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         }
     }
 
-    private class CalculateSignificanceTask extends AbstractTask {
+    private class CalculateSignificanceTask extends AbstractTask implements ObservableTask {
 
         Bootstrap bootstrap;
 
@@ -710,6 +713,11 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             success = false;
             allCancelled = true;
             System.gc();
+        }
+
+        @Override
+        public <R> R getResults(Class<? extends R> aClass) {
+            return null;
         }
     }
 

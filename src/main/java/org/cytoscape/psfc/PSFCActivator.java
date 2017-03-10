@@ -21,6 +21,8 @@ import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.SynchronousTaskManager;
+import org.cytoscape.work.TaskManager;
+import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
@@ -35,6 +37,7 @@ import java.util.Scanner;
 public class PSFCActivator extends AbstractCyActivator {
     public static CySwingApplication cytoscapeDesktopService;
     public static DialogTaskManager taskManager;
+    public static TaskManager justTaskManager;
     public static SynchronousTaskManager synchTaskManager;
     public static CySessionManager cySessionManager;
     public static CyNetworkFactory networkFactory;
@@ -103,6 +106,7 @@ public class PSFCActivator extends AbstractCyActivator {
     public void start(BundleContext bc) throws Exception {
         cytoscapeDesktopService = getService(bc, CySwingApplication.class);
         taskManager = getService(bc, DialogTaskManager.class);
+        justTaskManager = getService(bc, TaskManager.class);
         synchTaskManager = getService(bc, SynchronousTaskManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
         networkFactory = getService(bc, CyNetworkFactory.class);
@@ -127,6 +131,7 @@ public class PSFCActivator extends AbstractCyActivator {
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
         registerService(bc, taskManager, DialogTaskManager.class, new Properties());
+        registerService(bc, justTaskManager, TaskManager.class, new Properties());
         registerService(bc, synchTaskManager, SynchronousTaskManager.class, new Properties());
         registerService(bc, cySessionManager, CySessionManager.class, new Properties());
         registerService(bc, networkFactory, CyNetworkFactory.class, new Properties());
