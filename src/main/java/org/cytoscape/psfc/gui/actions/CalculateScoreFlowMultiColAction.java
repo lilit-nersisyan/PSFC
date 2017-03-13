@@ -1,6 +1,7 @@
 package org.cytoscape.psfc.gui.actions;
 
 
+import jdk.nashorn.internal.scripts.JO;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
@@ -126,6 +127,14 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             PSFCActivator.taskManager.execute(taskIterator);
 
         } else {
+            JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
+                    "PSFC multiple columns task is about to start. \n " +
+                            "Currently, there is a problem with the task monitor.\n" +
+                            "So, please, click \"OK\" and wait until the task monitor pops out for just a blink of a second \n " +
+                            "to make sure all the computations are complete. \n " +
+                            "Or watch the command prompt to see the progress. \n " +
+                            "If you  know a solution to this issue, please, let us know!",
+                    "PSFC multiple columns warning", JOptionPane.INFORMATION_MESSAGE);
             for (CyColumn column : selectedNodeDataColumns) {
                 if (allCancelled || exceptionOccured)
                     break;
@@ -154,7 +163,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 }
                 taskIterator.append(backupResultsTask);
 //                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
-                PSFCActivator.justTaskManager.execute(taskIterator, taskObserver);
+                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
 
                 while (!taskObserver.allComplete()) {
                     try {
