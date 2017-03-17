@@ -70,7 +70,7 @@ public class PSFCActivator extends AbstractCyActivator {
     private static String aboutFileName = "about.txt";
     private static String rulePresetsFileName = "rule_presets.pdf";
     private static String userManualFileName = "PSFC_User_Manual.pdf";
-    private static String userManualURL = "http://big.sci.am/apps/psfc/PSFC_User_Manual.pdf";
+    private static String userManualURL = "http://big.sci.am/apps/psfc/PSFC_User_Manual_1.1.2.pdf";
     private static String projectWebpageUrl = "http://apps.cytoscape.org/apps/psfc";
 
     public static String getAboutText() {

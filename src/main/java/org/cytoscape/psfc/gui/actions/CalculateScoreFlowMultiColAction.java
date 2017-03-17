@@ -19,7 +19,9 @@ import org.cytoscape.work.*;
 
 
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -110,7 +112,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(selectedNodeDataColumns.size() == 1){
+        if (selectedNodeDataColumns.size() == 1) {
             done = false;
             this.nodeDataColumn = selectedNodeDataColumns.get(0);
             final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
@@ -130,33 +132,58 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
                     "PSFC multiple columns task is about to start. \n " +
                             "Currently, there is a problem with the task monitor.\n" +
-                            "So, please, click \"OK\" and wait until the task monitor pops out for just a blink of a second \n " +
+                            "So, please, click \"OK\" and wait until next notification \n " +
                             "to make sure all the computations are complete. \n " +
                             "Or watch the command prompt to see the progress. \n " +
                             "If you  know a solution to this issue, please, let us know!",
-                    "PSFC multiple columns warning", JOptionPane.INFORMATION_MESSAGE);
+                    "PSFC multiple columns warning", JOptionPane.OK_CANCEL_OPTION);
+
+
+//            SwingWorker worker = new SwingWorker() {
+//                MultiColumnDialog multiColumnDialog = new MultiColumnDialog(PSFCActivator.cytoscapeDesktopService.getJFrame());
+//
+//                @Override
+//                protected Object doInBackground() throws Exception {
+//                    multiColumnDialog.setVisible(true);
+//                    System.out.println("executed worker");
+//                    return null;
+//                }
+//            };
+//            worker.execute();
+
+
             for (CyColumn column : selectedNodeDataColumns) {
                 if (allCancelled || exceptionOccured)
                     break;
-                this.nodeDataColumn = column;
+                nodeDataColumn = column;
                 System.out.println("Computing psf for column " + column);
-                this.scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + nodeDataColumn.getName() + ".xls");
-                try {
+                scoreBackupFile = new
+
+                        File(PSFCActivator.getPSFCDir(), networkName + nodeDataColumn.getName() + ".xls");
+                try
+
+                {
                     boolean success = scoreBackupFile.createNewFile();
                     if (!success) {
                         PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
                     }
-                } catch (IOException e1) {
+                } catch (
+                        IOException e1)
+
+                {
                     exceptionOccured = true;
                     PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath(), e1);
                 }
+
                 TaskIterator taskIterator = new TaskIterator();
 
                 final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask();
                 final BackupResultsTask backupResultsTask = new BackupResultsTask();
 
                 taskIterator.append(psfTask);
-                if (calculateSignificance) {
+                if (calculateSignificance)
+
+                {
                     final CalculateSignificanceTask calculateSignificanceTask =
                             new CalculateSignificanceTask();
                     taskIterator.append(calculateSignificanceTask);
@@ -165,7 +192,9 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 //                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
                 PSFCActivator.taskManager.execute(taskIterator, taskObserver);
 
-                while (!taskObserver.allComplete()) {
+                while (!taskObserver.allComplete())
+
+                {
                     try {
                         Thread.sleep(100);
                     } catch (InterruptedException e1) {
@@ -173,8 +202,17 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                         e1.printStackTrace();
                     }
                 }
+//                multiColumnDialog.setVisible(false);
                 taskObserver.reset();
             }
+
+
+            JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
+                    "PSFC finished for all the columns. \n " +
+                            "The scores for each column and the summary file are saved in "
+                            + PSFCActivator.getPSFCDir() +
+                            " directory. ",
+                    "PSFC task finished", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 
@@ -183,7 +221,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     }
 
 
-    private class CalculateScoreFlowTask extends AbstractTask implements ObservableTask{
+    private class CalculateScoreFlowTask extends AbstractTask implements ObservableTask {
         boolean flowSuccess = true;
         String errorMessage;
         Thread psfThread = new Thread(new Runnable() {
@@ -203,7 +241,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             exceptionOccured = true;
             taskMonitor.setTitle("PSFC.CalculateFlowTask for column " + nodeDataColumn.getName());
             if (nodeDataColumn == null) {
-                throw  new Exception("Selected Node Data column does not exist. " +
+                throw new Exception("Selected Node Data column does not exist. " +
                         "\nPlease, refresh the column list and choose a valid Node Data column for pathway flow calculation.");
             }
 
@@ -213,7 +251,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     isNumber = false;
             if (!isNumber) {
                 throw new Exception("Illegal NodeData column: should be numeric. " +
-                                "\nPlease, choose a valid column for pathway flow calculation.");
+                        "\nPlease, choose a valid column for pathway flow calculation.");
             }
 
             //Converting network to Graph
@@ -511,9 +549,9 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                             row.toString() + ". Reason: " + e.getMessage());
                 }
                 String function = null;
-                if(obj == null)
+                if (obj == null)
                     continue;
-                if(obj instanceof String){
+                if (obj instanceof String) {
                     String objV = (String) obj;
                     if (!objV.equals(""))
                         function = objV;
@@ -521,7 +559,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     throw new Exception("the function column " + nodeFunctionColumn.getName() +
                             " must be String");
                 }
-                map.put(cyNode,function);
+                map.put(cyNode, function);
             }
             return map;
         }
@@ -570,7 +608,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         public void run(TaskMonitor taskMonitor) throws Exception {
             exceptionOccured = true;
             success = false;
-            if(levelNodeSignalMap == null){
+            if (levelNodeSignalMap == null) {
                 throw new Exception("No node signals available for score backup");
             }
             taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
@@ -603,8 +641,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                         if (level >= node.getLevel()) {
 //                            score = node.getSignal();
                             score = levelNodeSignalMap.get(node.getLevel()).get(node);
-                        }
-                        else
+                        } else
                             score = node.getValue();
 
                         line += "\t" + score;
@@ -624,8 +661,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 throw new Exception("PSFC::Exception " + "Problem writing node scores to file "
                         + scoreBackupFile.getAbsolutePath()
                         + ". Reason: " + e.getMessage(), e);
-            }
-            finally {
+            } finally {
                 success = true;
                 done = true;
                 System.gc();
@@ -707,8 +743,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             } catch (Exception e) {
                 exceptionOccured = true;
                 throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
-            }
-            finally {
+            } finally {
                 success = true;
                 System.gc();
             }

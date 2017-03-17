@@ -532,32 +532,32 @@ public class PSF {
                 signals[i] = parentNodes.get(i).getSignal();
             }
             double signal = Double.NaN;
-
+            double missingValue = Double.parseDouble((String) nodeDataProps.get(ENodeDataProps.MISSING_DATA_VALUE.getName()));
             switch (function){
                 case "min":
-                    //compute min but don't account for 1's (those may be missing values)
+                    //compute min but don't account for missing values
                     signal = Double.MAX_VALUE;
 
                     for(Double s : signals){
-                        if ( s != 1){
+                        if ( s != missingValue){
                             if ( s < signal)
                                 signal = s;
                         }
                     }
                     if(signal == Double.MAX_VALUE)
-                        signal = 1;
+                        signal = missingValue;
                     break;
                 case "max":
-                    //compute max but don't account for 1's (those may be missing values)
+                    //compute max but don't account for missing values
                     signal = Double.MIN_VALUE;
                     for(Double s : signals){
-                        if (s != 1){
+                        if (s != missingValue){
                             if ( s > signal)
                                 signal = s;
                         }
                     }
                     if(signal == Double.MIN_VALUE)
-                        signal = 1;
+                        signal = missingValue;
                     break;
                 case "sum":
                     signal = 0;
@@ -567,16 +567,29 @@ public class PSF {
                     break;
                 case "prod":
                     signal = 1;
+                    boolean prodmissing = true;
                     for(double s : signals){
-                        signal *= s;
+                        if(s != missingValue)
+                            signal *= s;
+                        else
+                            prodmissing = false;
                     }
+                    if(prodmissing)
+                        signal = missingValue;
                     break;
                 case "mean":
                     signal = 1;
+                    boolean meanmissing = true;
                     for(double s : signals){
-                        signal += s;
+                        if(s != missingValue)
+                            signal += s;
+                        else
+                            meanmissing = false;
                     }
-                    signal /= signals.length;
+                    if(meanmissing)
+                        signal = missingValue;
+                    else
+                        signal /= signals.length;
                     break;
                 default:
                     throw new Exception("Function " + function +

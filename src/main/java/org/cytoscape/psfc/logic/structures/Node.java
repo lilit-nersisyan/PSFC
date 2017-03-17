@@ -27,6 +27,8 @@ public class Node {
     private static String defaultValue = "1";
     private TreeMap<Integer, Double> signals = new TreeMap<>();
     private String function = null;
+    public static double missingDataDefault = 1;
+
 
     /**
      * Creates a Node with given ID and 0.0 initial value.
