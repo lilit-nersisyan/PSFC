@@ -3001,7 +3001,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         Properties psfcProps = PSFCActivator.getPsfcProps();
 
         try {
-            /*** General setting ***/
 
             if (jcb_edgeTypeAttribute.getSelectedItem() != null)
                 psfcProps.setProperty(EpsfcProps.EdgeTypeAttribute.getName(), jcb_edgeTypeAttribute.getSelectedItem().toString());
@@ -3439,6 +3438,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
+    private CyColumn getEdgeIsBackwardColumn() {
+        CyColumn edgeIsBackwardColummn = getEdgeColumn(EColumnNames.PSFC_IS_BACKWARD.getName());
+        if (edgeIsBackwardColummn == null) {
+            boolean success = addEdgeColumn(EColumnNames.PSFC_IS_BACKWARD.getName(), Boolean.class);
+            if (!success)
+                System.out.println("Problem creating the column: " + EColumnNames.PSFC_IS_BACKWARD.getName());
+        }
+        return edgeIsBackwardColummn;
+    }
+
     /**
      * ***************
      * Actions: jp_Data
@@ -3849,7 +3858,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jl_missingValues.setToolTipText("The value of nodes assigned when no data for the node is present (e.g. usually the missing values are replaced with 1.0)");
     }
 
-    private CyNetwork getSelectedNetwork() {
+    public CyNetwork getSelectedNetwork() {
         CyNetwork selectedNetwork = null;
 
         if (jcb_network.getSelectedItem() == null)
@@ -4263,6 +4272,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
+    private boolean addEdgeColumn(String columnName, Class<?> colClass) {
+        try {
+            CyNetwork network = getSelectedNetwork();
+            network.getDefaultEdgeTable().createColumn(columnName, colClass, true);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     private CyColumn getEdgeColumn(String columnName) {
         try {
             CyNetwork network = getSelectedNetwork();
@@ -4308,5 +4327,9 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
     }
 
+    @Override
+    public String getName() {
+        return "PSFC";
+    }
 
 }

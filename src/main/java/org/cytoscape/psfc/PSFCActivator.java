@@ -7,6 +7,7 @@ import org.cytoscape.application.CyApplicationConfiguration;
 import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
+import org.cytoscape.application.swing.CytoPanelName;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.gui.PSFCPanel;
@@ -21,18 +22,23 @@ import org.cytoscape.view.vizmap.VisualMappingFunctionFactory;
 import org.cytoscape.view.vizmap.VisualMappingManager;
 import org.cytoscape.view.vizmap.VisualStyleFactory;
 import org.cytoscape.work.SynchronousTaskManager;
+import org.cytoscape.work.TaskFactory;
 import org.cytoscape.work.TaskManager;
 import org.cytoscape.work.TaskObserver;
 import org.cytoscape.work.swing.DialogTaskManager;
 import org.osgi.framework.BundleContext;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 import java.util.Scanner;
+
+import static org.cytoscape.work.ServiceProperties.COMMAND;
+import static org.cytoscape.work.ServiceProperties.COMMAND_NAMESPACE;
 
 public class PSFCActivator extends AbstractCyActivator {
     public static CySwingApplication cytoscapeDesktopService;
@@ -125,8 +131,8 @@ public class PSFCActivator extends AbstractCyActivator {
         cyTableManager = getService(bc, CyTableManager.class);
         cyNetworkTableManager = getService(bc, CyNetworkTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
-
         psfcPanel = new PSFCPanel();
+
 
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
@@ -149,8 +155,8 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
         registerService(bc, cyNetworkTableManager, CyNetworkTableManager.class, new Properties());
-
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
+
 
 //        EpiNetSimulator epiNetSimulator = new EpiNetSimulator();
 //        epiNetSimulator.setBC(bc);
