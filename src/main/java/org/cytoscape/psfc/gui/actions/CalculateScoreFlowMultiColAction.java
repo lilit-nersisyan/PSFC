@@ -139,19 +139,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     "PSFC multiple columns warning", JOptionPane.OK_CANCEL_OPTION);
 
 
-//            SwingWorker worker = new SwingWorker() {
-//                MultiColumnDialog multiColumnDialog = new MultiColumnDialog(PSFCActivator.cytoscapeDesktopService.getJFrame());
-//
-//                @Override
-//                protected Object doInBackground() throws Exception {
-//                    multiColumnDialog.setVisible(true);
-//                    System.out.println("executed worker");
-//                    return null;
-//                }
-//            };
-//            worker.execute();
-
-
             for (CyColumn column : selectedNodeDataColumns) {
                 if (allCancelled || exceptionOccured)
                     break;
@@ -192,16 +179,24 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 //                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
                 PSFCActivator.taskManager.execute(taskIterator, taskObserver);
 
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e1) {
+                            e1.printStackTrace();
+                        }
+                    }
+                });
                 while (!taskObserver.allComplete())
 
                 {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e1) {
-                        exceptionOccured = true;
-                        e1.printStackTrace();
-                    }
+
+                    thread.run();
+
                 }
+                thread.interrupt();
 //                multiColumnDialog.setVisible(false);
                 taskObserver.reset();
             }
@@ -221,9 +216,11 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     }
 
 
-    private class CalculateScoreFlowTask extends AbstractTask implements ObservableTask {
+    private class CalculateScoreFlowTask extends AbstractTask implements MyObservableTask {
         boolean flowSuccess = true;
         String errorMessage;
+        Graph graph;
+        TaskMonitor taskMonitor;
         Thread psfThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -238,6 +235,11 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            this.taskMonitor = taskMonitor;
+            executeFirstPart();
+        }
+
+        public void executeFirstPart() throws Exception {
             exceptionOccured = true;
             taskMonitor.setTitle("PSFC.CalculateFlowTask for column " + nodeDataColumn.getName());
             if (nodeDataColumn == null) {
@@ -256,7 +258,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
             //Converting network to Graph
             taskMonitor.setStatusMessage("Converting network to PSFC Graph");
-            Graph graph;
             try {
                 graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
             } catch (Exception e) {
@@ -358,6 +359,10 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             deleted = NetworkCyManager.deleteAttributeColumn(network.getDefaultNodeTable(), EColumnNames.PSFC_FINAL.getName());
 
 
+        }
+
+        @Override
+        public void executeSecondPart() throws Exception {
             //Instantiate new PSF class with generated graph, and perform pathway flow calculation
             try {
                 HashMap<String, String> rulesMap;
@@ -498,7 +503,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 success = true;
                 System.gc();
             }
-
         }
 
         @Override
@@ -599,19 +603,31 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         public <R> R getResults(Class<? extends R> aClass) {
             return null;
         }
+
+
     }
 
-    private class BackupResultsTask extends AbstractTask implements ObservableTask {
+    private class BackupResultsTask extends AbstractTask implements MyObservableTask {
         boolean cancelled = false;
+        TaskMonitor taskMonitor;
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            this.taskMonitor = taskMonitor;
+            executeFirstPart();
+        }
+
+        public void executeFirstPart() throws Exception {
             exceptionOccured = true;
             success = false;
             if (levelNodeSignalMap == null) {
                 throw new Exception("No node signals available for score backup");
             }
             taskMonitor.setStatusMessage("Exporting updated signals to file " + scoreBackupFile.getAbsolutePath());
+
+        }
+
+        public void executeSecondPart() throws Exception {
             try {
                 PrintWriter writer = new PrintWriter(scoreBackupFile);
                 String columnNames = "SUID\tName\tLevel";
@@ -666,7 +682,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 done = true;
                 System.gc();
             }
-
         }
 
         @Override
@@ -682,12 +697,17 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         }
     }
 
-    private class CalculateSignificanceTask extends AbstractTask implements ObservableTask {
-
+    private class CalculateSignificanceTask extends AbstractTask implements MyObservableTask {
+        TaskMonitor taskMonitor;
         Bootstrap bootstrap;
 
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
+            this.taskMonitor = taskMonitor;
+            executeFirstPart();
+        }
+
+        public void executeFirstPart() throws Exception{
             exceptionOccured = true;
             success = false;
             taskMonitor.setTitle("PSFC.CalculateSignificanceTask");
@@ -724,8 +744,9 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 }
                 bootstrap = new BootstrapGeneCentric(psf, numOfSamplings, expMatrixFile, PSFCActivator.getLogger());
             }
-
-
+        }
+        public void executeSecondPart() throws Exception {
+            System.out.println("second part started");
             bootstrap.setTaskMonitor(taskMonitor);
             try {
                 HashMap<Node, Double> targetPValueMap = bootstrap.performBootstrap();

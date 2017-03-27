@@ -8,8 +8,12 @@ import org.cytoscape.application.CyApplicationManager;
 import org.cytoscape.application.swing.CySwingApplication;
 import org.cytoscape.application.swing.CytoPanelComponent;
 import org.cytoscape.application.swing.CytoPanelName;
+import org.cytoscape.command.AvailableCommands;
+import org.cytoscape.command.CommandExecutorTaskFactory;
 import org.cytoscape.event.CyEventHelper;
 import org.cytoscape.model.*;
+import org.cytoscape.psfc.commands.CommandTaskFactory;
+import org.cytoscape.psfc.commands.PSFCCommands;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
 import org.cytoscape.psfc.properties.ENodeDataProps;
@@ -61,6 +65,8 @@ public class PSFCActivator extends AbstractCyActivator {
     public static CyApplicationManager cyApplicationManager;
     public static CyTableManager cyTableManager;
     public static CyNetworkTableManager cyNetworkTableManager;
+    public static CommandExecutorTaskFactory commandTaskFactory;
+    public static PSFCCommands psfcCommands;
 
     public static PSFCPanel psfcPanel;
     private static File PSFCDir;
@@ -132,7 +138,8 @@ public class PSFCActivator extends AbstractCyActivator {
         cyNetworkTableManager = getService(bc, CyNetworkTableManager.class);
         cySessionManager = getService(bc, CySessionManager.class);
         psfcPanel = new PSFCPanel();
-
+        commandTaskFactory = new CommandTaskFactory(CommandTaskFactory.COMMANDWITHARGS);
+        psfcCommands = new PSFCCommands();
 
 
         registerService(bc, cytoscapeDesktopService, CySwingApplication.class, new Properties());
@@ -155,7 +162,12 @@ public class PSFCActivator extends AbstractCyActivator {
         registerService(bc, cyApplicationManager, CyApplicationManager.class, new Properties());
         registerService(bc, cyTableManager, CyTableManager.class, new Properties());
         registerService(bc, cyNetworkTableManager, CyNetworkTableManager.class, new Properties());
+        Properties properties = new Properties();
+        properties.setProperty(COMMAND_NAMESPACE, "psfc");
+        properties.setProperty(COMMAND, CommandTaskFactory.COMMANDWITHARGS);
+        registerService(bc, commandTaskFactory, CommandExecutorTaskFactory.class, properties);
         registerService(bc, psfcPanel, CytoPanelComponent.class, new Properties());
+        registerService(bc, psfcCommands, AvailableCommands.class, new Properties());
 
 
 //        EpiNetSimulator epiNetSimulator = new EpiNetSimulator();
