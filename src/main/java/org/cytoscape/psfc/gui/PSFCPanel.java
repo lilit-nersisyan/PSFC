@@ -57,7 +57,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private String flowEndIconName = "flow_end_icon.png";
     private HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>> networkLevelNodeSignalMap = new HashMap<CyNetwork, HashMap<Integer, HashMap<CyNode, Double>>>();
     private HashMap<CyNetwork, HashMap<Integer, HashMap<CyEdge, Double>>> networkLevelEdgeSignalMap = new HashMap<CyNetwork, HashMap<Integer, HashMap<CyEdge, Double>>>();
-    private CalculateScoreFlowAction calculateFlowAction = null;
     private int minNodeSignalIndex = 0;
     private int midNodeSignalIndex = 1;
     private int maxNodeSignalIndex = 2;
@@ -74,7 +73,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private HashMap<CyNetwork, double[]> networkMinMaxEdgeWidthMap = new HashMap<>();
     private HashMap<CyNetwork, Color[]> networkMinMaxNodeColorMap = new HashMap<>();
     private ArrayList<CyColumn> selectedNodeDataColumns;
-    Properties multiColProperties = new Properties();
 
 
     public PSFCPanel() {
@@ -2219,16 +2217,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         if (multiSignalProps == null)
             return;
         if (jrb_multipleColumns.isSelected()) {
-//            CalculateScoreFlowMultipleColumnsTask calculateScoreFlowMultipleColumnsTask =
-//                    new CalculateScoreFlowMultipleColumnsTask(e, network,
-//                            edgeTypeColumn, nodeLevelColumn,
-//                            isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
-//                            nodeDataProperties,
-//                            multiSignalProps, loopHandlingProps, this);
-
-//            TaskIterator taskIterator = new TaskIterator();
-//            taskIterator.append(calculateScoreFlowMultipleColumnsTask);
-//            PSFCActivator.taskManager.execute(taskIterator);
             CalculateScoreFlowMultiColAction calculateScoreFlowMultiColAction =
                     new CalculateScoreFlowMultiColAction(network, edgeTypeColumn,
                             selectedNodeDataColumns, nodeLevelColumn,
@@ -2240,6 +2228,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 calculateScoreFlowMultiColAction.setBootstrapProps(getBootstrapProperties());
             calculateScoreFlowMultiColAction.actionPerformed(e);
         } else {
+
             CyColumn nodeDataColumn = getNodeDataColumn();
             if (nodeDataColumn == null) {
                 JOptionPane.showMessageDialog(this,
@@ -2260,172 +2249,23 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 );
                 return;
             }
-            calculateFlowAction = new CalculateScoreFlowAction(
-                    network, edgeTypeColumn, nodeDataColumn, nodeLevelColumn, isOperatorColumn,
-                    nodeFunctionColumn, edgeIsBackwardColumn,
-                    edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
-                    multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(), this);
-            if (jchb_CalculateSignificance.isSelected()) {
-                calculateFlowAction.setBootstrapProps(getBootstrapProperties());
-            }
-            calculateFlowAction.actionPerformed(e);
+            selectedNodeDataColumns = new ArrayList<>();
+            selectedNodeDataColumns.add(nodeDataColumn);
+            CalculateScoreFlowMultiColAction calculateScoreFlowMultiColAction =
+                    new CalculateScoreFlowMultiColAction(network, edgeTypeColumn,
+                            selectedNodeDataColumns, nodeLevelColumn,
+                            isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
+                            edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile,
+                            nodeDataProperties, multiSignalProps, loopHandlingProps,
+                            jchb_CalculateSignificance.isSelected(), this);
+            if (jchb_CalculateSignificance.isSelected())
+                calculateScoreFlowMultiColAction.setBootstrapProps(getBootstrapProperties());
+            calculateScoreFlowMultiColAction.actionPerformed(e);
+
+
         }
     }
 
-    class CalculateScoreFlowMultipleColumnsTask extends AbstractTask {
-        private final ActionEvent e;
-        private CyNetwork network;
-        private CyColumn edgeTypeColumn;
-        private CyColumn nodeLevelColumn;
-        private CyColumn isOperatorColumn;
-        private Properties nodeDataProperties;
-        private Properties multiSignalProps;
-        private Properties loopHandlingProps;
-        private CyColumn nodeFunctionColumn;
-        private CyColumn edgeIsBackwardColumn;
-        private PSFCPanel psfcPanel;
-
-        public CalculateScoreFlowMultipleColumnsTask(ActionEvent e, CyNetwork network,
-                                                     CyColumn edgeTypeColumn,
-                                                     CyColumn nodeLevelColumn,
-                                                     CyColumn isOperatorColumn,
-                                                     CyColumn nodeFunctionColumn,
-                                                     CyColumn edgeIsBackwardColumn,
-                                                     Properties nodeDataProperties,
-                                                     Properties multiSignalProps,
-                                                     Properties loopHandlingProps,
-                                                     PSFCPanel psfcPanel) {
-            this.network = network;
-            this.edgeTypeColumn = edgeTypeColumn;
-            this.nodeLevelColumn = nodeLevelColumn;
-            this.isOperatorColumn = isOperatorColumn;
-            this.nodeFunctionColumn = nodeFunctionColumn;
-            this.edgeIsBackwardColumn = edgeIsBackwardColumn;
-            this.nodeDataProperties = nodeDataProperties;
-            this.multiSignalProps = multiSignalProps;
-            this.loopHandlingProps = loopHandlingProps;
-            this.e = e;
-            this.psfcPanel = psfcPanel;
-        }
-
-        @Override
-        public void run(TaskMonitor taskMonitor) throws Exception {
-            taskMonitor.setTitle("PSFC.CalculateFlowForMultipleColumnsTask");
-            if (selectedNodeDataColumns != null && !selectedNodeDataColumns.isEmpty()) {
-                taskMonitor.setStatusMessage("Selected columns: " + selectedNodeDataColumns);
-                for (CyColumn nextColumn : selectedNodeDataColumns) {
-                    taskMonitor.setStatusMessage("Performing PSF for column " + nextColumn.getName());
-
-                    calculateFlowAction = new CalculateScoreFlowAction(
-                            network, edgeTypeColumn, nextColumn, nodeLevelColumn, isOperatorColumn,
-                            nodeFunctionColumn, edgeIsBackwardColumn,
-                            edgeTypeRuleNameConfigFile, ruleNameRuleConfigFile, nodeDataProperties,
-                            multiSignalProps, loopHandlingProps, jchb_CalculateSignificance.isSelected(),
-                            psfcPanel);
-                    if (jchb_CalculateSignificance.isSelected()) {
-                        calculateFlowAction.setBootstrapProps(getBootstrapProperties());
-                    }
-
-                    calculateFlowAction.actionPerformed(e);
-                    int timeout = 10;
-                    int time = 0;
-
-                    while (!calculateFlowAction.done() && time < timeout) {
-                        try {
-                            Thread.sleep(100);
-                            time++;
-                        } catch (InterruptedException e1) {
-                            e1.printStackTrace();
-                        }
-                    }
-                    if (cancelled || calculateFlowAction.isCancelled()) {
-                        break;
-                    }
-                }
-                if (!cancelled && !calculateFlowAction.isCancelled()) {
-
-                    //create a summary backup file
-                    String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
-                    File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
-                    HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
-                    HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
-                    ArrayList<String> rownames = new ArrayList<>();
-                    boolean firstFile = true;
-                    for (CyColumn nextColumn : selectedNodeDataColumns) {
-                        File scoreBackupFile = new File(PSFCActivator.getPSFCDir(),
-                                networkName + nextColumn.getName() + ".xls");
-                        ArrayList<Double> scores = new ArrayList<>();
-                        ArrayList<Double> pvals = new ArrayList<>();
-
-                        if (scoreBackupFile.exists()) {
-                            BufferedReader reader = new BufferedReader(new FileReader(scoreBackupFile));
-                            String line;
-                            int ncol = 0, scoreInd = 0, pvalInd = 0;
-                            while ((line = reader.readLine()) != null) {
-                                String[] tokens = line.split("\t");
-                                if (line.startsWith("SUID")) {
-                                    ncol = tokens.length;
-                                    if (ncol < 2)
-                                        throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file " + scoreBackupFile + " was less than 2");
-                                    scoreInd = ncol - 2;
-                                    pvalInd = ncol - 1;
-                                } else {
-                                    if (firstFile) {
-                                        rownames.add(tokens[1]);
-                                    }
-
-                                    try {
-                                        double score = Double.parseDouble(tokens[scoreInd]);
-                                        scores.add(score);
-                                    } catch (NumberFormatException e1) {
-                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
-                                                "The value in " + scoreBackupFile.getName() + " at column "
-                                                + scoreInd + " and rowname " + tokens[1] +
-                                                " was not convertable to double");
-                                    }
-
-
-                                    try {
-                                        double pval = Double.parseDouble(tokens[pvalInd]);
-                                        pvals.add(pval);
-                                    } catch (NumberFormatException e1) {
-                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
-                                                "The value in " + scoreBackupFile.getName() + " at column "
-                                                + pvalInd + " and rowname " + tokens[1] +
-                                                " was not convertable to double");
-                                    }
-
-                                }
-                            }
-                            reader.close();
-                            columnScoreMap.put(nextColumn, scores);
-                            columnPvalMap.put(nextColumn, pvals);
-                            firstFile = false;
-                        } else {
-                            throw new Exception("PSFC: Error while generating summary file. The backup file: " + scoreBackupFile.getAbsolutePath() + " does not exist");
-                        }
-                    }
-                    PrintWriter writer = new PrintWriter(summaryFile);
-                    String header = "Name";
-                    for (CyColumn key : columnScoreMap.keySet()) {
-                        header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
-                    }
-                    writer.write(header);
-
-                    for (int i = 0; i < rownames.size(); i++) {
-                        String line = rownames.get(i);
-                        for (CyColumn key : columnScoreMap.keySet()) {
-                            line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
-                        }
-                        writer.append("\n" + line);
-                    }
-                    writer.close();
-                    taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
-                }
-            }
-            System.gc();
-        }
-    }
 
     private void mapMinMaxSignals(CyNetwork network) {
         if (network == null) {
