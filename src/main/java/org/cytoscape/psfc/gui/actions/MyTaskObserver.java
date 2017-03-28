@@ -11,12 +11,12 @@ public class MyTaskObserver implements TaskObserver {
     boolean allComplete = false;
     @Override
     public void taskFinished(ObservableTask observableTask) {
-        try {
+        /*try {
             ((MyObservableTask)observableTask).executeSecondPart();
         } catch (Exception e) {
             System.out.println("Exception occured executing the second part of task: " + observableTask.toString());
             e.printStackTrace();
-        }
+        }*/
         System.out.println("Task finished: " + observableTask.toString());
     }
 
