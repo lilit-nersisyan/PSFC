@@ -2269,6 +2269,98 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
 
+    public CalculateScoreFlowMultiColAction createCalculateScoreFlowMultiColAction(
+            CyNetwork network, CyColumn edgeTypeColumn,
+            ArrayList<CyColumn> nodeDataColumns,
+            File customEdgeTypeRuleNameConfigFile,
+            File customRuleNameRuleConfigFile, File fcFile, int bootCycles,
+            ActionEvent e) {
+        if (network == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Selected network does not exist. \nPlease, refresh the network list and choose a valid network for pathway flow calculation.",
+                    "PSFC user message", JOptionPane.OK_OPTION);
+            return null;
+        }
+        if (network.getNodeList().isEmpty()) {
+            JOptionPane.showMessageDialog(this,
+                    "The network you have chosen contains no nodes.\n " +
+                            "Please, choose a valid network for pathway flow calculation",
+                    "PSFC user message", JOptionPane.OK_OPTION
+            );
+            return null;
+        }
+        if (edgeTypeColumn == null) {
+            JOptionPane.showMessageDialog(this,
+                    "Selected EdgeType column does not exist. \nPlease, refresh the column list and choose a valid EdgeType column for pathway flow calculation.",
+                    "PSFC user message", JOptionPane.OK_OPTION);
+            return null;
+        }
+        boolean isString = true;
+        try {
+            if (!(edgeTypeColumn.getType().newInstance() instanceof String))
+                isString = false;
+        } catch (InstantiationException e1) {
+            isString = false;
+        } catch (IllegalAccessException e1) {
+            isString = false;
+        }
+        if (!isString) {
+            JOptionPane.showMessageDialog(this,
+                    "Illegal EdgeType column: should be of type String. " +
+                            "\nPlease, choose a valid column for pathway flow calculation.",
+                    "PSFC user message", JOptionPane.OK_OPTION
+            );
+            return null;
+        }
+
+        boolean sorted = checkSorted(network);
+        SortNetworkAction sortNetworkAction;
+        PSFCActivator.getLogger().debug("PSFC flow calculation calling network sorting action.");
+        if (!sorted) {
+            sortNetworkAction = new SortNetworkAction(network, getSortingAlgorithm(), jchb_changeNetworkLayout.isSelected());
+            sortNetworkAction.actionPerformed(e);
+            while (!sortNetworkAction.isPerformed()) {
+                try {
+                    Thread.sleep(50);
+//                    System.out.println("Pathway flow calculation waiting for network sorting");
+                } catch (InterruptedException e1) {
+                    PSFCActivator.getLogger().error("Error while sorting the network: " + e1.getMessage(), e1);
+                }
+            }
+            if (!sortNetworkAction.isSuccess()) {
+                JOptionPane.showMessageDialog(this,
+                        "An error occured while sortin the network. \n" +
+                                "Please, see the PSFC log file at "
+                                + PSFCActivator.getPSFCDir() + " directory for details.",
+                        "PSFC error message", JOptionPane.ERROR_MESSAGE
+                );
+                return null;
+            }
+        }
+
+        CyColumn nodeLevelColumn = getNodeColumn(levelAttr, network);
+        CyColumn isOperatorColumn = getNodeColumn(EColumnNames.PSFC_isOperator.getName(), network);
+        CyColumn nodeFunctionColumn = getNodeColumn(EColumnNames.PSFC_FUNCTION.getName(), network);
+        CyColumn edgeIsBackwardColumn = getEdgeColumn(EColumnNames.PSFC_IS_BACKWARD.getName(), network);
+        Properties nodeDataProperties = getDefaultNodeDataProperties();
+        Properties multiSignalProps = getDefaultMultiSignalProperties();
+        Properties loopHandlingProps = getDefaultLoopHandlingProperties();
+        if (multiSignalProps == null)
+            return null;
+
+        CalculateScoreFlowMultiColAction calculateScoreFlowMultiColAction =
+                new CalculateScoreFlowMultiColAction(network, edgeTypeColumn,
+                        nodeDataColumns, nodeLevelColumn,
+                        isOperatorColumn, nodeFunctionColumn, edgeIsBackwardColumn,
+                        customEdgeTypeRuleNameConfigFile,
+                        customRuleNameRuleConfigFile,
+                        nodeDataProperties, multiSignalProps, loopHandlingProps,
+                        true, this);
+        calculateScoreFlowMultiColAction.setBootstrapProps(
+                getDefaultBootstrapProperties(fcFile, bootCycles));
+        return calculateScoreFlowMultiColAction;
+    }
+
     private void mapMinMaxSignals(CyNetwork network) {
         if (network == null) {
             JOptionPane.showMessageDialog(this,
@@ -3951,6 +4043,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return properties;
     }
 
+    private Properties getDefaultNodeDataProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), Node.getDefaultValue());
+        properties.setProperty(ENodeDataProps.MISSING_DATA_VALUE.getName(), "" + ENodeDataProps.MISSING_DATA_VALUE.getDefaultValue());
+        return properties;
+    }
+
     private Properties getLoopHandlingProperties() {
         Properties properties = new Properties();
 
@@ -3967,6 +4066,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         return properties;
     }
+
+    private Properties getDefaultLoopHandlingProperties() {
+        Properties properties = new Properties();
+        properties.setProperty(ELoopHandlingProps.LoopHandling.getName(), ELoopHandlingProps.IGNORE_LOOPS);
+        return properties;
+    }
+
 
     private Properties getMultiSignalProperties() {
         Properties properties = new Properties();
@@ -4056,6 +4162,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         return properties;
     }
 
+    private Properties getDefaultMultiSignalProperties() {
+        Properties properties = new Properties();
+        properties.put(EMultiSignalProps.SplitSignalRule.getName(), EMultiSignalProps.SPLIT_PROPORTIONAL);
+        properties.put(EMultiSignalProps.SplitSignalOn.getName(), EMultiSignalProps.SPLIT_INCOMING);
+        properties.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(), EMultiSignalProps.ADDITION);
+        properties.put(EMultiSignalProps.SignalProcessingOrder.getName(), EMultiSignalProps.ORDER_NONE);
+        return properties;
+    }
+
 
     public Properties getBootstrapProperties() {
         Properties properties = new Properties();
@@ -4068,6 +4183,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         }
 
 
+        return properties;
+    }
+
+    public Properties getDefaultBootstrapProperties(File fcFile, int numberOfSamplings) {
+        Properties properties = new Properties();
+        properties.setProperty(Bootstrap.NUMOFSAMPLINGSPROP, "" + numberOfSamplings);
+        properties.setProperty(Bootstrap.SAMPLINGTYPEPROP, Bootstrap.GENECENTRIC + "");
+
+        if (fcFile != null && fcFile.exists())
+            properties.setProperty(Bootstrap.EXPMATRIXFILE, fcFile.getAbsolutePath());
         return properties;
     }
 
@@ -4096,8 +4221,16 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private CyColumn getNodeColumn(String columnName) {
+        CyNetwork network = getSelectedNetwork();
         try {
-            CyNetwork network = getSelectedNetwork();
+            return getNodeColumn(columnName, network);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private CyColumn getNodeColumn(String columnName, CyNetwork network) {
+        try {
             return network.getDefaultNodeTable().getColumn(columnName);
         } catch (Exception e) {
             return null;
@@ -4126,7 +4259,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     private CyColumn getEdgeColumn(String columnName) {
         try {
-            CyNetwork network = getSelectedNetwork();
+            return getEdgeColumn(columnName, getSelectedNetwork());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private CyColumn getEdgeColumn(String columnName, CyNetwork network) {
+        try {
             return network.getDefaultEdgeTable().getColumn(columnName);
         } catch (Exception e) {
             return null;
@@ -4171,7 +4311,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     @Override
     public String getName() {
-        return "PSFC";
+        return "PSFC_1.1.3";
     }
 
 }

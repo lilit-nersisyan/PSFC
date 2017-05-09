@@ -21,5 +21,8 @@
     <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.6.5" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:model-api:3.4.0" level="project" />
     <orderEntry type="library" name="Maven: org.cytoscape:command-executor-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.cytoscape:presentation-api:3.4.0" level="project" />
+    <orderEntry type="library" name="Maven: de.congrace:exp4j:0.3.11" level="project" />
+    <orderEntry type="library" name="Maven: com.google.guava:guava:17.0" level="project" />
   </component>
 </module>

@@ -344,5 +344,19 @@ public class NetworkCyManager {
         }
     }
 
+    /**
+     * Return edge CyColumn from name
+     */
+    public static CyColumn getEdgeColumnFromName(String columnName, CyNetwork network){
+        CyColumn column = network.getDefaultEdgeTable().getColumn(columnName);
+        return column;
+    }
 
+    /**
+     * Return node CyColumn from name
+     */
+    public static CyColumn getNodeColumnFromName(String columnName, CyNetwork network){
+        CyColumn column = network.getDefaultNodeTable().getColumn(columnName);
+        return column;
+    }
 }

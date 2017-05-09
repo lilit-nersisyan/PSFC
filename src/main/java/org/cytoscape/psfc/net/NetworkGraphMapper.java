@@ -70,7 +70,7 @@ public class NetworkGraphMapper {
      * The name attribute of <code>CyNode</code> is passed to Node's name field.
      * A <code>CyNode</code> : <code>Node</code> map is created and kept in the Graph.
      * An Edge object is created for each <code>CyEdge</code>and passed to the <code>Graph</code> object.
-     * The edgeType is passed to each of the graph's edges from the edgeTypeColumn <code>CyColumn</code> given.
+     * The edgeType is passed to each of the graph's edges from the edgeTypeColumnName <code>CyColumn</code> given.
      * If the CyColumn's type is not of <code>String</code> class, it will
      * The <code>Graph</code> keeps the reference of the <code>CyNetwork</code>.
      *

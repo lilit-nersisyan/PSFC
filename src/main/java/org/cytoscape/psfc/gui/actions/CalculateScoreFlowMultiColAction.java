@@ -1,7 +1,6 @@
 package org.cytoscape.psfc.gui.actions;
 
 
-import jdk.nashorn.internal.scripts.JO;
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
 import org.cytoscape.psfc.PSFCActivator;
@@ -19,13 +18,8 @@ import org.cytoscape.work.*;
 
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.beans.PropertyChangeEvent;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -64,6 +58,8 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     private boolean done = false;
     HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap =
             new HashMap<Integer, HashMap<CyNode, Double>>();
+    private File backupDir;
+
 
     public CalculateScoreFlowMultiColAction(CyNetwork network,
                                             CyColumn edgeTypeColumn,
@@ -102,12 +98,18 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
     }
 
+    public void setBackupDir(File backupDir) {
+        this.backupDir = backupDir;
+    }
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (selectedNodeDataColumns.size() == 1) {
             done = false;
             CyColumn column = selectedNodeDataColumns.get(0);
-            File scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + column.getName() + ".xls");
+            if(backupDir == null)
+                backupDir = PSFCActivator.getPSFCDir();
+            File scoreBackupFile = new File(backupDir, networkName + "_" + column.getName() + ".xls");
 
             final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask(column);
             final BackupResultsTask backupResultsTask = new BackupResultsTask(column, scoreBackupFile);
@@ -123,18 +125,23 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             PSFCActivator.taskManager.execute(taskIterator);
 
         } else {
-
             TaskIterator taskIterator = new TaskIterator();
-
+            boolean execute = true;
             for (CyColumn column : selectedNodeDataColumns) {
-                File scoreBackupFile = new File(PSFCActivator.getPSFCDir(), networkName + column.getName() + ".xls");
-                try {
-                    boolean success = scoreBackupFile.createNewFile();
+                if(backupDir == null)
+                    backupDir = PSFCActivator.getPSFCDir();
+                File scoreBackupFile = new File(backupDir, networkName + "_" + column.getName() + ".xls");
+
+                boolean success = false;
+                if (scoreBackupFile.exists()) {
+                    success = scoreBackupFile.delete();
                     if (!success) {
-                        PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath());
+                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),
+                                "Could not delete the file "
+                                        + scoreBackupFile.getAbsolutePath() + ". Probably it's in use.",
+                                "PSFC error",
+                                JOptionPane.ERROR_MESSAGE);
                     }
-                } catch (IOException e1) {
-                    PSFCActivator.getLogger().error("Could not create new file for " + scoreBackupFile.getAbsolutePath(), e1);
                 }
 
                 final CalculateScoreFlowTask psfTask = new CalculateScoreFlowTask(column);
@@ -149,11 +156,141 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     taskIterator.append(calculateSignificanceTask);
                 }
                 taskIterator.append(backupResultsTask);
-            }
-            PSFCActivator.taskManager.execute(taskIterator, taskObserver);
 
+            }
+            final GenerateSummaryFileTask generateSummaryFileTask = new GenerateSummaryFileTask();
+            taskIterator.append(generateSummaryFileTask);
+            if (execute)
+                PSFCActivator.taskManager.execute(taskIterator, taskObserver);
         }
     }
+
+    private class GenerateSummaryFileTask extends AbstractTask {
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            try {
+                taskMonitor.setTitle("PSFC Generate summary file task");
+                taskMonitor.setStatusMessage("Generating summary file");
+                //create a summary backup file
+                String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
+                File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
+                HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
+                HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
+                ArrayList<String> rownames = new ArrayList<>();
+                boolean firstFile = true;
+                for (CyColumn nextColumn : selectedNodeDataColumns) {
+                    if (cancelled)
+                        break;
+                    if(backupDir == null)
+                        backupDir = PSFCActivator.getPSFCDir();
+                    File scoreBackupFile = new File(backupDir,
+                            networkName + "_" + nextColumn.getName() + ".xls");
+                    ArrayList<Double> scores = new ArrayList<>();
+                    ArrayList<Double> pvals = new ArrayList<>();
+
+                    if (scoreBackupFile.exists()) {
+                        BufferedReader reader = null;
+                        try {
+                            reader = new BufferedReader(new FileReader(scoreBackupFile));
+                        } catch (FileNotFoundException e) {
+                            throw new Exception("Could not find the backup file " + scoreBackupFile.getAbsolutePath()
+                                    + " when creating the summary file. Reason: "
+                                    + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+                        }
+                        String line;
+                        int ncol = 0, scoreInd = 0, pvalInd = 0;
+                        try {
+                            while ((line = reader.readLine()) != null) {
+                                String[] tokens = line.split("\t");
+                                if (line.startsWith("SUID")) {
+                                    ncol = tokens.length;
+                                    if (ncol < 2)
+                                        throw new Exception("PSFC:: Error while generating summary file. Number of columns in the backup file "
+                                                + scoreBackupFile + " was less than 2");
+                                    scoreInd = ncol - 2;
+                                    pvalInd = ncol - 1;
+                                } else {
+                                    if (firstFile) {
+                                        rownames.add(tokens[0] + "\t" + tokens[1]);
+                                    }
+
+                                    try {
+                                        double score = Double.parseDouble(tokens[scoreInd]);
+                                        scores.add(score);
+                                    } catch (NumberFormatException e1) {
+                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                                "The value in " + scoreBackupFile.getName() + " at column "
+                                                + scoreInd + " and rowname " + tokens[1] +
+                                                " was not convertable to double");
+                                    }
+
+
+                                    try {
+                                        double pval = Double.parseDouble(tokens[pvalInd]);
+                                        pvals.add(pval);
+                                    } catch (NumberFormatException e1) {
+                                        throw new NumberFormatException("PSFC:: Error while generating summary file. " +
+                                                "The value in " + scoreBackupFile.getName() + " at column "
+                                                + pvalInd + " and rowname " + tokens[1] +
+                                                " was not convertable to double");
+                                    }
+
+                                }
+                            }
+                        } catch (Exception e) {
+                            throw new Exception("Exception reading the backup file "
+                                    + scoreBackupFile.getAbsolutePath() + " when generating the summary file. Reason: "
+                                    + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+                        }
+                        try {
+                            reader.close();
+                        } catch (IOException e) {
+                            throw new Exception("Exception reading the backup file "
+                                    + scoreBackupFile.getAbsolutePath() + " when generating the summary file. Reason: "
+                                    + (e.getCause() != null ? e.getCause().getMessage() : e.getMessage()));
+                        }
+                        columnScoreMap.put(nextColumn, scores);
+                        columnPvalMap.put(nextColumn, pvals);
+                        firstFile = false;
+                    } else {
+                        throw new Exception("PSFC: Error while generating summary file. The backup file: "
+                                + scoreBackupFile.getAbsolutePath() + " does not exist");
+                    }
+                }
+                if (!cancelled) {
+                    PrintWriter writer = new PrintWriter(summaryFile);
+
+                    String header = "SUID\tName";
+                    for (CyColumn key : columnScoreMap.keySet()) {
+                        header += String.format("\tscore.%s\tpval.%s", key.getName(), key.getName());
+                    }
+                    writer.write(header);
+
+                    for (int i = 0; i < rownames.size(); i++) {
+                        String line = rownames.get(i);
+                        for (CyColumn key : columnScoreMap.keySet()) {
+                            line += String.format("\t%f\t%f", columnScoreMap.get(key).get(i), columnPvalMap.get(key).get(i));
+                        }
+                        writer.append("\n" + line);
+                    }
+                    writer.close();
+                    taskMonitor.setStatusMessage("Successfully generated summary backup file at " + summaryFile.getAbsolutePath());
+                }
+            } catch (Exception e) {
+                throw new Exception(e.getMessage());
+            } finally {
+                System.gc();
+            }
+
+        }
+
+        @Override
+        public void cancel() {
+            cancelled = true;
+        }
+
+    }
+
 
     public void setBootstrapProps(Properties bootstrapProps) {
         this.bootstrapProps = bootstrapProps;
@@ -251,19 +388,21 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             }
 
             // Retrieving node scores from CyTable and keeping them in graph nodes
-            taskMonitor.setStatusMessage(nodeDataColumn + ": Retrieving node functions");
-            HashMap<CyNode, String> cyNodeFunctionMap;
-            try {
-                cyNodeFunctionMap = getCyNodeFunctionMap();
-            } catch (Exception e) {
-                throw new Exception("PSFC::Exception " + "Node functions could not be retrieved from the column " + nodeFunctionColumn.getName());
+            if(nodeFunctionColumn != null) {
+                taskMonitor.setStatusMessage(nodeDataColumn + ": Retrieving node functions");
+                HashMap<CyNode, String> cyNodeFunctionMap;
+                try {
+                    cyNodeFunctionMap = getCyNodeFunctionMap();
+                } catch (Exception e) {
+                    throw new Exception("PSFC::Exception " + "Node functions could not be retrieved from the column " + nodeFunctionColumn.getName());
+                }
+                try {
+                    GraphManager.assignNodeFunctions(graph, cyNodeFunctionMap);
+                } catch (Exception e) {
+                    throw new Exception("PSFC::Exception " + e.getMessage(), e);
+                }
+                taskMonitor.setProgress(0.2);
             }
-            try {
-                GraphManager.assignNodeFunctions(graph, cyNodeFunctionMap);
-            } catch (Exception e) {
-                throw new Exception("PSFC::Exception " + e.getMessage(), e);
-            }
-            taskMonitor.setProgress(0.2);
 
             //If edge weights are user supplied, take them from CyTable and keep in graph edges
             if (multiSignalProps.get(EMultiSignalProps.SplitSignalRule.getName()) == EMultiSignalProps.SPLIT_WEIGHTS) {
@@ -429,11 +568,15 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 psfcPanel.setVisualizationComponents(network, levelCyNodeScoreMap, levelCyEdgeScoreMap);
                 taskMonitor.setStatusMessage(nodeDataColumn + ": Flow calculation task complete");
                 taskMonitor.setProgress(1);
+                if (psf != null)
+                    levelNodeSignalMap = psf.getLevelNodeSignalMap();
+                else
+                    throw new Exception("PSFC:: PSF object was not created: see the log for details");
             } catch (Exception e) {
                 throw new Exception("PSFC::Exception " + "PSFC::Exception " + e.getMessage());
             } finally {
                 PSFCActivator.getLogger().debug("PSFC Score Flow calculation finished");
-                levelNodeSignalMap = psf.getLevelNodeSignalMap();
+
                 System.gc();
             }
 
@@ -472,8 +615,17 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         }
 
         private HashMap<CyNode, String> getCyNodeFunctionMap() throws Exception {
+            if(nodeFunctionColumn == null)
+                return null;
             HashMap<CyNode, String> map = new HashMap<>();
             String attr = nodeFunctionColumn.getName();
+            boolean hasFunctionColumn = false;
+            for(CyColumn column : network.getDefaultNodeTable().getColumns()){
+                if(column.getName().equals(nodeFunctionColumn.getName()))
+                    hasFunctionColumn = true;
+            }
+            if(!hasFunctionColumn)
+                return null;
             for (Object cyNodeObj : network.getNodeList()) {
                 CyNode cyNode = (CyNode) cyNodeObj;
                 CyRow row = network.getDefaultNodeTable().getRow(cyNode.getSUID());
@@ -564,10 +716,14 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
 
                 HashMap<Node, Double> targetPValueMap = null;
-
+                columnNames += "\tpval";
                 if (calculateSignificance) {
-                    columnNames += "\tpval";
                     targetPValueMap = psf.getTargetPValueMap();
+                } else {
+                    targetPValueMap = new HashMap<Node, Double>();
+                    for(Node node : psf.getGraph().getNodes()){
+                        targetPValueMap.put(node, Double.NaN);
+                    }
                 }
                 columnNames += "\n";
                 writer.append(columnNames);
@@ -633,7 +789,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         @Override
         public void run(TaskMonitor taskMonitor) throws Exception {
             taskMonitor.setTitle("PSFC.CalculateSignificanceTask");
-            taskMonitor.setStatusMessage(nodeDataColumn + ": Performing bootstrap cycles");
             taskMonitor.setProgress(0);
             String prop = "";
 
@@ -646,44 +801,49 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
                 throw new Exception("PSFC::Exception " + "Unable to parse integer " + prop);
             }
+            taskMonitor.setStatusMessage(nodeDataColumn + ": Performing "
+                    + numOfSamplings + " bootstrap cycles.");
 
-            int samplingType;
-            File expMatrixFile;
+            if(numOfSamplings != 0) {
+                int samplingType;
+                File expMatrixFile;
 
-            try {
-                prop = bootstrapProps
-                        .getProperty(Bootstrap.SAMPLINGTYPEPROP);
-                samplingType = Integer.parseInt(prop);
-            } catch (NumberFormatException e) {
-                throw new Exception("PSFC::Exception " + "Unable to parse integer " + prop);
-            }
-            if (samplingType == Bootstrap.SAMPLECENTRIC)
-                bootstrap = new BootstrapSampleCentric(psf, numOfSamplings, PSFCActivator.getLogger());
-            else {
-                prop = bootstrapProps.getProperty(Bootstrap.EXPMATRIXFILE);
-                expMatrixFile = new File(prop);
-                if (!expMatrixFile.exists()) {
-                    throw new Exception("PSFC::Exception " + "Expression matrix file" + prop + "does not exist");
+                try {
+                    prop = bootstrapProps
+                            .getProperty(Bootstrap.SAMPLINGTYPEPROP);
+                    samplingType = Integer.parseInt(prop);
+                } catch (NumberFormatException e) {
+                    throw new Exception("PSFC::Exception " + "Unable to parse integer " + prop);
                 }
-                bootstrap = new BootstrapGeneCentric(psf, numOfSamplings, expMatrixFile, PSFCActivator.getLogger());
-            }
-            System.out.println("second part started");
-            bootstrap.setTaskMonitor(taskMonitor);
-            try {
-                HashMap<Node, Double> targetPValueMap = bootstrap.performBootstrap();
-                psf.setTargetPValueMap(targetPValueMap);
-                Graph graph = psf.getGraph();
-                HashMap<CyNode, Double> cyNodePValueMap = new HashMap<CyNode, Double>();
-                for (Node node : targetPValueMap.keySet()) {
-                    cyNodePValueMap.put(graph.getCyNode(node), targetPValueMap.get(node));
+                if (samplingType == Bootstrap.SAMPLECENTRIC)
+                    bootstrap = new BootstrapSampleCentric(psf, numOfSamplings, PSFCActivator.getLogger());
+                else {
+                    prop = bootstrapProps.getProperty(Bootstrap.EXPMATRIXFILE);
+                    expMatrixFile = new File(prop);
+                    if (!expMatrixFile.exists()) {
+                        throw new Exception("PSFC::Exception " + "Expression matrix file" + prop + "does not exist");
+                    }
+                    bootstrap = new BootstrapGeneCentric(psf, numOfSamplings, expMatrixFile, PSFCActivator.getLogger());
                 }
+                bootstrap.setTaskMonitor(taskMonitor);
+                try {
+                    HashMap<Node, Double> targetPValueMap = bootstrap.performBootstrap();
+                    psf.setTargetPValueMap(targetPValueMap);
+                    Graph graph = psf.getGraph();
+                    HashMap<CyNode, Double> cyNodePValueMap = new HashMap<CyNode, Double>();
+                    for (Node node : targetPValueMap.keySet()) {
+                        cyNodePValueMap.put(graph.getCyNode(node), targetPValueMap.get(node));
+                    }
 
-                NetworkCyManager.setNodeAttributesFromMap(network, cyNodePValueMap, EColumnNames.PSFC_PVAL.getName(), Double.class);
-                taskMonitor.setStatusMessage(nodeDataColumn + ": Bootstrap significance calculation complete");
-                taskMonitor.setProgress(1);
-            } catch (Exception e) {
-                throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
-            } finally {
+                    NetworkCyManager.setNodeAttributesFromMap(network, cyNodePValueMap, EColumnNames.PSFC_PVAL.getName(), Double.class);
+                    taskMonitor.setStatusMessage(nodeDataColumn + ": Bootstrap significance calculation complete");
+                    taskMonitor.setProgress(1);
+                } catch (Exception e) {
+                    throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
+                } finally {
+                    System.gc();
+                }
+            } else {
                 System.gc();
             }
         }
@@ -700,6 +860,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         public <R> R getResults(Class<? extends R> aClass) {
             return null;
         }
+
     }
 
     private HashMap<CyEdge, Integer> getCyEdgeRankMap(CyColumn cyEdgeRankColumn) throws Exception {

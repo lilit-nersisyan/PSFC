@@ -16,44 +16,35 @@ import java.util.Map;
 /**
  * Created by Lilit Nersisyan on 3/24/2017.
  */
-public class CommandTaskFactory implements CommandExecutorTaskFactory {
-    public static final String COMMANDWITHARGS = "commandwithargs";
+public class CommandTaskFactory implements TaskFactory{
+    public static final String RUNDEFAULTPSF = "run psf";
+    private String command;
+    Map<String, Object> map;
+    RunDefaultPSFTask runDefaultPSFTask;
 
-    private String command = "";
 /*
-    private CyColumn edgeTypeColumn;
+    private CyColumn edgeTypeColumnName;
     private ArrayList<CyColumn> nodeDataColumn;
     private ActionEvent e;
 */
 
     public CommandTaskFactory(String command) {
+        System.out.println(command);
         this.command = command;
-    }
-
-
-    @Override
-    public TaskIterator createTaskIterator(File file, TaskObserver taskObserver) {
-        return null;
-    }
-
-    @Override
-    public TaskIterator createTaskIterator(TaskObserver taskObserver, String... strings) {
-        return null;
-    }
-
-    @Override
-    public TaskIterator createTaskIterator(List<String> list, TaskObserver taskObserver) {
-        return null;
-    }
-
-    @Override
-    public TaskIterator createTaskIterator(String namespace, String command,
-                                           Map<String, Object> map, TaskObserver taskObserver) {
-        if(!namespace.equals("psfc"))
-            return null;
-        if(command.equals(COMMANDWITHARGS)) {
-            return new TaskIterator(new RunDefaultPSFTask(map, taskObserver));
+        if(command.equals(RUNDEFAULTPSF)){
+            runDefaultPSFTask = new RunDefaultPSFTask(new ActionEvent(this, 0, RUNDEFAULTPSF));
         }
-        return null;
+    }
+
+    @Override
+    public TaskIterator createTaskIterator() {
+        TaskIterator taskIterator = new TaskIterator();
+        taskIterator.append(runDefaultPSFTask);
+        return taskIterator;
+    }
+
+    @Override
+    public boolean isReady() {
+        return false;
     }
 }
