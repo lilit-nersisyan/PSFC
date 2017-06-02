@@ -23,6 +23,7 @@ import java.util.ArrayList;
  */
 public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
     private final ActionEvent e;
+    private File lockFile;
     PSFCPanel psfcPanel = PSFCActivator.psfcPanel;
 
     @Tunable(description = "Edge type column name")
@@ -55,6 +56,15 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
     public void run(TaskMonitor taskMonitor) throws Exception {
         System.out.println("RunDefaultPSFTask started");
         taskMonitor.setTitle("Default PSF Task");
+
+        lockFile = new File(PSFCActivator.getPSFCDir(), "psfLock");
+        while(lockFile.exists()){
+            boolean locksuccess = lockFile.delete();
+            if(!locksuccess)
+                lockFile = new File(lockFile.getAbsolutePath() + "+");
+        }
+        lockFile.createNewFile();
+
 
         CyNetwork currentNetwork = PSFCActivator.cyApplicationManager.getCurrentNetwork();
         if (currentNetwork == null) {
@@ -129,6 +139,12 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
             throw new Exception("Exception initiating or running the task, reason: " + message);
 
         } finally {
+            boolean unlock = lockFile.delete();
+            if(unlock)
+                System.out.println("PSF unlocked");
+            else
+                System.out.println("Could not delete PSF lock file");
+
             System.gc();
         }
 

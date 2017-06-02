@@ -1,4 +1,4 @@
-PSFC version 1.0.0
+PSFC version 1.1.4
 Cytoscape app for calculation of pathway
 signal flow based on gene expression data
 and pathway topology.

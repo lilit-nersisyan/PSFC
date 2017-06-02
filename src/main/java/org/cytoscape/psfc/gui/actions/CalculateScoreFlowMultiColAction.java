@@ -59,6 +59,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap =
             new HashMap<Integer, HashMap<CyNode, Double>>();
     private File backupDir;
+    private File summaryFile;
 
 
     public CalculateScoreFlowMultiColAction(CyNetwork network,
@@ -173,7 +174,12 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 taskMonitor.setStatusMessage("Generating summary file");
                 //create a summary backup file
                 String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
-                File summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
+                File prevSummaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary.xls");
+                if(prevSummaryFile.exists())
+                    if(!prevSummaryFile.delete())
+                        throw new Exception("Summary file " + prevSummaryFile + "is in use.\n Please, delete and start again.");
+
+                summaryFile = new File(PSFCActivator.getPSFCDir(), networkName + "_summary_temp.xls");
                 HashMap<CyColumn, ArrayList<Double>> columnScoreMap = new HashMap<>();
                 HashMap<CyColumn, ArrayList<Double>> columnPvalMap = new HashMap<>();
                 ArrayList<String> rownames = new ArrayList<>();
@@ -279,6 +285,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             } catch (Exception e) {
                 throw new Exception(e.getMessage());
             } finally {
+                summaryFile.renameTo(new File(summaryFile.getParent(), networkName + "_summary.xls"));
                 System.gc();
             }
 
