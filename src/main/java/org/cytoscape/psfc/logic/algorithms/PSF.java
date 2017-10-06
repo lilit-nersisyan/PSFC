@@ -489,7 +489,7 @@ public class PSF {
                 ArrayList<Edge> edges = collectEdges(node, parentNodes);
                 double signal;
                 String function = node.getFunction();
-                if (function != null){
+                if (function != null) {
                     try {
                         signal = applyFunction(function, parentNodes);
                     } catch (Exception e) {
@@ -514,11 +514,11 @@ public class PSF {
 
         /**
          * Functions are from the list:
-         *  min
-         *  max
-         *  sum
-         *  prod
-         *
+         * min
+         * max
+         * sum
+         * prod
+         * <p>
          * For now, these function are applied on all of the input edges.
          * Later, the functions will allow for any operation on any subset of the edges.
          *
@@ -528,65 +528,81 @@ public class PSF {
          */
         private double applyFunction(String function, ArrayList<Node> parentNodes) throws Exception {
             double[] signals = new double[parentNodes.size()];
-            for(int i = 0; i < signals.length; i++){
+            for (int i = 0; i < signals.length; i++) {
                 signals[i] = parentNodes.get(i).getSignal();
             }
             double signal = Double.NaN;
             double missingValue = Double.parseDouble((String) nodeDataProps.get(ENodeDataProps.MISSING_DATA_VALUE.getName()));
-            switch (function){
+            switch (function) {
                 case "min":
                     //compute min but don't account for missing values
                     signal = Double.MAX_VALUE;
 
-                    for(Double s : signals){
-                        if ( s != missingValue){
-                            if ( s < signal)
+                    for (Double s : signals) {
+                        if (s != missingValue) {
+                            if (s < signal)
                                 signal = s;
                         }
                     }
-                    if(signal == Double.MAX_VALUE)
+                    if (signal == Double.MAX_VALUE)
                         signal = missingValue;
                     break;
                 case "max":
                     //compute max but don't account for missing values
                     signal = Double.MIN_VALUE;
-                    for(Double s : signals){
-                        if (s != missingValue){
-                            if ( s > signal)
+                    for (Double s : signals) {
+                        if (s != missingValue) {
+                            if (s > signal)
                                 signal = s;
                         }
                     }
-                    if(signal == Double.MIN_VALUE)
+                    if (signal == Double.MIN_VALUE)
                         signal = missingValue;
                     break;
                 case "sum":
                     signal = 0;
-                    for(double s : signals){
+                    for (double s : signals) {
                         signal += s;
                     }
                     break;
                 case "prod":
                     signal = 1;
                     boolean prodmissing = true;
-                    for(double s : signals){
-                        if(s != missingValue)
+                    for (double s : signals) {
+                        if (s != missingValue) {
                             signal *= s;
-                        else
                             prodmissing = false;
+                        }
                     }
-                    if(prodmissing)
+                    if (prodmissing)
                         signal = missingValue;
+                    break;
+                case "geomean":
+                    signal = 1;
+                    int sigNum = 0;
+                    prodmissing = true;
+                    for (double s : signals) {
+                        if (s != missingValue) {
+                            signal *= s;
+                            prodmissing = false;
+                            sigNum++;
+                        }
+                    }
+                    if (prodmissing)
+                        signal = missingValue;
+                    else
+                        signal = Math.pow(signal, 1./sigNum);
                     break;
                 case "mean":
                     signal = 1;
                     boolean meanmissing = true;
-                    for(double s : signals){
-                        if(s != missingValue)
+                    for (double s : signals) {
+                        if (s != missingValue) {
                             signal += s;
-                        else
                             meanmissing = false;
+                        }
                     }
-                    if(meanmissing)
+                    if (meanmissing)
                         signal = missingValue;
                     else
                         signal /= signals.length;
@@ -603,11 +619,12 @@ public class PSF {
          * In case of  precomputeMode, only the backward edges are collected.
          * In case of loopMode, all the edges are collected.
          * Otherwise, all the edges except for backwards are collected.
+         *
          * @param node
          * @param parentNodes
          * @return
          */
-        private ArrayList<Edge> collectEdges(Node node,ArrayList<Node> parentNodes){
+        private ArrayList<Edge> collectEdges(Node node, ArrayList<Node> parentNodes) {
             ArrayList<Edge> edges = new ArrayList<Edge>();
             for (Node parentNode : parentNodes) {
                 Edge edge = graph.getEdge(parentNode, node);
@@ -692,8 +709,10 @@ public class PSF {
                     if (nodeScoreSum == 0)
                         for (Edge edge : edges)
                             edge.setWeight(1.);
-                    for (Edge edge : edges)
-                        edge.setWeight(edge.getSource().getSignal() / nodeScoreSum);
+                    // this else is added in 1.1.6
+                    else
+                        for (Edge edge : edges)
+                            edge.setWeight(edge.getSource().getSignal() / nodeScoreSum);
                 }
             }
         }
@@ -784,7 +803,14 @@ public class PSF {
                 result = calculable.calculate();
             } catch (ArithmeticException e) {
                 if (e.getMessage().equals("Division by zero!")) {
-                    result = Double.POSITIVE_INFINITY;
+                    //version 1.1.6 - infinity causes problems in further analysis,
+                    //thus replacing it with division by a small number is better
+                    System.out.println("Warning: division by zero: 0's are replaced by 0.1");
+                    if(target == 0)
+                        result = 0;
+                    else
+//                        result = Double.POSITIVE_INFINITY;
+                    result = 1 / 0.1;
                     logger.debug(e.getMessage() + Double.POSITIVE_INFINITY + " assigned");
                 } else {
                     result = Double.NaN;

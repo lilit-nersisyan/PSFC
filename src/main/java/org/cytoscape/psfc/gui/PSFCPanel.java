@@ -1559,7 +1559,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jta_about.setColumns(20);
         jta_about.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
         jta_about.setRows(5);
-        jta_about.setText("PSFC version 1.1.4\nCytoscape app for calculation of pathway\nsignal flow based on gene expression data \nand pathway topology.\n\nCopyright(C) 2015\nLilit Nersisyan, IMB NAS RA\nArsen Arakelyan, IMB NAS RA\nGraham Johnson, UCSF\nMegan Riel-Mehan, UCSF\nAlexander Pico, UCSF\n\nDistributed under\nGNU General Public License version 3");
+        jta_about.setText("PSFC version 1.1.6\nCytoscape app for calculation of pathway\nsignal flow based on gene expression data \nand pathway topology.\n\nCopyright(C) 2015\nLilit Nersisyan, IMB NAS RA\nArsen Arakelyan, IMB NAS RA\nGraham Johnson, UCSF\nMegan Riel-Mehan, UCSF\nAlexander Pico, UCSF\n\nDistributed under\nGNU General Public License version 3");
         jta_about.setAlignmentX(10.0F);
         jta_about.setBorder(null);
         jta_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -4337,7 +4337,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     @Override
     public String getName() {
-        return "PSFC_1.1.4";
+        return "PSFC_1.1.6";
     }
 
 }
