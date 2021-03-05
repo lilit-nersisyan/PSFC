@@ -3,6 +3,7 @@ package org.cytoscape.psfc.gui.actions;
 
 import org.cytoscape.application.swing.AbstractCyAction;
 import org.cytoscape.model.*;
+import org.cytoscape.psfc.DoubleFormatter;
 import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.PSFCPanel;
 import org.cytoscape.psfc.gui.enums.EColumnNames;
@@ -10,6 +11,7 @@ import org.cytoscape.psfc.logic.algorithms.*;
 import org.cytoscape.psfc.logic.parsers.RuleFilesParser;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.GraphInfluence;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.psfc.net.NetworkGraphMapper;
@@ -55,11 +57,14 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
     private Properties bootstrapProps;
     private PSF psf;
+    private Graph graph;
     private boolean done = false;
     HashMap<Integer, HashMap<CyNode, Double>> levelCyNodeScoreMap =
             new HashMap<Integer, HashMap<CyNode, Double>>();
     private File backupDir;
-    private File summaryFile;
+    private File summaryFile, nodeInfluenceFile;
+    private boolean detectNodeInfluence;
+    private GraphInfluence graphInfluence;
 
 
     public CalculateScoreFlowMultiColAction(CyNetwork network,
@@ -103,8 +108,18 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         this.backupDir = backupDir;
     }
 
+    public void setDetectNodeInfluence(boolean detectNodeInfluence) {
+        this.detectNodeInfluence = detectNodeInfluence;
+    }
     @Override
     public void actionPerformed(ActionEvent e) {
+
+        try {
+            graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
+        } catch (Exception e1) {
+            System.out.println("Problem initiating graph for calculating score flow\n. Reason: ");
+        }
+
         if (selectedNodeDataColumns.size() == 1) {
             done = false;
             CyColumn column = selectedNodeDataColumns.get(0);
@@ -122,6 +137,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                         new CalculateSignificanceTask(column);
                 taskIterator.append(calculateSignificanceTask);
             }
+
             taskIterator.append(backupResultsTask);
             PSFCActivator.taskManager.execute(taskIterator);
 
@@ -156,15 +172,32 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                             new CalculateSignificanceTask(column);
                     taskIterator.append(calculateSignificanceTask);
                 }
+
+                if (detectNodeInfluence & graph != null) {
+                    graphInfluence = GraphInfluence.getGraphInfluence(graph);
+                    final DetectNodeInfluenceTask detectNodeInfluenceTask =
+                            new DetectNodeInfluenceTask(column);
+                    taskIterator.append(detectNodeInfluenceTask);
+                }
+
                 taskIterator.append(backupResultsTask);
 
             }
             final GenerateSummaryFileTask generateSummaryFileTask = new GenerateSummaryFileTask();
             taskIterator.append(generateSummaryFileTask);
+            if(detectNodeInfluence) {
+                final GenerateNodeInfluenceSummaryTask generateNodeInfluenceSummaryTask
+                        = new GenerateNodeInfluenceSummaryTask();
+                taskIterator.append(generateNodeInfluenceSummaryTask);
+            }
+
+
             if (execute)
                 PSFCActivator.taskManager.execute(taskIterator, taskObserver);
         }
     }
+
+
 
     private class GenerateSummaryFileTask extends AbstractTask {
         @Override
@@ -286,6 +319,72 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 throw new Exception(e.getMessage());
             } finally {
                 summaryFile.renameTo(new File(summaryFile.getParent(), networkName + "_summary.xls"));
+                System.gc();
+            }
+
+        }
+
+        @Override
+        public void cancel() {
+            cancelled = true;
+        }
+
+    }
+
+    private class GenerateNodeInfluenceSummaryTask extends AbstractTask {
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            try {
+                taskMonitor.setTitle("PSFC Generate node influence summary task");
+                taskMonitor.setStatusMessage("Generating node influence summary");
+
+                //create a summary file
+                String networkName = network.getRow(network).get(CyNetwork.NAME, String.class);
+                File prevNodeInfluenceFile = new File(PSFCActivator.getPSFCDir(),
+                        networkName + "_node_influence.xls");
+                if(prevNodeInfluenceFile.exists())
+                    if(!prevNodeInfluenceFile.delete())
+                        throw new Exception("Node influence file " + prevNodeInfluenceFile
+                                + "is in use.\n Please, delete and start again.");
+                if(backupDir == null)
+                    backupDir = PSFCActivator.getPSFCDir();
+                nodeInfluenceFile = new File(backupDir, networkName
+                        + "_node_influence.xls");
+
+
+                if (!cancelled) {
+                    PrintWriter writer = new PrintWriter(nodeInfluenceFile);
+
+                    //TODO there's smth wrong here: check deltaPSF generation ones more
+                    String header = "Name";
+                    for (Node targetNode : graph.getNodes()) {
+                        header += String.format("\t%s.deltaPSF\t%s.sd\t%s.pval",
+                                targetNode.getName(), targetNode.getName(), targetNode.getName());
+                    }
+                    writer.write(header);
+
+                    for (Node influenceNode : graph.getNodes()) {
+                        if(!cancelled) {
+                            String line = influenceNode.getName();
+                            for (Node targetNode : graph.getNodes()) {
+                                double meandif = graphInfluence.getDeltaPSF(influenceNode, targetNode);
+                                if(!Double.isFinite(meandif))
+                                    meandif = 0;
+                                double psfsd = graphInfluence.getPSFsd(influenceNode, targetNode);
+                                double pval = graphInfluence.getDeltaPSFpval(influenceNode, targetNode);
+                                line += String.format("\t%f\t%f\t%f",
+                                        meandif, psfsd, pval);
+                            }
+                            writer.append("\n" + line);
+                        }
+                    }
+                    writer.close();
+                    taskMonitor.setStatusMessage("Successfully generated summary node influence file at "
+                            + nodeInfluenceFile.getAbsolutePath());
+                }
+            } catch (Exception e) {
+                throw new Exception(e.getMessage());
+            } finally {
                 System.gc();
             }
 
@@ -463,7 +562,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 psf.setLoopHandlingProps(loopHandlingProps);
 
                 PSFCActivator.getLogger().info("\n################\n################");
-                System.out.println("\nPSFC:: Flow calculation on clumn " + nodeDataColumn.getName() + "\n");
+                System.out.println("\nPSFC:: Flow calculation on column " + nodeDataColumn.getName() + "\n");
                 String date = (new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")).format(new Date());
                 PSFCActivator.getLogger().info(date);
                 System.out.println("PSFC:: Date: " + date + "\n");
@@ -784,9 +883,52 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         }
     }
 
+
+    private class DetectNodeInfluenceTask extends AbstractTask implements ObservableTask {
+        private final CyColumn nodeDataColumn;
+        NodeInfluenceDetector nodeInfluenceDetector;
+
+        public DetectNodeInfluenceTask(CyColumn nodeDataColumn){
+            this.nodeDataColumn = nodeDataColumn;
+        }
+
+        @Override
+        public void run(TaskMonitor taskMonitor) throws Exception {
+            taskMonitor.setTitle("PSFC.DetectNodeInfluenceTask");
+            taskMonitor.setProgress(0);
+
+            taskMonitor.setStatusMessage("Calculating PSF fluctuations for " + nodeDataColumn + " sample");
+
+            nodeInfluenceDetector = new NodeInfluenceDetector(psf, PSFCActivator.getLogger());
+            nodeInfluenceDetector.setTaskMonitor(taskMonitor);
+
+            try {
+                nodeInfluenceDetector.detectNodeInfluence(graphInfluence, nodeDataColumn.getName(), backupDir);
+                taskMonitor.setStatusMessage(nodeDataColumn + ": node influence detection complete");
+                taskMonitor.setProgress(1);
+            } catch (Exception e) {
+                throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
+            } finally {
+                System.gc();
+            }
+        }
+
+        @Override
+        public void cancel() {
+            if (nodeInfluenceDetector != null)
+                nodeInfluenceDetector.setCancelled(true);
+            cancelled = true;
+            System.gc();
+        }
+
+        @Override
+        public <R> R getResults(Class<? extends R> aClass) {
+            return null;
+        }
+    }
+
     private class CalculateSignificanceTask extends AbstractTask implements ObservableTask {
         private final CyColumn nodeDataColumn;
-        TaskMonitor taskMonitor;
         Bootstrap bootstrap;
 
         public CalculateSignificanceTask(CyColumn nodeDataColumn) {

@@ -4,8 +4,10 @@ import com.google.common.primitives.Doubles;
 import de.congrace.exp4j.Calculable;
 import de.congrace.exp4j.ExpressionBuilder;
 import org.apache.log4j.Logger;
+import org.cytoscape.model.CyColumn;
 import org.cytoscape.psfc.logic.structures.Edge;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.GraphInfluence;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.psfc.properties.ELoopHandlingProps;
 import org.cytoscape.psfc.properties.EMultiSignalProps;
@@ -355,6 +357,7 @@ public class PSF {
         return levelNodesMap;
     }
 
+
     public boolean isFinished() {
         return finished;
     }
@@ -431,47 +434,60 @@ public class PSF {
         private void updateSignalsByCascade(int nextLevel) throws Exception {
             for (Node node : levelNodesMap.get(nextLevel)) {
                 ArrayList<Node> parentNodes = graph.getParentNodes(node);
-                ArrayList<Edge> edges = collectEdges(node, parentNodes);
 
-
-                if (orderRule == EMultiSignalProps.ORDER_RANKS) {
-                    Collections.sort(edges, new Comparator<Edge>() {
-                        @Override
-                        public int compare(Edge edge1, Edge edge2) {
-                            return edge2.getRank() - edge1.getRank();
-                        }
-                    });
-                }
-                boolean firstEdge = true;
-
-                for (Edge edge : edges) {
-                    if (firstEdge) {
-                        firstEdge = false;
-                        edge.getTarget().setSignal(edge.getTarget().getValue(), iteration);
-                    }
-                    double source, target, signal;
-                    if (splitOn == EMultiSignalProps.SPLIT_INCOMING) {
-                        source = edge.getSource().getSignal();
-                        target = edge.getWeight() * edge.getTarget().getSignal();
-                    } else {
-                        source = edge.getWeight() * edge.getSource().getSignal();
-                        target = edge.getTarget().getSignal();
-                    }
+                String function = node.getFunction();
+                if (function != null) {
                     try {
-                        signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
+                        double signal = applyFunction(function, parentNodes);
+                        node.setSignal(signal, iteration);
                     } catch (Exception e) {
-                        String message = "Exception at rule calculation for edge " + edge.toString()
-                                + ". Reason: " + e.getMessage();
-//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
-                        logger.debug(message);
-                        throw new Exception(message, e);
+                        throw new Exception("Problem handling function " + function + " at node " + node.toString());
                     }
-                    edge.setSignal(signal);
+                } else {
+                    ArrayList<Edge> edges = collectEdges(node, parentNodes);
+
+
+
+                    if (orderRule == EMultiSignalProps.ORDER_RANKS) {
+                        Collections.sort(edges, new Comparator<Edge>() {
+                            @Override
+                            public int compare(Edge edge1, Edge edge2) {
+                                return edge2.getRank() - edge1.getRank();
+                            }
+                        });
+                    }
+                    boolean firstEdge = true;
+
+                    for (Edge edge : edges) {
+                        if (firstEdge) {
+                            firstEdge = false;
+                            edge.getTarget().setSignal(edge.getTarget().getValue(), iteration);
+                        }
+                        double source, target, signal;
+                        if (splitOn == EMultiSignalProps.SPLIT_INCOMING) {
+                            source = edge.getSource().getSignal();
+                            target = edge.getWeight() * edge.getTarget().getSignal();
+                        } else {
+                            source = edge.getWeight() * edge.getSource().getSignal();
+                            target = edge.getTarget().getSignal();
+                        }
+                        try {
+                            signal = updateScoreBySimpleRule(source, target, edge.getEdgeType());
+                        } catch (Exception e) {
+                            String message = "Exception at rule calculation for edge " + edge.toString()
+                                    + ". Reason: " + e.getMessage();
+//                        JOptionPane.showMessageDialog(PSFCActivator.cytoscapeDesktopService.getJFrame(),message, "PSFC rule calculation problem", JOptionPane.OK_OPTION);
+                            logger.debug(message);
+                            throw new Exception(message, e);
+                        }
+                        edge.setSignal(signal);
 //                    if (edge.isBackward() && iteration != 0) {
 //                        edge.getTarget().setSignal(edge.getSignal(), iteration);
 //                    } else
-                    edge.getTarget().setSignal(signal, iteration);
+                        edge.getTarget().setSignal(signal, iteration);
+                    }
                 }
+
             }
         }
 
@@ -532,7 +548,7 @@ public class PSF {
                 signals[i] = parentNodes.get(i).getSignal();
             }
             double signal = Double.NaN;
-            double missingValue = Double.parseDouble((String) nodeDataProps.get(ENodeDataProps.MISSING_DATA_VALUE.getName()));
+            double missingValue = Double.parseDouble((String) nodeDataProps.get(ENodeDataProps.NODE_DEFAULT_VALUE.getName()));
             switch (function) {
                 case "min":
                     //compute min but don't account for missing values

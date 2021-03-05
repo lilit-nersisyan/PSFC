@@ -18,7 +18,7 @@
     <artifactId>psfc</artifactId>
     <packaging>bundle</packaging>
     <name>PSFC</name>
-    <version>1.1.6</version>
+    <version>1.1.8</version>
 
     <build>
         <plugins>
@@ -68,6 +68,7 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+
     </build>
 
     <repositories>
@@ -102,6 +103,11 @@
             <id>repository.springsource.com.external</id>
             <name>SpringSource OBR - External</name>
             <url>http://repository.springsource.com/maven/bundles/external</url>
+        </repository>
+        <repository>
+            <id>in-project</id>
+            <name>project-repo</name>
+            <url>file://${project.basedir}/lib/</url>
         </repository>
     </repositories>
 
@@ -223,6 +229,19 @@
             <groupId>de.congrace</groupId>
             <artifactId>exp4j</artifactId>
             <version>0.3.11</version>
+        </dependency>
+        <dependency>
+            <groupId>jsc</groupId>
+            <artifactId>jsc.1.0</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/jsc.jar</systemPath>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/org.apache.commons/commons-math3 -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math3</artifactId>
+            <version>3.0</version>
         </dependency>
 
 

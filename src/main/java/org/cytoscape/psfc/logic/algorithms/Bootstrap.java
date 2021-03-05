@@ -1,10 +1,14 @@
 package org.cytoscape.psfc.logic.algorithms;
 
 import org.apache.log4j.Logger;
+import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.logic.structures.Graph;
+import org.cytoscape.psfc.logic.structures.GraphInfluence;
 import org.cytoscape.psfc.logic.structures.Node;
 import org.cytoscape.work.TaskMonitor;
 
+import java.io.File;
+import java.io.PrintWriter;
 import java.util.*;
 
 /**
@@ -28,18 +32,17 @@ public class Bootstrap {
     private int SAMPLINGTYPE = SAMPLECENTRIC;
     protected Graph graph;
     private ArrayList<Node> targetNodes;
-    protected HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
+    protected HashMap<Integer, Double> originalNodeValues = new HashMap<Integer, Double>();
     private int cycle = 0;
     private TaskMonitor taskMonitor = null;
 
-
-    public Bootstrap(PSF psf, Logger logger){
+    public Bootstrap(PSF psf, Logger logger) {
         this.psf = psf;
         this.logger = logger;
         this.graph = psf.getGraph();
     }
 
-    public Bootstrap(PSF psf, int numOfSamplings, Logger logger){
+    public Bootstrap(PSF psf, int numOfSamplings, Logger logger) {
         this.psf = psf;
         this.graph = psf.getGraph();
         this.numOfSamplings = numOfSamplings;
@@ -70,10 +73,9 @@ public class Bootstrap {
 
         // keep the original values of the nodes in a map
         for (Node node : graph.getNodes()) {
-            originalNodeValues.put(node, node.getValue());
+            originalNodeValues.put(node.getID(), node.getValue());
         }
-        // get target nodes from the graph
-//        targetNodes = graph.getTargetNodes();
+
         targetNodes = new ArrayList<Node>();
         targetNodes.addAll(graph.getNodes());
 
@@ -95,7 +97,7 @@ public class Bootstrap {
 
         logger.debug("Performing bootstrap for " + numOfSamplings + " cycles:\n");
         for (int sampling = 0; sampling < numOfSamplings; sampling++) {
-            if(cancelled) {
+            if (cancelled) {
                 String message = "Bootstrap cancelled at sampling: " + sampling;
                 logger.debug(message);
                 System.out.println("PSFC:: " + message);
@@ -143,12 +145,117 @@ public class Bootstrap {
     }
 
     /**
+     * Iterate through nodes to check their influence (influence nodes).
+     * Per each iteration:
+     * a) keep the original PSF values of the graph in a target->original PSF map
+     * b) initiate a map for target-> new PSF and target -> deltaPSF map
+     * c)
+     *
+     * @param graphInfluence
+     * @param sample
+     * @param backupDir
+     * @return
+     * @throws Exception
+     */
+    public void detectNodeInfluence(GraphInfluence graphInfluence, String sample, File backupDir) throws Exception {
+        System.out.println("Detecting PSF influence of all nodes: sample" + sample);
+
+        // keep the original values of the nodes in a map (to reset later)
+        for (Node node : graph.getNodes()) {
+            originalNodeValues.put(node.getID(), node.getValue());
+        }
+
+        // keep target node signals from the PSF computation on the original graph
+        HashMap<Integer, Double> originalPSFValues = new HashMap<Integer, Double>();
+        for (Node node : graph.getNodes()) {
+            originalPSFValues.put(node.getID(), node.getSignal());
+            graphInfluence.setOriginalPSF(node, node.getSignal(), sample);
+            System.out.println("original value setting success " + node);
+        }
+
+        System.out.println("Original PSF values for nodes set, sample: " + sample);
+
+        // loop on the number of resamplings
+        this.psf.setSilentMode(true); // restrict PSF logging
+
+        logger.debug("Looping over node for PSF influence detection \n");
+        for (Node influenceNode : graph.getNodes()) {
+            if (cancelled) {
+                String message = "PSF influence detection cancelled at node: " + influenceNode;
+                logger.debug(message);
+                System.out.println("PSFC:: " + message);
+                break;
+            }
+            //reassign node values according to the resampling type
+
+            if (taskMonitor != null) {
+                taskMonitor.setProgress(cycle++ / ((double) graph.getOrder()));
+            }
+
+
+            // resample
+            // TODO check if default value is set correctly
+            double influenceOriginalValue = influenceNode.getValue();
+            influenceNode.setValue(Node.getDefaultValue());
+            int knockdirection = (influenceOriginalValue > Node.getDefaultValue() ? -1 : 1); // knock-down = -1, knock-up (or knock-nowhere) = 1
+
+
+            //calculate PSF with the knock-down values and keep the
+            // target signals in a priority queue per each target node
+
+            try {
+                this.psf.setSilentMode(true);
+                this.psf.calculateFlow();
+                for (Node target : graph.getNodes()) {
+                    graphInfluence.setNewPSF(influenceNode,
+                            target, target.getSignal(), knockdirection, sample);
+                }
+            } catch (Exception e) {
+                throw new Exception("Exception at psf computation at influence node "
+                        + influenceNode, e);
+            }
+//            resetGraphOriginalValues();
+            influenceNode.setValue(influenceOriginalValue);
+
+        }
+
+        logger.debug("Node influence computation for the sample" + sample + " complete\n");
+
+
+        //resetGraphOriginalPSFValues
+        for (Node node : graph.getNodes()) {
+            node.setSignal(originalPSFValues.get(node.getID()), 0);
+        }
+
+        //log
+
+        File nodeInfluenceOut = new File(backupDir, sample + "_influence.xls");
+        if (nodeInfluenceOut.exists())
+            nodeInfluenceOut.delete();
+        PrintWriter writer = new PrintWriter(nodeInfluenceOut);
+        String header = "";
+        for (Node node : graph.getNodes()) {
+            header += "\t" + node.getName();
+        }
+        writer.append(header + "\n");
+        for (Node influenceNode : graph.getNodes()) {
+            String line = influenceNode.getName();
+            for (Node targetNode : graph.getNodes()) {
+                line += "\t" + graphInfluence.getNewPSF(influenceNode, targetNode, sample);
+            }
+            writer.append(line + "\n");
+        }
+        writer.close();
+    }
+
+    /**
      * Calculates the p value of the given value based on the proportion
      * of bigger bootstrap values.
      * If the given value is less than the mean of the queue, the proportion of lesser values is computed.
      * Otherwise, the proportion of greater or equal values is computed.
      * This takes into consideration the case where all the values in the queue are equal to the given value.
-     * In this case the numOfSamplings - lessValues.size() will be equal to the numOfSamplings, and the p value will be 1.
+     * In this case the numOfSamplings - lessValues.size() will be equal to the numOfSamplings,
+     * and the p value will be 1.
      *
      * @param value           : the value for which the significance should be computed
      * @param bootstrapValues : the values generated with bootstrap resampling
@@ -171,7 +278,7 @@ public class Bootstrap {
         }
         double pValue;
         if (logger != null)
-            logger.debug(String.format("#Test value: %f\t#Queue mean: %f",value,mean));
+            logger.debug(String.format("#Test value: %f\t#Queue mean: %f", value, mean));
         if (value >= mean) {
             int gteq = size - lessValues.size();
             pValue = gteq / ((double) size);
@@ -183,7 +290,7 @@ public class Bootstrap {
             int lt = lessValues.size();
             pValue = lt / ((double) size);
             if (logger != null) {
-                logger.debug(String.format("#Number of extreme (lt) values: %d out of %d",lt,size));
+                logger.debug(String.format("#Number of extreme (lt) values: %d out of %d", lt, size));
                 logger.debug(String.format("p value: " + "%d/%d = %f", lessValues.size(), size, pValue));
             }
         }
@@ -192,16 +299,15 @@ public class Bootstrap {
 
     private void resetGraphOriginalValues() {
         for (Node node : graph.getNodes())
-            node.setValue(originalNodeValues.get(node));
+            node.setValue(originalNodeValues.get(node.getID()));
     }
 
     /**
      * Resampling is intended to assign nodes in the graph another value
      * - either taken from other nodes in the graph (sample-centric)
      * or from gene expression matrix (gene-centric).
-     *
+     * <p>
      * This method is implemented in each of respective child classes correspondingly.
-     *
      */
     public void resample() {
     }

@@ -1,7 +1,9 @@
 package org.cytoscape.psfc.logic.structures;
 
 import org.cytoscape.psfc.DoubleFormatter;
+import org.cytoscape.psfc.PSFCActivator;
 import org.cytoscape.psfc.gui.enums.ExceptionMessages;
+import org.cytoscape.psfc.properties.ENodeDataProps;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
@@ -71,16 +73,17 @@ public class Node {
         this.signals = signals;
     }
 
-    public static String getDefaultValue() {
-        return defaultValue;
+    public static double getDefaultValue() {
+        return Double.parseDouble(PSFCActivator.getPsfcProps().getProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName()));
     }
+
 
     public double getValue() {
         return value;
     }
 
     public void setValue(double value) {
-        if (!Double.isNaN(value))
+        if (!Double.isNaN(value) & Double.isFinite(value))
             this.value = value;
     }
 
@@ -108,9 +111,10 @@ public class Node {
     }
 
     public void setSignal(double signal, int iteration) {
-        if (!Double.isNaN(signal)) {
-            signals.put(iteration, signal);
-        }
+        if (Double.isNaN(signal) || Double.isInfinite(signal))
+            signal = getSignal();
+
+        signals.put(iteration, signal);
     }
 
     public TreeMap<Integer, Double> getSignals() {
@@ -199,7 +203,7 @@ public class Node {
     }
 
     public void setFunction(String function) {
-        if(!function.equals(""))
+        if(function != null && !function.equals(""))
             this.function = function;
     }
 }

@@ -199,7 +199,8 @@ public class GraphManager {
     }
 
     /**
-     * Returns all the edges between the nodes at given level and their parent nodes at lower level in the graph.
+     * Returns all the edges between the nodes at given level and their parent nodes at lower
+     * level in the graph.
      *
      * @param graph
      * @param level

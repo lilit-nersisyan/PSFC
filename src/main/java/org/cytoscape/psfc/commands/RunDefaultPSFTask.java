@@ -8,7 +8,6 @@ import org.cytoscape.psfc.gui.actions.CalculateScoreFlowMultiColAction;
 import org.cytoscape.psfc.net.NetworkCyManager;
 import org.cytoscape.work.*;
 import org.cytoscape.work.util.ListSingleSelection;
-import sun.awt.CausedFocusEvent;
 
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -42,6 +41,23 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
 
     @Tunable(description = "Backup directory")
     public File backupDir = new File("backupDir", "");
+
+
+    @Tunable(description = "psfOption")
+    public ListSingleSelection<String> psfOption =
+            new ListSingleSelection("psfOption", "optionDefault");
+
+    @Tunable(description = "edgeRulesOption")
+    public ListSingleSelection<String> edgeRulesOption =
+            new ListSingleSelection("edgeRulesOption", "optionDefault");
+
+
+    /*
+    @Tunable(description = "rankColumn")
+    public ListSingleSelection<String> rankColumn =
+            new ListSingleSelection("rankColumn", "rankDefault");
+*/
+
 
     public RunDefaultPSFTask(ActionEvent e) {
         this.e = e;
@@ -120,15 +136,19 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
             throw new Exception("FC file was null");
 
         taskMonitor.setStatusMessage(nodeDataColumns.size() + " nodeDataColumns selected");
+
+
         try {
             CalculateScoreFlowMultiColAction calculateScoreFlowMultiColAction =
                     psfcPanel.createCalculateScoreFlowMultiColAction(
                             currentNetwork, edgeTypeColumn, nodeDataColumns,
-                            getEdgeTypeRuleNameConfigFile(),
+                            getEdgeTypeRuleNameConfigFile(edgeRulesOption.getSelectedValue()),
                             getRuleNameRuleConfigFile(),
-                            fcFile, bootCycles, e);
+                            fcFile, bootCycles,
+                            psfOption.getSelectedValue(), e);
             if(backupDir != null)
                 calculateScoreFlowMultiColAction.setBackupDir(backupDir);
+            calculateScoreFlowMultiColAction.setDetectNodeInfluence(true);
             calculateScoreFlowMultiColAction.actionPerformed(e);
         } catch (Exception e) {
             String message;
@@ -155,47 +175,66 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
         return null;
     }
 
-    private File getEdgeTypeRuleNameConfigFile() throws Exception {
+    private String ADDSUB = "ADDSUB";
+    private String MULDIV = "MULDIV";
+
+    private File getEdgeTypeRuleNameConfigFile(String edgeRulesOption) throws Exception {
         File psfcDir = PSFCActivator.getPSFCDir();
         File file = new File(psfcDir, "defaultEdgeTypeRuleName.config");
+        if(edgeRulesOption.equals(ADDSUB))
+            file = new File(psfcDir, "ADDSUB_EdgeTypeRuleName.config");
+        else if (edgeRulesOption.equals(MULDIV))
+            file = new File(psfcDir, "MULDIV_EdgeTypeRuleName.config");
 
-        if (file.exists()) {
+        // why am I creating a new default file?
+/*        if (file.exists()) {
             boolean success = file.delete();
             if (!success)
                 throw new Exception("PSFC:: could not remove file " + file.getAbsolutePath());
         }
-
-        boolean success = file.createNewFile();
-        if (!success) {
-            throw new Exception("Could not create file " + file.getAbsolutePath());
+*/
+        if(! file.exists()) { // only do this if file does not exist
+            file = new File(psfcDir, "defaultEdgeTypeRuleName.config");
+            boolean success = file.createNewFile();
+            if (!success) {
+                throw new Exception("Could not create file " + file.getAbsolutePath());
+            }
+            PrintWriter writer = new PrintWriter(file);
+            writer.append("activation\t*\n");
+            writer.append("inhibition\t/");
+            writer.close();
         }
 
-        PrintWriter writer = new PrintWriter(file);
-        writer.append("activation\t*\n");
-        writer.append("inhibition\t/");
-        writer.close();
         return file;
     }
+
+
+
+
 
     private File getRuleNameRuleConfigFile() throws Exception {
         File psfcDir = PSFCActivator.getPSFCDir();
         File file = new File(psfcDir, "defaultRuleNameRule.config");
 
-        if (file.exists()) {
+/*        if (file.exists()) {
             boolean success = file.delete();
             if (!success)
                 throw new Exception("PSFC:: could not remove file " + file.getAbsolutePath());
         }
+*/
+        if(! file.exists()) {
+            boolean success = file.createNewFile();
+            if (!success) {
+                throw new Exception("Could not create file " + file.getAbsolutePath());
+            }
 
-        boolean success = file.createNewFile();
-        if (!success) {
-            throw new Exception("Could not create file " + file.getAbsolutePath());
+            PrintWriter writer = new PrintWriter(file);
+            writer.append("*\tsource * target\n");
+            writer.append("/\t1/source * target");
+            writer.append("+\tsource + target");
+            writer.append("-\ttarget - source");
+            writer.close();
         }
-
-        PrintWriter writer = new PrintWriter(file);
-        writer.append("*\tsource * target\n");
-        writer.append("/\t1/source * target");
-        writer.close();
         return file;
     }
 }

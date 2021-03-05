@@ -30,7 +30,8 @@ public enum EpsfcProps {
     NodeColorMax("nodeColorMax"),
     EdgeWidthMin("edgeWidthMin"),
     EdgeWidthMid("edgeWidthMid"),
-    EdgeWidthMax("edgeWidthMax")
+    EdgeWidthMax("edgeWidthMax"),
+    NodeDefaultValue("NodeDefaultValue")
     ;
 
     private boolean oldValue = true;

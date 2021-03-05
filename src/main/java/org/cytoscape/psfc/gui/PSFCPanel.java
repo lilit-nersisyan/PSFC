@@ -154,6 +154,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JComboBox jcb_sortingAlgorithm;
     private javax.swing.JCheckBox jchb_CalculateSignificance;
     private javax.swing.JCheckBox jchb_changeNetworkLayout;
+    private javax.swing.JCheckBox jchb_detectNodeInfluence;
     private javax.swing.JCheckBox jchb_ignoreLoops;
     private javax.swing.JCheckBox jchb_iterateUntilConvergence;
     private javax.swing.JCheckBox jchb_precomputeLoops;
@@ -181,6 +182,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JLabel jl_multiSignalProcessing;
     private javax.swing.JLabel jl_network_and_attrs;
     private javax.swing.JLabel jl_nodeDataOptions;
+    private javax.swing.JLabel jl_nodeInfluenceDetection;
     private javax.swing.JLabel jl_numOfSamplings;
     private javax.swing.JLabel jl_percentLabel;
     private javax.swing.JLabel jl_psfc;
@@ -211,6 +213,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     private javax.swing.JPanel jp_iterateUntilConvergence;
     private javax.swing.JPanel jp_multiInOutRulesPanel;
     private javax.swing.JPanel jp_network_attrs;
+    private javax.swing.JPanel jp_nodeInfuelnce;
     private javax.swing.JPanel jp_procomputeLoops;
     private javax.swing.JPanel jp_ruleConfigPanel;
     private javax.swing.JPanel jp_significance;
@@ -335,16 +338,19 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jb_GeneMatrixFile = new javax.swing.JButton();
         jl_warnNumSamplings = new javax.swing.JLabel();
         jl_exprMatrixFile = new javax.swing.JLabel();
-        jP_nodeData = new javax.swing.JPanel();
-        jl_nodeDataOptions = new javax.swing.JLabel();
-        jl_missingValues = new javax.swing.JLabel();
-        jtxt_missingValues = new javax.swing.JTextField();
+        jp_nodeInfuelnce = new javax.swing.JPanel();
+        jl_nodeInfluenceDetection = new javax.swing.JLabel();
+        jchb_detectNodeInfluence = new javax.swing.JCheckBox();
         jp_algorithms = new javax.swing.JPanel();
         jl_algorithms = new javax.swing.JLabel();
         jl_sortingAlgorithm = new javax.swing.JLabel();
         jcb_sortingAlgorithm = new javax.swing.JComboBox();
         jb_sortNetwork = new javax.swing.JButton();
         jchb_changeNetworkLayout = new javax.swing.JCheckBox();
+        jP_nodeData = new javax.swing.JPanel();
+        jl_nodeDataOptions = new javax.swing.JLabel();
+        jl_missingValues = new javax.swing.JLabel();
+        jtxt_missingValues = new javax.swing.JTextField();
         jsp_Rules = new javax.swing.JScrollPane();
         jp_Rules = new javax.swing.JPanel();
         jp_simpleRules = new javax.swing.JPanel();
@@ -902,41 +908,34 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jP_nodeData.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+        jp_nodeInfuelnce.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 
-        jl_nodeDataOptions.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
-        jl_nodeDataOptions.setForeground(new java.awt.Color(51, 102, 0));
-        jl_nodeDataOptions.setText("Node data options");
+        jl_nodeInfluenceDetection.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_nodeInfluenceDetection.setForeground(new java.awt.Color(51, 102, 0));
+        jl_nodeInfluenceDetection.setText("Node influence detection");
 
-        jl_missingValues.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jl_missingValues.setForeground(new java.awt.Color(102, 102, 102));
-        jl_missingValues.setText("Missing values");
+        jchb_detectNodeInfluence.setText("Detect node influence");
+        jchb_detectNodeInfluence.setToolTipText("Computes the influence of nodes on PSF variance");
 
-        jtxt_missingValues.setText("1.0");
-
-        javax.swing.GroupLayout jP_nodeDataLayout = new javax.swing.GroupLayout(jP_nodeData);
-        jP_nodeData.setLayout(jP_nodeDataLayout);
-        jP_nodeDataLayout.setHorizontalGroup(
-                jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
-                                .addGroup(jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(jl_nodeDataOptions)
-                                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
-                                                .addContainerGap()
-                                                .addComponent(jl_missingValues)
-                                                .addGap(18, 18, 18)
-                                                .addComponent(jtxt_missingValues, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                .addGap(0, 163, Short.MAX_VALUE))
+        javax.swing.GroupLayout jp_nodeInfuelnceLayout = new javax.swing.GroupLayout(jp_nodeInfuelnce);
+        jp_nodeInfuelnce.setLayout(jp_nodeInfuelnceLayout);
+        jp_nodeInfuelnceLayout.setHorizontalGroup(
+                jp_nodeInfuelnceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_nodeInfuelnceLayout.createSequentialGroup()
+                                .addComponent(jl_nodeInfluenceDetection)
+                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jp_nodeInfuelnceLayout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jchb_detectNodeInfluence)
+                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jP_nodeDataLayout.setVerticalGroup(
-                jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
-                                .addComponent(jl_nodeDataOptions)
+        jp_nodeInfuelnceLayout.setVerticalGroup(
+                jp_nodeInfuelnceLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jp_nodeInfuelnceLayout.createSequentialGroup()
+                                .addComponent(jl_nodeInfluenceDetection)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addGroup(jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                                        .addComponent(jl_missingValues)
-                                        .addComponent(jtxt_missingValues, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addContainerGap(76, Short.MAX_VALUE))
+                                .addComponent(jchb_detectNodeInfluence)
+                                .addContainerGap(26, Short.MAX_VALUE))
         );
 
         jp_algorithms.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -989,16 +988,55 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                 .addContainerGap(15, Short.MAX_VALUE))
         );
 
+        jP_nodeData.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        jl_nodeDataOptions.setFont(new java.awt.Font("Tahoma", 1, 12)); // NOI18N
+        jl_nodeDataOptions.setForeground(new java.awt.Color(51, 102, 0));
+        jl_nodeDataOptions.setText("Node data options");
+
+        jl_missingValues.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jl_missingValues.setForeground(new java.awt.Color(102, 102, 102));
+        jl_missingValues.setText("Missing values");
+
+        jtxt_missingValues.setText("1.0");
+
+        javax.swing.GroupLayout jP_nodeDataLayout = new javax.swing.GroupLayout(jP_nodeData);
+        jP_nodeData.setLayout(jP_nodeDataLayout);
+        jP_nodeDataLayout.setHorizontalGroup(
+                jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
+                                .addGroup(jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(jl_nodeDataOptions)
+                                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
+                                                .addContainerGap()
+                                                .addComponent(jl_missingValues)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(jtxt_missingValues, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 163, Short.MAX_VALUE))
+        );
+        jP_nodeDataLayout.setVerticalGroup(
+                jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                        .addGroup(jP_nodeDataLayout.createSequentialGroup()
+                                .addComponent(jl_nodeDataOptions)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addGroup(jP_nodeDataLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                        .addComponent(jl_missingValues)
+                                        .addComponent(jtxt_missingValues, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addContainerGap(25, Short.MAX_VALUE))
+        );
+
         javax.swing.GroupLayout jp_OptionsLayout = new javax.swing.GroupLayout(jp_Options);
         jp_Options.setLayout(jp_OptionsLayout);
         jp_OptionsLayout.setHorizontalGroup(
                 jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jp_OptionsLayout.createSequentialGroup()
                                 .addContainerGap()
-                                .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                        .addComponent(jp_algorithms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jp_significance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jP_nodeData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                        .addGroup(jp_OptionsLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                                .addComponent(jp_algorithms, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                                .addComponent(jp_significance, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                                        .addComponent(jP_nodeData, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(jp_nodeInfuelnce, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                                 .addContainerGap(164, Short.MAX_VALUE))
         );
         jp_OptionsLayout.setVerticalGroup(
@@ -1006,11 +1044,13 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                         .addGroup(jp_OptionsLayout.createSequentialGroup()
                                 .addContainerGap()
                                 .addComponent(jp_algorithms, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                                .addGap(18, 18, 18)
                                 .addComponent(jp_significance, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 34, Short.MAX_VALUE)
+                                .addGap(28, 28, 28)
                                 .addComponent(jP_nodeData, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(148, Short.MAX_VALUE))
+                                .addGap(26, 26, 26)
+                                .addComponent(jp_nodeInfuelnce, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addContainerGap(116, Short.MAX_VALUE))
         );
 
         jsp_Options.setViewportView(jp_Options);
@@ -1350,7 +1390,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                         .addComponent(jb_rulePresetsGuide)
                                         .addComponent(jp_multiInOutRulesPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                                        .addComponent(jp_simpleRules, javax.swing.GroupLayout.PREFERRED_SIZE, 331, Short.MAX_VALUE))
                                 .addContainerGap(140, Short.MAX_VALUE))
         );
         jp_RulesLayout.setVerticalGroup(
@@ -1559,7 +1599,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         jta_about.setColumns(20);
         jta_about.setFont(new java.awt.Font("Monospaced", 2, 11)); // NOI18N
         jta_about.setRows(5);
-        jta_about.setText("PSFC version 1.1.6\nCytoscape app for calculation of pathway\nsignal flow based on gene expression data \nand pathway topology.\n\nCopyright(C) 2015\nLilit Nersisyan, IMB NAS RA\nArsen Arakelyan, IMB NAS RA\nGraham Johnson, UCSF\nMegan Riel-Mehan, UCSF\nAlexander Pico, UCSF\n\nDistributed under\nGNU General Public License version 3");
+        jta_about.setText("PSFC version 1.1.4\nCytoscape app for calculation of pathway\nsignal flow based on gene expression data \nand pathway topology.\n\nCopyright(C) 2015\nLilit Nersisyan, IMB NAS RA\nArsen Arakelyan, IMB NAS RA\nGraham Johnson, UCSF\nMegan Riel-Mehan, UCSF\nAlexander Pico, UCSF\n\nDistributed under\nGNU General Public License version 3");
         jta_about.setAlignmentX(10.0F);
         jta_about.setBorder(null);
         jta_about.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
@@ -1643,7 +1683,6 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                                                 .addComponent(jb_calculateFlow)))
                                 .addGap(18, 18, 18))
         );
-
     }
 
 
@@ -1913,6 +1952,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 jchb_CalculateSignificanceActionPerformed();
             }
         });
+
         jrb_SampleCentric.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -1937,6 +1977,14 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             @Override
             public void actionPerformed(ActionEvent e) {
                 jtxt_numOfSamplingsActionPerformed();
+            }
+        });
+
+
+        jchb_detectNodeInfluence.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                jchb_detectNodeInfluenceActionPerformed();
             }
         });
 
@@ -2254,6 +2302,8 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                             jchb_CalculateSignificance.isSelected(), this);
             if (jchb_CalculateSignificance.isSelected())
                 calculateScoreFlowMultiColAction.setBootstrapProps(getBootstrapProperties());
+            if (jchb_detectNodeInfluence.isSelected())
+                calculateScoreFlowMultiColAction.setDetectNodeInfluence(true);
             calculateScoreFlowMultiColAction.actionPerformed(e);
         } else {
 
@@ -2300,6 +2350,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
             ArrayList<CyColumn> nodeDataColumns,
             File customEdgeTypeRuleNameConfigFile,
             File customRuleNameRuleConfigFile, File fcFile, int bootCycles,
+            String psfOption,
             ActionEvent e) {
         if (network == null) {
             JOptionPane.showMessageDialog(this,
@@ -2370,6 +2421,28 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         CyColumn edgeIsBackwardColumn = getEdgeColumn(EColumnNames.PSFC_IS_BACKWARD.getName(), network);
         Properties nodeDataProperties = getDefaultNodeDataProperties();
         Properties multiSignalProps = getDefaultMultiSignalProperties();
+        if(psfOption.equals("update")) {
+            multiSignalProps.put(EMultiSignalProps.SplitSignalRule.getName(),
+                    EMultiSignalProps.SPLIT_NONE);
+            multiSignalProps.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(),
+                    EMultiSignalProps.UPDATE_NODE_SCORES);
+        } else if (psfOption.equals("add")) {
+            multiSignalProps.put(EMultiSignalProps.SplitSignalRule.getName(),
+                    EMultiSignalProps.SPLIT_INCOMING);
+            multiSignalProps.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(),
+                    EMultiSignalProps.ADDITION);
+        } else if (psfOption.equals("split-mult")){
+            multiSignalProps.put(EMultiSignalProps.SplitSignalRule.getName(),
+                    EMultiSignalProps.SPLIT_OUTGOING);
+            multiSignalProps.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(),
+                    EMultiSignalProps.MULTIPLICATION);
+        } else if (psfOption.equals("mult")) {
+            multiSignalProps.put(EMultiSignalProps.SplitSignalRule.getName(),
+                    EMultiSignalProps.SPLIT_NONE);
+            multiSignalProps.put(EMultiSignalProps.MultipleSignalProcessingRule.getName(),
+                    EMultiSignalProps.MULTIPLICATION);
+        }
+
         Properties loopHandlingProps = getDefaultLoopHandlingProperties();
         if (multiSignalProps == null)
             return null;
@@ -2996,7 +3069,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
                 psfcProps.setProperty(EpsfcProps.BootstrapExpMatrix.getName(), exprMatrixFile.getAbsolutePath());
             psfcProps.setProperty(EpsfcProps.NumOfSamplings.getName(), jtxt_numOfSamplings.getText());
 
-            psfcProps.setProperty(ENodeDataProps.MISSING_DATA_VALUE.getName(),
+            psfcProps.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(),
                     jtxt_missingValues.getText());
             /*** End of Options ***/
 
@@ -3104,6 +3177,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         enableButtons();
     }
 
+
     private void jrb_SampleCentricActionPerformed() {
         enableButtons();
     }
@@ -3162,17 +3236,26 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void jtxt_missingValuesActionPerformed() {
-        Double missingValue = Double.parseDouble(String.valueOf(ENodeDataProps.MISSING_DATA_VALUE.getDefaultValue()));
+        Double defaultValue = Double.parseDouble(PSFCActivator.getPsfcProps().getProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName()));
 
         try {
-            missingValue = Double.parseDouble(jtxt_missingValues.getText());
+            defaultValue = Double.parseDouble(jtxt_missingValues.getText());
+            PSFCActivator.getPsfcProps().setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(),
+                    String.valueOf(defaultValue));
         } catch (NumberFormatException e) {
-            String property = (String) PSFCActivator.getPsfcProps().get(ENodeDataProps.MISSING_DATA_VALUE.getName());
-            missingValue = Double.parseDouble(property);
+            String property = (String) PSFCActivator.getPsfcProps().get(ENodeDataProps.NODE_DEFAULT_VALUE.getName());
+            defaultValue = Double.parseDouble(property);
         }
 
-        jtxt_missingValues.setText(String.valueOf(missingValue));
+        jtxt_missingValues.setText(String.valueOf(defaultValue));
     }
+
+    // node influence
+
+    private void jchb_detectNodeInfluenceActionPerformed() {
+        enableButtons();
+    }
+
 
 
     /**
@@ -3377,7 +3460,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
     }
 
     private void jcb_edgeRanksActionPerformed() {
-        setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
+//        setJcbAttributes(jcb_edgeRanks, EpsfcProps.EdgeRankAttribute);
     }
 
     private void jrb_edgeRanksActionPerformed() {
@@ -3723,7 +3806,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
         //Node data
         propValue = PSFCActivator.getPsfcProps()
-                .getProperty(ENodeDataProps.MISSING_DATA_VALUE.getName());
+                .getProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName());
         jtxt_missingValues.setText(propValue);
 
         //Loops
@@ -3869,6 +3952,17 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
         for (int i = 0; i < comboBox.getItemCount(); i++) {
             Object item = comboBox.getItemAt(i);
             if (item.toString().equals(edgeTypeAttr))
+                comboBox.setSelectedItem(item);
+        }
+        enableButtons();
+    }
+
+    private void setJcbAttributes(JComboBox comboBox, String columnName){
+        setJcbAttributes(comboBox);
+
+        for (int i = 0; i < comboBox.getItemCount(); i++) {
+            Object item = comboBox.getItemAt(i);
+            if (item.toString().equals(columnName))
                 comboBox.setSelectedItem(item);
         }
         enableButtons();
@@ -4064,15 +4158,15 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     private Properties getNodeDataProperties() {
         Properties properties = new Properties();
-        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), Node.getDefaultValue());
-        properties.setProperty(ENodeDataProps.MISSING_DATA_VALUE.getName(), jtxt_missingValues.getText());
+        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(),
+                PSFCActivator.getPsfcProps().getProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName()));
         return properties;
     }
 
     private Properties getDefaultNodeDataProperties() {
         Properties properties = new Properties();
-        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(), Node.getDefaultValue());
-        properties.setProperty(ENodeDataProps.MISSING_DATA_VALUE.getName(), "" + ENodeDataProps.MISSING_DATA_VALUE.getDefaultValue());
+        properties.setProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName(),
+                PSFCActivator.getPsfcProps().getProperty(ENodeDataProps.NODE_DEFAULT_VALUE.getName()));
         return properties;
     }
 
