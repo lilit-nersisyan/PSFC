@@ -4431,7 +4431,7 @@ public class PSFCPanel extends JPanel implements CytoPanelComponent {
 
     @Override
     public String getName() {
-        return "PSFC_1.2.0";
+        return "PSFC_1.2.1";
     }
 
 }
