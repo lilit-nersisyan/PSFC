@@ -393,13 +393,20 @@ public class GraphSort {
             Collections.sort(loopEdges, new Comparator<Edge>() {
                 @Override
                 public int compare(Edge o1, Edge o2) {
-                    int ldiff = o2.getLoopCount() - o1.getLoopCount();
-                    int ddiff = (int) (edgeSourceDistanceMap.get(o2)-edgeSourceDistanceMap.get(o1));
-                    int iddiff = o2.getSource().getID()-o1.getSource().getID();
-                    int diff = 10^6*ldiff + 10^4*ddiff + iddiff;
-                    if(diff == 0)
-                        diff = 1;
-                    return diff;
+                    int loopDiff = o2.getLoopCount() - o1.getLoopCount();
+                    if (loopDiff != 0) return loopDiff;
+
+                    int distDiff = (int) (edgeSourceDistanceMap.get(o2)-edgeSourceDistanceMap.get(o1));
+                    if (distDiff != 0) return distDiff;
+
+                    int idDiff = o2.getSource().getID()-o1.getSource().getID();
+                    return idDiff;
+//                    int diff = 10^6*loopDiff + 10^4*distDiff + idDiff;
+//                    if(diff >= 0)
+//                        diff = 1;
+//                    if(diff < 0)
+//                        diff = -1;
+//                    return diff;
                 }
             });
 

@@ -17,7 +17,6 @@ import org.cytoscape.view.vizmap.mappings.ContinuousMappingPoint;
 import org.cytoscape.work.AbstractTask;
 import org.cytoscape.work.TaskIterator;
 import org.cytoscape.work.TaskMonitor;
-import sun.print.PSPrinterJob;
 
 import javax.swing.*;
 import java.awt.*;

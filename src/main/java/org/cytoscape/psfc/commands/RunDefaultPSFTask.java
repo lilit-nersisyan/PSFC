@@ -193,15 +193,16 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
                 throw new Exception("PSFC:: could not remove file " + file.getAbsolutePath());
         }
 */
-        if(! file.exists()) { // only do this if file does not exist
+        if(! file.getAbsoluteFile().exists()) { // only do this if file does not exist
             file = new File(psfcDir, "defaultEdgeTypeRuleName.config");
             boolean success = file.createNewFile();
             if (!success) {
-                throw new Exception("Could not create file " + file.getAbsolutePath());
+                System.out.println("WARNING: file either not recognized or not created: " + file.getAbsolutePath());
+                //throw new Exception("Could not create file " + file.getAbsolutePath());
             }
             PrintWriter writer = new PrintWriter(file);
             writer.append("activation\t*\n");
-            writer.append("inhibition\t/");
+            writer.append("inhibition\t/\n");
             writer.close();
         }
 
@@ -222,17 +223,18 @@ public class RunDefaultPSFTask extends AbstractTask implements ObservableTask {
                 throw new Exception("PSFC:: could not remove file " + file.getAbsolutePath());
         }
 */
-        if(! file.exists()) {
+        if(! file.getAbsoluteFile().exists()) {
             boolean success = file.createNewFile();
             if (!success) {
-                throw new Exception("Could not create file " + file.getAbsolutePath());
+                 PSFCActivator.getLogger().warn("WARNING: file either not recognized or not created: " + file.getAbsolutePath());
+                //throw new Exception("Could not create file " + file.getAbsolutePath());
             }
 
             PrintWriter writer = new PrintWriter(file);
             writer.append("*\tsource * target\n");
-            writer.append("/\t1/source * target");
-            writer.append("+\tsource + target");
-            writer.append("-\ttarget - source");
+            writer.append("/\t1/source * target\n");
+            writer.append("+\tsource + target\n");
+            writer.append("-\ttarget - source\n");
             writer.close();
         }
         return file;
