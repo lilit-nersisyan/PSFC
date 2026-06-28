@@ -3,7 +3,10 @@ package org.cytoscape.psfc.logic.structures;
 
 
 import org.apache.commons.math3.stat.inference.TTest;
+import org.cytoscape.psfc.properties.EMultiSignalProps;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -13,25 +16,22 @@ import java.util.HashMap;
  * knock-down of influence nodes in the graph and associated PSF fluctuations on the target nodes.
  */
 public class GraphInfluence {
+    private final int psfoption;
     private Graph graph;
     private HashMap<Integer, NodeInfluence> nodeInfluenceMap; // influence node -> NodeInfluence map
 
-    private static GraphInfluence instance = null;
-
-    public static GraphInfluence getGraphInfluence(Graph graph) {
-        if(instance == null){
-            instance = new GraphInfluence(graph);
-        }
-        return instance;
+    public static GraphInfluence getGraphInfluence(Graph graph, int psfoption) {
+        return new GraphInfluence(graph, psfoption);
     }
 
-    private GraphInfluence(Graph graph) {
+    private GraphInfluence(Graph graph, int psfoptions) {
         this.graph = graph;
         nodeInfluenceMap = new HashMap<>();
         for (Node influenceNode : graph.getNodes()) {
             nodeInfluenceMap.put(influenceNode.getID(),
                     new NodeInfluence(influenceNode.getID()));
         }
+        this.psfoption = psfoptions;
     }
 
     /**
@@ -67,6 +67,17 @@ public class GraphInfluence {
             throw new Exception("Graph influence object does not contain target node "
                     + targetNode);
         return influence.getTargetFluctuations().get(targetNode.getID()).getMeanDeltaPSF();
+    }
+
+    public double getDeltaPSFperSample(Node influenceNode, Node targetNode, String sample) throws Exception {
+        if(!nodeInfluenceMap.containsKey(influenceNode.getID()))
+            throw new Exception("Graph influence object does not contain influence node "
+                    + influenceNode);
+        NodeInfluence influence = nodeInfluenceMap.get(influenceNode.getID());
+        if(!influence.getTargetFluctuations().containsKey(targetNode.getID()))
+            throw new Exception("Graph influence object does not contain target node "
+                    + targetNode);
+        return influence.getTargetFluctuations().get(targetNode.getID()).getDeltaPSFMap().get(sample);
     }
 
     public double getPSFsd(Node influenceNode, Node targetNode) throws Exception {
@@ -165,18 +176,17 @@ public class GraphInfluence {
         }
 
         public HashMap<String, Double> getDeltaPSFMap() throws Exception {
-            for(String sample : originalPSFMap.keySet()){
-                if(!newPSFMap.containsKey(sample))
-                    throw new Exception("Exception when computing deltaPSFMap:\n "
-                            +  "The sample " + sample + " is present in original PSF values, "
-                            + " but no found in new ones");
-                deltaPSFMap.put(sample, originalPSFMap.get(sample) - newPSFMap.get(sample));
+            ArrayList<String> samples = getSamples();
+            double[] deltas = getDeltaPSFValues(samples);
+            deltaPSFMap.clear();
+            for (int i = 0; i < samples.size(); i++) {
+                deltaPSFMap.put(samples.get(i), deltas[i]);
             }
             return deltaPSFMap;
         }
 
         double getMeanDeltaPSF() {
-            double[] deltas = getDeltaPSFValues();
+            double[] deltas = getDeltaPSFValues(getSamples());
             double sum = 0;
             for(int i = 0; i < deltas.length; i++){
                 sum += deltas[i];
@@ -185,7 +195,11 @@ public class GraphInfluence {
         }
 
         double getPSFsd() {
-            double[] deltas = getDeltaPSFValues();
+            ArrayList<String> samples = getSamples();
+            if (samples.size() < 2) {
+                return Double.NaN;
+            }
+            double[] deltas = getDeltaPSFValues(samples);
             double mean = getMeanDeltaPSF();
             double sum = 0;
             for(int i = 0; i < deltas.length; i++){
@@ -195,47 +209,67 @@ public class GraphInfluence {
         }
 
         double getDeltaPSFpval() {
+            ArrayList<String> samples = getSamples();
+            if (samples.size() < 2) {
+                return Double.NaN;
+            }
             TTest ttest = new TTest();
-            return ttest.pairedTTest(getNewPSFValues(), getOriginalPSFValues());
+            return ttest.pairedTTest(getNewPSFValues(samples), getOriginalPSFValues(samples));
         }
 
 
-        private double[] getNewPSFValues(){
-            double[] newPSFvalues = new double[newPSFMap.size()];
-            int i = 0;
-            for(double value : newPSFMap.values()){
-                newPSFvalues[i++] = value;
+        private double[] getNewPSFValues(ArrayList<String> samples){
+            double[] newPSFvalues = new double[samples.size()];
+            for (int i = 0; i < samples.size(); i++) {
+                newPSFvalues[i] = newPSFMap.get(samples.get(i));
             }
             return newPSFvalues;
         }
 
-        private int[] getKnockdirections() {
-            int[] knockdirections = new int[knockdirectionMap.size()];
-            int i = 0;
-            for(int value : knockdirectionMap.values()){
-                knockdirections[i++] = value;
+        private int[] getKnockdirections(ArrayList<String> samples) {
+            int[] knockdirections = new int[samples.size()];
+            for (int i = 0; i < samples.size(); i++) {
+                knockdirections[i] = knockdirectionMap.get(samples.get(i));
             }
             return knockdirections;
         }
 
-        private double[] getOriginalPSFValues(){
-            double[] originalPSFvalues = new double[originalPSFMap.size()];
-            int i = 0;
-            for(double value : originalPSFMap.values()){
-                originalPSFvalues[i++] = value;
+        private double[] getOriginalPSFValues(ArrayList<String> samples){
+            double[] originalPSFvalues = new double[samples.size()];
+            for (int i = 0; i < samples.size(); i++) {
+                originalPSFvalues[i] = originalPSFMap.get(samples.get(i));
             }
             return originalPSFvalues;
         }
 
-        private double[] getDeltaPSFValues(){
-            double[] newPSFvalues = getNewPSFValues();
-            double[] originalPSFValues = getOriginalPSFValues();
+        private double[] getDeltaPSFValues(ArrayList<String> samples){
+            double[] newPSFvalues = getNewPSFValues(samples);
+            double[] originalPSFValues = getOriginalPSFValues(samples);
             double[] deltaPSFValues = new double[newPSFvalues.length];
-            int[] knockdirections = getKnockdirections();
+            int[] knockdirections = getKnockdirections(samples);
             for(int i = 0; i < deltaPSFValues.length; i++){
-                deltaPSFValues[i] = (newPSFvalues[i] - originalPSFValues[i]) * knockdirections[i];
+                if(psfoption == EMultiSignalProps.ADDITION)
+                    deltaPSFValues[i] = (originalPSFValues[i]-newPSFvalues[i]) * knockdirections[i];
+                else {
+                    double pseudocount = 0;
+                    if (knockdirections[i] < 0) {
+                        if (originalPSFValues[i] == 0)
+                            pseudocount = 0.0001;
+                        deltaPSFValues[i] = (newPSFvalues[i] + pseudocount) / (originalPSFValues[i] + pseudocount);
+                    } else {
+                        if (newPSFvalues[i] == 0)
+                            pseudocount = 0.0001;
+                        deltaPSFValues[i] = (originalPSFValues[i] + pseudocount) / (newPSFvalues[i] + pseudocount);
+                    }
+                }
             }
             return deltaPSFValues;
+        }
+
+        private ArrayList<String> getSamples() {
+            ArrayList<String> samples = new ArrayList<>(originalPSFMap.keySet());
+            Collections.sort(samples);
+            return samples;
         }
 
     }

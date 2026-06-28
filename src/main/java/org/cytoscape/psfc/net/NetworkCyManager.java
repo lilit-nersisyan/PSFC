@@ -138,7 +138,8 @@ public class NetworkCyManager {
         if (attrType.equals(Double.class) || attrType.equals(double.class)) {
             for (Object obj : cyNodeAttributeMap.keySet()) {
                 cyNode = (CyNode) obj;
-                double value = (Double) cyNodeAttributeMap.get(cyNode);
+                Object valueObj = cyNodeAttributeMap.get(cyNode);
+                double value = (valueObj == null) ? Double.NaN : (Double) valueObj;
                 value = DoubleFormatter.formatDouble(value);
                 CyRow row = nodeTable.getRow(cyNode.getSUID());
                 row.set(attrName, value);
@@ -190,7 +191,8 @@ public class NetworkCyManager {
         if (attrType.equals(Double.class) || attrType.equals(double.class)) {
             for (Object obj : cyEdgeAttributeMap.keySet()) {
                 cyEdge = (CyEdge) obj;
-                double value = (Double) cyEdgeAttributeMap.get(cyEdge);
+                Object valueObj = cyEdgeAttributeMap.get(cyEdge);
+                double value = (valueObj == null) ? Double.NaN : (Double) valueObj;
                 value = DoubleFormatter.formatDouble(value);
                 CyRow row = edgeTable.getRow(cyEdge.getSUID());
                 row.set(attrName, value);

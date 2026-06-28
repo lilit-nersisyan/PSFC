@@ -115,6 +115,10 @@ public class GraphManager {
      * @throws Exception if a <code>Node</code> does not exist for any <code>CyNode</code>
      */
     public static void assignNodeValues(Graph graph, HashMap<CyNode, Double> cyNodeDataMap) throws Exception{
+        // Reset all nodes to default to avoid value carryover between samples/columns.
+        for (Node node : graph.getNodes()) {
+            node.setValue(Node.getDefaultValue());
+        }
         for (CyNode cyNode : cyNodeDataMap.keySet()) {
             Node node = graph.getNode(cyNode);
             if (node == null)

@@ -47,6 +47,7 @@ public class PSF {
     private HashMap<Node, Double> originalNodeValues = new HashMap<Node, Double>();
     private boolean finished = false;
     private boolean precomputeMode = false;
+    private boolean restoreOriginalValues = false;
 
     public HashMap<Node, Double> getTargetPValueMap() {
         return targetPValueMap;
@@ -116,6 +117,19 @@ public class PSF {
             logger.debug(loopHandlingProps.toString());
         }
 
+        // Ensure previous runs don't leak signals into this computation.
+        for (Node node : graph.getNodes()) {
+            node.removeNodeSignals();
+        }
+
+
+        HashMap<Node, Double> originalValuesSnapshot = null;
+        if (restoreOriginalValues) {
+            originalValuesSnapshot = new HashMap<>();
+            for (Node node : graph.getNodes()) {
+                originalValuesSnapshot.put(node, node.getValue());
+            }
+        }
 
         if (!loopHandlingProps.getProperty(ELoopHandlingProps.LoopHandling.getName()).equals(ELoopHandlingProps.IGNORE_LOOPS)) {
             if (!GraphSort.cycleExists(graph)) {
@@ -188,6 +202,12 @@ public class PSF {
         }
         loopMode = false;
         finished = true;
+
+        if (restoreOriginalValues && originalValuesSnapshot != null) {
+            for (Node node : graph.getNodes()) {
+                node.setValue(originalValuesSnapshot.get(node));
+            }
+        }
 
         if (!silentMode) {
             logger.debug("\nSuccess: psf computation complete!");
@@ -319,6 +339,14 @@ public class PSF {
 
     public void setLoopHandlingProps(Properties loopHandlingProps) {
         this.loopHandlingProps = loopHandlingProps;
+    }
+
+    public void setRestoreOriginalValues(boolean restoreOriginalValues) {
+        this.restoreOriginalValues = restoreOriginalValues;
+    }
+
+    public boolean isRestoreOriginalValues() {
+        return restoreOriginalValues;
     }
 
     public HashMap<Integer, HashMap<Node, Double>> getLevelNodeSignalMap() {
@@ -821,12 +849,12 @@ public class PSF {
                 if (e.getMessage().equals("Division by zero!")) {
                     //version 1.1.6 - infinity causes problems in further analysis,
                     //thus replacing it with division by a small number is better
-                    System.out.println("Warning: division by zero: 0's are replaced by 0.1");
+                    System.out.println("Warning: division by zero: 0's are replaced by 0.0001");
                     if(target == 0)
                         result = 0;
                     else
 //                        result = Double.POSITIVE_INFINITY;
-                    result = 1 / 0.1;
+                    result = 1 / 0.0001;
                     logger.debug(e.getMessage() + Double.POSITIVE_INFINITY + " assigned");
                 } else {
                     result = Double.NaN;

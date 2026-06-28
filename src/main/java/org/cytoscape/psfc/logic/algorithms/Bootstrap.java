@@ -160,6 +160,21 @@ public class Bootstrap {
     public void detectNodeInfluence(GraphInfluence graphInfluence, String sample, File backupDir) throws Exception {
         System.out.println("Detecting PSF influence of all nodes: sample" + sample);
 
+        File debugFile = new File(backupDir, sample + "_influence_debug.tsv");
+        if (debugFile.exists()) {
+            debugFile.delete();
+        }
+        PrintWriter debugWriter = new PrintWriter(debugFile);
+        String networkName = "";
+        if (graph.getNetwork() != null) {
+            networkName = graph.getNetwork().getRow(graph.getNetwork())
+                    .get(org.cytoscape.model.CyNetwork.NAME, String.class);
+        }
+        debugWriter.println("column\tnetworkName\tnetworkSUID\tinfluence\tinfluenceSUID\tinfluenceNodeId\t" +
+                "influenceEntrez\tinfluenceNetworkAttr\ttarget\ttargetSUID\ttargetNodeId\t" +
+                "targetEntrez\ttargetNetworkAttr\tinfluenceOriginal\tinfluenceNew\t" +
+                "targetOriginalPSF\ttargetNewPSF\tdeltaPSF");
+
         // keep the original values of the nodes in a map (to reset later)
         for (Node node : graph.getNodes()) {
             originalNodeValues.put(node.getID(), node.getValue());
@@ -197,6 +212,7 @@ public class Bootstrap {
             // TODO check if default value is set correctly
             double influenceOriginalValue = influenceNode.getValue();
             influenceNode.setValue(Node.getDefaultValue());
+            double influenceNewValue = influenceNode.getValue();
             int knockdirection = (influenceOriginalValue > Node.getDefaultValue() ? -1 : 1); // knock-down = -1, knock-up (or knock-nowhere) = 1
 
 
@@ -207,15 +223,42 @@ public class Bootstrap {
                 this.psf.setSilentMode(true);
                 this.psf.calculateFlow();
                 for (Node target : graph.getNodes()) {
+                    double originalSignal = originalPSFValues.get(target.getID());
+                    double newSignal = target.getSignal();
                     graphInfluence.setNewPSF(influenceNode,
-                            target, target.getSignal(), knockdirection, sample);
+                            target, newSignal, knockdirection, sample);
+                    double deltaSignal = graphInfluence.getDeltaPSFperSample(influenceNode, target, sample);
+                    String influenceEntrez = getNodeAttribute(graph, influenceNode, "entrez");
+                    String targetEntrez = getNodeAttribute(graph, target, "entrez");
+                    String influenceNetworkAttr = getNodeAttribute(graph, influenceNode, "network");
+                    String targetNetworkAttr = getNodeAttribute(graph, target, "network");
+                    String influenceSuid = getNodeSuid(graph, influenceNode);
+                    String targetSuid = getNodeSuid(graph, target);
+                    String networkSuid = getNetworkSuid(graph);
+                    debugWriter.println(sample
+                            + "\t" + networkName
+                            + "\t" + networkSuid
+                            + "\t" + influenceNode.getName()
+                            + "\t" + influenceSuid
+                            + "\t" + influenceNode.getID()
+                            + "\t" + influenceEntrez
+                            + "\t" + influenceNetworkAttr
+                            + "\t" + target.getName()
+                            + "\t" + targetSuid
+                            + "\t" + target.getID()
+                            + "\t" + targetEntrez
+                            + "\t" + targetNetworkAttr
+                            + "\t" + influenceOriginalValue
+                            + "\t" + influenceNewValue
+                            + "\t" + originalSignal
+                            + "\t" + newSignal
+                            + "\t" + deltaSignal);
                 }
             } catch (Exception e) {
                 throw new Exception("Exception at psf computation at influence node "
                         + influenceNode, e);
             }
-//            resetGraphOriginalValues();
-            influenceNode.setValue(influenceOriginalValue);
+            resetGraphOriginalValues();
 
         }
 
@@ -226,6 +269,8 @@ public class Bootstrap {
         for (Node node : graph.getNodes()) {
             node.setSignal(originalPSFValues.get(node.getID()), 0);
         }
+
+        debugWriter.close();
 
         //log
 
@@ -241,12 +286,48 @@ public class Bootstrap {
         for (Node influenceNode : graph.getNodes()) {
             String line = influenceNode.getName();
             for (Node targetNode : graph.getNodes()) {
-                line += "\t" + graphInfluence.getNewPSF(influenceNode, targetNode, sample);
+              //  line += "\t" + graphInfluence.getNewPSF(influenceNode, targetNode, sample);
+                double delta = graphInfluence.getDeltaPSFperSample(influenceNode, targetNode, sample);
+                if (!Double.isFinite(delta)) {
+                    delta = 0;
+                }
+                line += "\t" + delta;
             }
             writer.append(line + "\n");
         }
         writer.close();
     }
+
+    private String getNodeAttribute(Graph graph, Node node, String columnName) {
+        if (graph.getNetwork() == null) {
+            return "";
+        }
+        if (graph.getCyNode(node) == null) {
+            return "";
+        }
+        Object value = graph.getNetwork().getDefaultNodeTable()
+                .getRow(graph.getCyNode(node).getSUID())
+                .get(columnName, Object.class);
+        return value == null ? "" : String.valueOf(value);
+    }
+
+    private String getNodeSuid(Graph graph, Node node) {
+        if (graph.getNetwork() == null) {
+            return "";
+        }
+        if (graph.getCyNode(node) == null) {
+            return "";
+        }
+        return String.valueOf(graph.getCyNode(node).getSUID());
+    }
+
+    private String getNetworkSuid(Graph graph) {
+        if (graph.getNetwork() == null) {
+            return "";
+        }
+        return String.valueOf(graph.getNetwork().getSUID());
+    }
+
 
     /**
      * Calculates the p value of the given value based on the proportion

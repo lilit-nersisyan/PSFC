@@ -52,6 +52,10 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
     private String networkName;
     private boolean calculateSignificance;
     private HashMap<Integer, HashMap<Node, Double>> levelNodeSignalMap; //to be used by backupscorestask, since the signals may later be updtaed by bootstrap
+    private HashMap<CyColumn, HashMap<Integer, HashMap<Node, Double>>> levelNodeSignalMapByColumn =
+            new HashMap<>();
+    private HashMap<CyColumn, HashMap<Node, Double>> nodeValueMapByColumn =
+            new HashMap<>();
     MyTaskObserver taskObserver = new MyTaskObserver();
 
 
@@ -116,6 +120,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
 
         try {
             graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
+            graphInfluence = null;
         } catch (Exception e1) {
             System.out.println("Problem initiating graph for calculating score flow\n. Reason: ");
         }
@@ -174,7 +179,6 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                 }
 
                 if (detectNodeInfluence & graph != null) {
-                    graphInfluence = GraphInfluence.getGraphInfluence(graph);
                     final DetectNodeInfluenceTask detectNodeInfluenceTask =
                             new DetectNodeInfluenceTask(column);
                     taskIterator.append(detectNodeInfluenceTask);
@@ -356,17 +360,18 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     PrintWriter writer = new PrintWriter(nodeInfluenceFile);
 
                     //TODO there's smth wrong here: check deltaPSF generation ones more
+                    Graph summaryGraph = (psf != null && psf.getGraph() != null) ? psf.getGraph() : graph;
                     String header = "Name";
-                    for (Node targetNode : graph.getNodes()) {
+                    for (Node targetNode : summaryGraph.getNodes()) {
                         header += String.format("\t%s.deltaPSF\t%s.sd\t%s.pval",
                                 targetNode.getName(), targetNode.getName(), targetNode.getName());
                     }
                     writer.write(header);
 
-                    for (Node influenceNode : graph.getNodes()) {
+                    for (Node influenceNode : summaryGraph.getNodes()) {
                         if(!cancelled) {
                             String line = influenceNode.getName();
-                            for (Node targetNode : graph.getNodes()) {
+                            for (Node targetNode : summaryGraph.getNodes()) {
                                 double meandif = graphInfluence.getDeltaPSF(influenceNode, targetNode);
                                 if(!Double.isFinite(meandif))
                                     meandif = 0;
@@ -445,7 +450,11 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             //Converting network to Graph
             taskMonitor.setStatusMessage(nodeDataColumn + ": Converting network to PSFC Graph");
             try {
-                graph = NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
+                if (CalculateScoreFlowMultiColAction.this.graph == null) {
+                    CalculateScoreFlowMultiColAction.this.graph =
+                            NetworkGraphMapper.graphFromNetwork(network, edgeTypeColumn);
+                }
+                graph = CalculateScoreFlowMultiColAction.this.graph;
             } catch (Exception e) {
                 throw new Exception("PSFC::Exception " + "Could not convert network to graph. Reason: " + e.getMessage(), e);
             }
@@ -489,6 +498,7 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             }
             try {
                 GraphManager.assignNodeValues(graph, cyNodeDataMap);
+                nodeValueMapByColumn.put(nodeDataColumn, buildNodeValueMap(graph, cyNodeDataMap));
             } catch (Exception e) {
                 throw new Exception("PSFC::Exception " + e.getMessage(), e);
             }
@@ -678,6 +688,9 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
                     levelNodeSignalMap = psf.getLevelNodeSignalMap();
                 else
                     throw new Exception("PSFC:: PSF object was not created: see the log for details");
+                if (levelNodeSignalMap != null) {
+                    levelNodeSignalMapByColumn.put(nodeDataColumn, cloneLevelNodeSignalMap(levelNodeSignalMap));
+                }
             } catch (Exception e) {
                 throw new Exception("PSFC::Exception " + "PSFC::Exception " + e.getMessage());
             } finally {
@@ -903,10 +916,20 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
             nodeInfluenceDetector.setTaskMonitor(taskMonitor);
 
             try {
+                boolean restorePrev = psf.isRestoreOriginalValues();
+                psf.setRestoreOriginalValues(true);
+                if (graphInfluence == null) {
+                    graphInfluence = GraphInfluence.getGraphInfluence(
+                            psf.getGraph(),
+                            (Integer) multiSignalProps.get(EMultiSignalProps.MultipleSignalProcessingRule.getName()));
+                }
+                restoreOriginalSignals();
                 nodeInfluenceDetector.detectNodeInfluence(graphInfluence, nodeDataColumn.getName(), backupDir);
                 taskMonitor.setStatusMessage(nodeDataColumn + ": node influence detection complete");
                 taskMonitor.setProgress(1);
+                psf.setRestoreOriginalValues(restorePrev);
             } catch (Exception e) {
+                psf.setRestoreOriginalValues(false);
                 throw new Exception("PSFC::Exception " + "Problem performing bootstrap significance calculation " + e.getMessage());
             } finally {
                 System.gc();
@@ -925,6 +948,55 @@ public class CalculateScoreFlowMultiColAction extends AbstractCyAction {
         public <R> R getResults(Class<? extends R> aClass) {
             return null;
         }
+
+        private void restoreOriginalSignals() {
+            if (psf == null) {
+                return;
+            }
+            Graph influenceGraph = psf.getGraph();
+            HashMap<Integer, HashMap<Node, Double>> baselineMap = levelNodeSignalMapByColumn.get(nodeDataColumn);
+            if (baselineMap == null) {
+                baselineMap = levelNodeSignalMap;
+            }
+            if (baselineMap == null) {
+                return;
+            }
+            HashMap<Node, Double> baselineValues = nodeValueMapByColumn.get(nodeDataColumn);
+            for (Node node : influenceGraph.getNodes()) {
+                node.removeNodeSignals();
+                if (baselineValues != null && baselineValues.containsKey(node)) {
+                    node.setValue(baselineValues.get(node));
+                }
+                HashMap<Node, Double> levelSignals = baselineMap.get(node.getLevel());
+                if (levelSignals != null && levelSignals.containsKey(node)) {
+                    node.setSignal(levelSignals.get(node), 0);
+                } else {
+                    node.setSignal(node.getValue(), 0);
+                }
+            }
+        }
+    }
+
+    private HashMap<Integer, HashMap<Node, Double>> cloneLevelNodeSignalMap(
+            HashMap<Integer, HashMap<Node, Double>> source) {
+        HashMap<Integer, HashMap<Node, Double>> copy = new HashMap<>();
+        for (Integer level : source.keySet()) {
+            copy.put(level, new HashMap<>(source.get(level)));
+        }
+        return copy;
+    }
+
+    private HashMap<Node, Double> buildNodeValueMap(Graph graph, HashMap<CyNode, Double> cyNodeDataMap) {
+        HashMap<Node, Double> map = new HashMap<>();
+        for (Node node : graph.getNodes()) {
+            CyNode cyNode = graph.getCyNode(node);
+            if (cyNode != null && cyNodeDataMap.containsKey(cyNode)) {
+                map.put(node, cyNodeDataMap.get(cyNode));
+            } else {
+                map.put(node, Node.getDefaultValue());
+            }
+        }
+        return map;
     }
 
     private class CalculateSignificanceTask extends AbstractTask implements ObservableTask {
